@@ -4,7 +4,7 @@
     .input
         value..hi
         .text
-            hello..2
+            hello..2 % 3
         text.
     input.
 div.

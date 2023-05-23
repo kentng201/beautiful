@@ -2,13 +2,15 @@ import * as fs from 'fs';
 
 const filePath: string = process.argv[2];
 
+type AttributeType = 'string' | 'variable' | 'math' | 'function';
+
 class AstObject {
     tagName: string;
-    attributes: { [key: string]: string };
+    attributes: { [key: string]: [AttributeType, string] };
     children: AstObject[];
     parent: AstObject | undefined; // Add parent property
 
-    constructor(tagName: string, attributes: { [key: string]: string }) {
+    constructor(tagName: string, attributes: { [key: string]: [AttributeType, string] }) {
         this.tagName = tagName;
         this.attributes = attributes;
         this.children = [];
@@ -48,12 +50,21 @@ function getObject(line: string) {
     } else if (line.includes('...')) {
         const [key, ...rest] = line.trimStart().trimEnd().split('...');
         if (currentParent) {
-            currentParent.attributes[key] = rest.join('...').replace('...', '');
+            const value = rest.join('...').replace('...', '');
+            currentParent.attributes[key] = ['string', value];
         }
     } else if (line.includes('..')) {
         const [key, value] = line.trimStart().trimEnd().split('..');
+        
         if (currentParent) {
-            currentParent.attributes[key] = value;
+            let type: AttributeType;
+            try {
+                eval(value);
+                type = 'math';
+            } catch (e) {
+                type = 'variable';
+            }
+            currentParent.attributes[key] = [type, value.trim()];
         }
     }
 }
