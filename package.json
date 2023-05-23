@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "biu": "ts-node src/commands/biu.ts"
+    "biu": "ts-node src/commands/biu.ts",
+    "ast": "ts-node src/ast.ts"
   },
   "keywords": [],
   "author": "",
