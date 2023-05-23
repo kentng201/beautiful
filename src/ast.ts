@@ -65,7 +65,7 @@ function getObject(line: string) {
         const isFunction = line.match(/(\([a-zA-Z0-9_, ]*\) (=>*) {)/) !== null;
         const isClass = line.match(/(class [a-zA-Z0-9_]* {)/) !== null;
         const isKeyword = line.match(/(if|else|for|while|switch|case)/) !== null;
-        const [key, value] = line.trimStart().trimEnd().split('..');
+        const [key, value] = line.trimStart().trimEnd().split('..').map(x => x.trim());
         if (isKeyword) {
             keywordStatement = line;
             if (functionObject) {
