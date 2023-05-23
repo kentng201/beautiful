@@ -16,7 +16,14 @@ var2 .. var1
 var1++
 
 mounted .. () => {
-    console.log('mounted');
+    type Testing = {
+        a: number;
+    }
+
+    const variable: Testing = {
+        a: 1
+    };
+
 }
 
 logic.
