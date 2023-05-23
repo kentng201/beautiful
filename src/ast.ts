@@ -6,46 +6,45 @@ class AstObject {
     tagName: string;
     attributes: { [key: string]: string };
     children: AstObject[];
+    parent: AstObject | undefined; // Add parent property
 
     constructor(tagName: string, attributes: { [key: string]: string }) {
         this.tagName = tagName;
         this.attributes = attributes;
         this.children = [];
+        this.parent = undefined; // Initialize parent as undefined
     }
 }
 
 let mainObject: AstObject | undefined;
-// let currentTagName: string | undefined;
-
-let object: AstObject | undefined;
-
+let currentParent: AstObject | undefined;
 
 function getObject(line: string) {
     if (line.startsWith('.')) {
-        if (mainObject) {
-            object = new AstObject(line.replace('.', ''), {});
+        const tagName = line.replace('.', '');
+        const newObject = new AstObject(tagName, {});
+        if (currentParent) {
+            currentParent.children.push(newObject);
+            newObject.parent = currentParent; // Set parent of new object
         } else {
-            mainObject = new AstObject(line.replace('.', ''), {});
-            object = mainObject;
-            // currentTagName = line.replace('.', '');
+            mainObject = newObject;
         }
+        currentParent = newObject;
     } else if (line.endsWith('.') && !line.includes(' ')) {
-        if (mainObject && object && mainObject.tagName !== object.tagName) {
-            mainObject.children.push(object);
-            object = undefined;
+        if (currentParent && currentParent !== mainObject) {
+            currentParent = currentParent.parent; // Move up to the parent object
         } else {
             const newObject = mainObject;
             mainObject = undefined;
-            object = undefined;
+            currentParent = undefined;
             return newObject;
         }
-        
     } else if (line.startsWith('.,')) {
         // ignore, this is a comment
     } else if (line.includes('..')) {
         const [key, value] = line.trimStart().trimEnd().split('..');
-        if (object) {
-            object.attributes[key] = value;
+        if (currentParent) {
+            currentParent.attributes[key] = value;
         }
     }
 }
@@ -61,9 +60,5 @@ fs.readFile(filePath, 'utf8', (err, data) => {
         if (result) {
             ast.push(result);
         }
-    }
-    
-    for (const object of ast) {
-        console.log(object);
     }
 });
