@@ -14,6 +14,10 @@ class AstObject {
         this.children = [];
         this.parent = undefined; // Initialize parent as undefined
     }
+    removeParentReference() {
+        delete this.parent;
+        this.children.forEach(child => child.removeParentReference());
+    }
 }
 
 let mainObject: AstObject | undefined;
@@ -61,4 +65,9 @@ fs.readFile(filePath, 'utf8', (err, data) => {
             ast.push(result);
         }
     }
+
+    for (const object of ast) {
+        object.removeParentReference();
+    }
+    console.log(JSON.stringify(ast, null, 2));
 });
