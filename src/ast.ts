@@ -6,7 +6,7 @@ type AttributeType = 'string' | 'variable' | 'math' | 'function';
 
 class AstObject {
     tagName: string;
-    attributes: { [key: string]: [AttributeType, string] };
+    attributes: { [key: string]: [AttributeType, string | FunctionObject] };
     children: AstObject[];
     parent: AstObject | undefined; // Add parent property
 
@@ -22,8 +22,24 @@ class AstObject {
     }
 }
 
+class FunctionObject {
+    name: string;
+    args: [string, string][];
+    body: string[];
+
+    constructor(name: string, args: [string, string][], body: string[]) {
+        this.name = name;
+        this.args = args;
+        this.body = body;
+    }
+}
+
 let mainObject: AstObject | undefined;
 let currentParent: AstObject | undefined;
+
+let functionObject: FunctionObject | undefined;
+let currentVariable: string | undefined;
+let keywordStatement: string | undefined;
 
 function getObject(line: string) {
     if (line.startsWith('.')) {
@@ -44,6 +60,50 @@ function getObject(line: string) {
             mainObject = undefined;
             currentParent = undefined;
             return newObject;
+        }
+    } else if (line.endsWith("{")) {
+        const isFunction = line.match(/(\([a-zA-Z0-9_, ]*\) (=>*) {)/) !== null;
+        const isClass = line.match(/(class [a-zA-Z0-9_]* {)/) !== null;
+        const isKeyword = line.match(/(if|else|for|while|switch|case)/) !== null;
+        const [key, value] = line.trimStart().trimEnd().split('..');
+        if (isKeyword) {
+            keywordStatement = line;
+            if (functionObject) {
+                functionObject.body.push(line);
+            }
+        } if (isFunction) {
+            const parameters = value
+                .replace('{', '')
+                .replace(')', '')
+                .replace('(', '')
+                .replace('=>', '')
+                .replace('function', '')
+                .trim()
+                .split(',')
+                .map(param => [param.trim(), 'any'] as [string, string]);
+            functionObject = new FunctionObject(key, parameters, []);
+            currentVariable = key;
+        }
+    } else if (line.endsWith("}")) {
+        if (keywordStatement) {
+            if (functionObject) {
+                functionObject.body.push(line);
+            }
+            keywordStatement = undefined;
+        } else if (currentParent) {
+            currentParent.attributes[currentVariable!] = ['function', functionObject!];
+            functionObject = undefined;
+        }
+    // is function body
+    } else if (
+        line.startsWith('const') || line.startsWith('let') ||
+        line.includes('(') && line.includes(')') ||
+        line.startsWith('//') ||
+        line.startsWith('return')
+    ) {
+        
+        if (functionObject) {
+            functionObject.body.push(line);
         }
     } else if (line.startsWith('.,')) {
         // ignore, this is a comment

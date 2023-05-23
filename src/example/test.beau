@@ -1,5 +1,5 @@
 .div
-    value..test 
+    value.hi..test.v
     hello...This is a value....
     .input
         value..hi
@@ -11,22 +11,25 @@ div.
 
 .logic
 
-var1 .. hello
+var1 .. hello.hey
 var2 .. this
 var3 ...pure string...
 mul .. 1+2
 var2 .. var1 
 var1++
 
-mounted .. () => {
-    type Testing = {
-        a: number;
+mounted .. (testString, helloString2) => {
+    // test
+    const hi = 2;
+    console.log(testString);
+    if (hello) {
+
     }
+}
 
-    const variable: Testing = {
-        a: 1
-    };
-
+testFunction .. function (quote, amPm) => {
+    console.log('quote: ', quote);
+    console.log('amPm: ', amPm);
 }
 
 logic.
