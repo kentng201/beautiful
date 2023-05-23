@@ -45,6 +45,11 @@ function getObject(line: string) {
         }
     } else if (line.startsWith('.,')) {
         // ignore, this is a comment
+    } else if (line.includes('...')) {
+        const [key, ...rest] = line.trimStart().trimEnd().split('...');
+        if (currentParent) {
+            currentParent.attributes[key] = rest.join('...').replace('...', '');
+        }
     } else if (line.includes('..')) {
         const [key, value] = line.trimStart().trimEnd().split('..');
         if (currentParent) {
