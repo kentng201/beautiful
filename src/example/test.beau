@@ -1,16 +1,19 @@
 .div
-    ,, test
-    value..test hello..This is a value input size..12 size.unit..px
-    ...Pure text...
-    .input value..1+2/3
-    .input value..hi input.
+    value..test 
+    hello...This is a value...
+    .input
+        value..hi
+        .text
+            hello..2
+        text.
+    input.
 div.
 
 .logic
 
-var1 .. hello world 
-var2 .. this is a new world
-var3 ... pure string...
+var1 .. hello
+var2 .. this
+var3 ...pure string...
 mul .. 1+2
 var2 .. var1 
 var1++
