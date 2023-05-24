@@ -1,6 +1,6 @@
 .div
     value.hi..test
-    hello ...input...
+    hello...input...
     onInput.. () => {}
     formula.. 1 and 1 and 2 or 3
 
@@ -11,9 +11,7 @@
             size.unit..px
             color..red
             backgroundColor...#304900...
-            .image
-                src...http://www.google.com...
-            image.
+            .image src...http://www.google.com... host...aws... secure..false version..1.2*4 image.
         text.
     input.
 div.
