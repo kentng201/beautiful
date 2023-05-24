@@ -17,39 +17,3 @@
         text.
     input.
 div.
-
-.logic
-
-var1 .. hello.hey
-var2 .. this
-var3 ...pure string...
-mul .. 1+2
-total .. gst + subtotal
-
-gst .. 3
-subtotal .. 4
-
-ERROR_MESSAGE ... error message ...
-
-gst .. 4
-., total .. gst + subtotal
-
-
-var1++
-
-mounted .. (testString, helloString2) => {
-    // test
-    const hi = 2;
-    console.log(testString);
-    if (hello) {
-        console.log('hello');
-    }
-    console.log('hi');
-}
-
-testFunction .. function (quote, amPm) => {
-    console.log('quote: ', quote);
-    console.log('amPm: ', amPm);
-}
-
-logic.

@@ -1,0 +1,16 @@
+.logic
+mounted .. (testString, helloString2) => {
+    // test
+    const hi = 2;
+    console.log(testString);
+    while (true) {
+    }
+    console.log('hi');
+}
+
+testFunction .. function (quote, amPm) => {
+    console.log('quote: ', quote);
+    console.log('amPm: ', amPm);
+}
+
+logic.
