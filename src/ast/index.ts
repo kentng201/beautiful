@@ -9,7 +9,7 @@ let currentParent: AstObject | undefined;
 
 let functionObject: FunctionObject | undefined;
 let currentVariable: string | undefined;
-let keywordStatement: string | undefined;
+let keywordStack: string[] = [];
 
 function getObject(line: string) {
     if (line.startsWith('.')) {
@@ -37,7 +37,7 @@ function getObject(line: string) {
         const isKeyword = line.match(/(if|else|for|while|switch|case)/) !== null;
         const [key, value] = line.trimStart().trimEnd().split('..').map(x => x.trim());
         if (isKeyword) {
-            keywordStatement = line;
+            keywordStack.push(line);
             if (functionObject) {
                 functionObject.body.push(line);
             }
@@ -55,11 +55,11 @@ function getObject(line: string) {
             currentVariable = key;
         }
     } else if (line.endsWith("}")) {
-        if (keywordStatement) {
+        if (keywordStack.length > 0) {
             if (functionObject) {
                 functionObject.body.push(line);
             }
-            keywordStatement = undefined;
+            keywordStack.pop();
         } else if (currentParent) {
             currentParent.attributes[currentVariable!] = ['function', functionObject!];
             functionObject = undefined;

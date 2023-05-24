@@ -4,6 +4,9 @@ mounted .. (testString, helloString2) => {
     const hi = 2;
     console.log(testString);
     while (true) {
+        if (false) {
+            console.log('hi');
+        }
     }
     console.log('hi');
 }
