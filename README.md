@@ -28,7 +28,6 @@ The above example is equivalent to the following HTML code
 
 2. Attribute
 <br>The attribute can be a variable, a string, a javascript function, or a number/math formula.
-<br>
 <br>- string literal: <code>... any form of string ...</code>
 <br>- variable: .. <code>test</code>
 <br>- number/formula: .. <code>1 + 2</code>
