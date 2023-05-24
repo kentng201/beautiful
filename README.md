@@ -21,12 +21,12 @@ The above example is equivalent to the following HTML code
 ```
 
 ## Grammer
-1. tag
+1. Tag
 ```
 .div div.
 ```
 
-2. attribute
+2. Attribute
 <br>The attribute can be a variable, a string, a javascript function, or a number/math formula.
 <br>
 <br>- string literal: <code>... any form of string ...</code>
@@ -49,7 +49,7 @@ Which is equivalent to the following HTML code
 <div id="div1" class="bold" onClick="() => console.log('input')" value="3"></div>
 ```
 
-3. chilren
+3. Children Tag
 <br>The children can another tag or a string.
 
 ```
