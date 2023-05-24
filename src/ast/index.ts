@@ -11,8 +11,65 @@ let functionObject: FunctionObject | undefined;
 let currentVariable: string | undefined;
 let keywordStack: string[] = [];
 
+const isMultipleAttributeLine = (line: string) => {
+    const attributes = line.match(/(?<!\.)\.(?!\.)\.(?!\.)/) || [];
+    const stringPairs = line.match(/(\w+)\.\.\.(.*?)\.\.\./g) || [];
+    if (attributes.length == 0 && stringPairs.length == 0) return false;
+    return attributes.length + stringPairs.length > 1;
+};
+
+const isOneLiner = (line: string) => {
+    const attributes = line.match(/(\.\.)/);
+    const hasStartTag = line.startsWith('.');
+    const hasEndTag = line.endsWith('.') && !line.endsWith('...');
+    const hasAttributes = !!(attributes && attributes.length > 1);
+    return hasAttributes && (hasStartTag || hasEndTag);
+}
+
+const seperateMultipleAttributeLine = (line: string): string[] => {
+    const hasStartTag = line.startsWith('.');
+    const hasEndTag = line.endsWith('.') && !line.endsWith('...');
+
+    const tags = [];
+
+    let startTag, endTag;
+    if (hasStartTag) {
+        startTag = line.match(/(\.\w+)/)![0];
+        tags.push(startTag);
+        line = line.replace(/(?<!\.)\.(\w+)/, '');
+    }
+    if (hasEndTag) {
+        endTag = line.match(/(\w+\.)$/)![0];
+        tags.push(endTag);
+        line = line.replace(/\b\w+\.$/, '');
+    }
+
+    const strings = line.match(/(\w+)\.\.\.(.*?)\.\.\./g) || [];
+    const booleans = line.match(/(\w+)\.\.\ ?\b(true|false)\b/g) || [];
+    const numericFormula = line.match(/(\w+)\.\.\ ?\-?\b\d+(\.\d+)?\b(\/|\*|\+|\-)\b\d+(\.\d+)?\b/g) || [];
+
+    const result = [];
+    if (startTag) result.push(startTag);
+    for (let i = 0; i < strings.length; i++) {
+        result.push(strings[i]);
+    }
+    for (let i = 0; i < booleans.length; i++) {
+        result.push(booleans[i]);
+    }
+    for (let i = 0; i < numericFormula.length; i++) {
+        result.push(numericFormula[i]);
+    }
+    if (endTag) result.push(endTag);
+    return result;
+}
+
 function getObject(line: string) {
-    if (line.startsWith('.')) {
+    if (isMultipleAttributeLine(line) || isOneLiner(line)) {
+        const lines = seperateMultipleAttributeLine(line);
+        for (let i = 0; i < lines.length; i++) {
+            getObject(lines[i]);
+        }
+    } else if (line.startsWith('.')) {
         const tagName = line.replace('.', '');
         const newObject = new AstObject(tagName, {});
         if (currentParent) {
@@ -22,7 +79,7 @@ function getObject(line: string) {
             mainObject = newObject;
         }
         currentParent = newObject;
-    } else if (line.endsWith('.') && !line.includes(' ')) {
+    } else if (line.endsWith('.') && !line.endsWith('...')) {
         if (currentParent && currentParent !== mainObject) {
             currentParent = currentParent.parent; // Move up to the parent object
         } else {
