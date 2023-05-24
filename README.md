@@ -29,10 +29,10 @@ The above example is equivalent to the following HTML code
 2. attribute
 <br>The attribute can be a variable, a string, a javascript function, or a number/math formula.
 <br>
-<br>- string literal: `... any form of string ...`
-<br>- variable: .. `test`
-<br>- number/formula: .. `1 + 2`
-<br>- javascript function: .. `() => console.log('hello world')`
+<br>- string literal: <code>... any form of string ...</code>
+<br>- variable: .. <code>test</code>
+<br>- number/formula: .. <code>1 + 2</code>
+<br>- javascript function: .. <code>() => console.log('hello world')</code>
 <br>
 ```
 .div 
