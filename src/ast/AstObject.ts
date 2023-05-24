@@ -1,6 +1,6 @@
 import FunctionObject from "./FunctionObject";
 
-export type AttributeType = 'string' | 'variable' | 'math' | 'function';
+export type AttributeType = 'string' | 'variable' | 'math' | 'function' | 'comment';
 
 export default class AstObject {
     tagName: string;

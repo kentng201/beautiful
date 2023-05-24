@@ -64,12 +64,20 @@ const seperateMultipleAttributeLine = (line: string): string[] => {
 }
 
 function getObject(line: string) {
-    if (isMultipleAttributeLine(line) || isOneLiner(line)) {
+    // is inside a function body
+    if (!line.startsWith('.,') && (isMultipleAttributeLine(line) || isOneLiner(line))) {
+        console.log('no', 0);
         const lines = seperateMultipleAttributeLine(line);
+        console.log('preparing get object');
         for (let i = 0; i < lines.length; i++) {
-            getObject(lines[i]);
+            const output = getObject(lines[i]);
+            console.log('output: ', output)
         }
+        console.log('done get object');
+        // is start of tag
     } else if (line.startsWith('.') && !line.startsWith('.,')) {
+        console.log('line: ', line)
+        console.log('no', 1);
         const tagName = line.replace('.', '');
         const newObject = new AstObject(tagName, {});
         if (currentParent) {
@@ -79,16 +87,22 @@ function getObject(line: string) {
             mainObject = newObject;
         }
         currentParent = newObject;
+    // is end of tag
     } else if (line.endsWith('.') && !line.endsWith('...')) {
+        console.log('no', 2);
         if (currentParent && currentParent !== mainObject) {
             currentParent = currentParent.parent; // Move up to the parent object
-        } else {
+        } else if (mainObject) {
             const newObject = mainObject;
             mainObject = undefined;
             currentParent = undefined;
             return newObject;
+        } else {
+            console.log('ignoring line:', line);
         }
+    // is start of a class/function/keyword
     } else if (line.endsWith("{")) {
+        console.log('no', 3);
         const isFunction = line.match(/(\([a-zA-Z0-9_, ]*\) (=>*) {)/) !== null;
         const isClass = line.match(/(class [a-zA-Z0-9_]* {)/) !== null;
         const isKeyword = line.match(/(if|else|for|while|switch|case)/) !== null;
@@ -101,25 +115,56 @@ function getObject(line: string) {
         } if (isFunction) {
             const parameters = value
                 .replace('{', '')
+                .replace('}', '')
                 .replace(')', '')
                 .replace('(', '')
                 .replace('=>', '')
                 .replace('function', '')
                 .trim()
                 .split(',')
+                .filter(param => param !== '')
                 .map(param => [param.trim(), 'any'] as [string, string]);
             functionObject = new FunctionObject(key, parameters, []);
             currentVariable = key;
+
+            if (line.endsWith('}')) {
+                if (currentParent) {
+                    currentParent.attributes[currentVariable] = ['function', functionObject];
+                }
+                functionObject = undefined;
+            }
         }
+    // is end of a class/function/keyword
     } else if (line.endsWith("}")) {
+        console.log('no', 4);
         if (keywordStack.length > 0) {
             if (functionObject) {
                 functionObject.body.push(line);
             }
             keywordStack.pop();
-        } else if (currentParent) {
-            currentParent.attributes[currentVariable!] = ['function', functionObject!];
-            functionObject = undefined;
+        } 
+        else if (currentParent) {
+            console.log('no', 5);
+            if (functionObject) {
+                currentParent.attributes[currentVariable!] = ['function', functionObject];
+                functionObject = undefined;
+            } else if (line.includes('=>')) {
+                const [key, value] = line.trimStart().trimEnd().split('..').map(x => x.trim());
+                console.log('func key, value: ', key, value)
+                const parameters = value
+                    .replace('{', '')
+                    .replace('}', '')
+                    .replace(')', '')
+                    .replace('(', '')
+                    .replace('=>', '')
+                    .replace('function', '')
+                    .trim()
+                    .split(',')
+                    .filter(param => param !== '')
+                    .map(param => [param.trim(), 'any'] as [string, string]);
+                const newFunctionObject = new FunctionObject(key, parameters, []);
+                currentParent.attributes[key] = ['function', newFunctionObject];
+            }
         }
     // is function body
     } else if (
@@ -128,32 +173,45 @@ function getObject(line: string) {
         line.startsWith('//') ||
         line.startsWith('return')
     ) {
-        
+        console.log('no', 6);
         if (functionObject) {
             functionObject.body.push(line);
         }
     } else if (line.startsWith('.,')) {
-        // ignore, this is a comment
+        console.log('no', 7);
+        if (currentParent) {
+            const [key, value] = line.replace('.,', '').trimStart().trimEnd().split('..');
+            currentParent.attributes[key] = ['comment', value.trim()];
+        }
     } else if (line.includes('...')) {
+        console.log('no', 8);
         const [key, ...rest] = line.trimStart().trimEnd().split('...');
+        console.log('key, ...rest: ', key, ...rest)
         if (currentParent) {
             const value = rest.join('...').replace('...', '');
             currentParent.attributes[key] = ['string', value];
         }
     } else if (line.includes('..')) {
+        console.log('no', 9);
         const [key, value] = line.trimStart().trimEnd().split('..');
         
         if (currentParent) {
             let type: AttributeType;
             try {
-                eval(value);
+                const mathVal = value.replace('and', '&&').replace('or', '||');
+                eval(mathVal);
                 type = 'math';
             } catch (e) {
                 type = 'variable';
             }
             currentParent.attributes[key] = [type, value.trim()];
         }
+    } else {
+        console.log('ignoring line:', line);
+        return undefined;
     }
+
+    return line;
 }
 
 fs.readFile(filePath, 'utf8', (err, data) => {
@@ -164,7 +222,7 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
         const result = getObject(line);
-        if (result) {
+        if (result instanceof AstObject) {
             ast.push(result);
         }
     }
@@ -172,5 +230,5 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     for (const object of ast) {
         object.removeParentReference();
     }
-    console.log(JSON.stringify(ast, null, 2));
+    fs.writeFileSync('ast-result.test.json', JSON.stringify(ast, null, 4));
 });
