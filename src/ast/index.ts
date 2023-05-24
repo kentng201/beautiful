@@ -20,14 +20,14 @@ const isMultipleAttributeLine = (line: string) => {
 
 const isOneLiner = (line: string) => {
     const attributes = line.match(/(\.\.)/);
-    const hasStartTag = line.startsWith('.');
+    const hasStartTag = line.startsWith('.') && !line.startsWith('.,');
     const hasEndTag = line.endsWith('.') && !line.endsWith('...');
     const hasAttributes = !!(attributes && attributes.length > 1);
     return hasAttributes && (hasStartTag || hasEndTag);
 }
 
 const seperateMultipleAttributeLine = (line: string): string[] => {
-    const hasStartTag = line.startsWith('.');
+    const hasStartTag = line.startsWith('.') && !line.startsWith('.,');
     const hasEndTag = line.endsWith('.') && !line.endsWith('...');
 
     const tags = [];
@@ -69,7 +69,7 @@ function getObject(line: string) {
         for (let i = 0; i < lines.length; i++) {
             getObject(lines[i]);
         }
-    } else if (line.startsWith('.')) {
+    } else if (line.startsWith('.') && !line.startsWith('.,')) {
         const tagName = line.replace('.', '');
         const newObject = new AstObject(tagName, {});
         if (currentParent) {
