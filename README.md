@@ -34,6 +34,7 @@ The above example is equivalent to the following HTML code
 <br>- number/formula: .. <code>1 + 2</code>
 <br>- javascript function: .. <code>() => console.log('hello world')</code>
 <br>
+
 ```
 .div 
     id...div1...
