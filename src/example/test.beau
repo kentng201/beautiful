@@ -1,10 +1,16 @@
 .div
-    value.hi..test.v
-    hello...This is a value....
+    value.hi..test
+    hello...input...
+    onInput..() => {}
+    formula..1+2 mod 3 / 4
+
     .input
         value..hi
         .text
             hello..2 % 3
+            .image
+                src...http://www.google.com...
+            image.
         text.
     input.
 div.
@@ -15,7 +21,17 @@ var1 .. hello.hey
 var2 .. this
 var3 ...pure string...
 mul .. 1+2
-var2 .. var1 
+total .. gst + subtotal
+
+gst .. 3
+subtotal .. 4
+
+ERROR_MESSAGE ... error message ...
+
+gst .. 4
+., total .. gst + subtotal
+
+
 var1++
 
 mounted .. (testString, helloString2) => {
