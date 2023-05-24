@@ -1,12 +1,15 @@
 .model User
     username,,string
     password,,string
+    id,,number
 model.
 
 
 load users
+    select username
     from User
-    where user..test
+    where username...ho..........
+    and (id..3 or id>3)
     or username...kentng201...
     left join a
     order by username;
@@ -14,8 +17,8 @@ load users
 load user from User find 1;
 load user from User where id..1 or id..2 last;
 
-user.username ... hello world ...
-
+user.username ... hello world ....
+user.id ..2
 
 save user;
 save users;

@@ -1,15 +1,17 @@
+This is a ignoring line.
 .div
     value.hi..test
     hello...input...
-    onInput.. () => {}
-    formula.. 1 and 1 and 2 or 3
+    onInput..() => {}
+    formula..1 and 1 and 2 or 3
+    align..left
 
     .input
         value..hi
         .text
             size..20
             size.unit..px
-            color..red
+            ., color..blue
             backgroundColor...#304900...
             .image src...http://www.google.com... host...aws... secure..false version..1.2*4 image.
         text.
