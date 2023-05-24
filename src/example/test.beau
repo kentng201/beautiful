@@ -1,13 +1,16 @@
 .div
     value.hi..test
-    hello...input...
-    onInput..() => {}
-    formula..1+2 mod 3 / 4
+    hello ...input...
+    onInput.. () => {}
+    formula.. 1 and 1 and 2 or 3
 
     .input
         value..hi
         .text
-            hello..2 % 3
+            size..20
+            size.unit..px
+            color..red
+            backgroundColor...#304900...
             .image
                 src...http://www.google.com...
             image.

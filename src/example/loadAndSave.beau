@@ -1,0 +1,21 @@
+.model User
+    username,,string
+    password,,string
+model.
+
+
+load users
+    from User
+    where user..test
+    or username...kentng201...
+    left join a
+    order by username;
+
+load user from User find 1;
+load user from User where id..1 or id..2 last;
+
+user.username ... hello world ...
+
+
+save user;
+save users;
