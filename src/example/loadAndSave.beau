@@ -26,3 +26,20 @@ assign user via newUser.username + newUser2.username ., this one real time when 
 
 save user
 save users
+
+new user from User
+soft delete user == delete user ., true
+
+load allUsers from User ., this will load all users
+
+if user.username bigger than 2
+    assign user.username via 100 + 20
+else
+    assign user.username via 50 + 20
+
+when user.username smaller than 100
+    assign user.username via user.username + 1
+
+every user in allUsers where user.username bigger than 2
+    console.log(user.username)
+
