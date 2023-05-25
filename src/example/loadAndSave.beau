@@ -8,17 +8,21 @@ model.
 load users
     select username
     from User
-    where username...ho..........
-    and (id..3 or id>3)
+    where username equal...ho..........
+    and (id equal 3 or id smaller than 3 or id equal ...test... )
     or username...kentng201...
     left join a
-    order by username;
+    order by username
 
-load user from User find 1;
-load user from User where id..1 or id..2 last;
+load user from User find 1
+load user from User where id equal 1 or id equal 2 last
 
-user.username ... hello world ....
-user.id ..2
+assign user.username via ... hello world ....
+assign user.id via 2
 
-save user;
-save users;
+load newUser from User find 10
+load newUser2 from User find 11
+assign user via newUser.username + newUser2.username ., this one real time when username changed
+
+save user
+save users
