@@ -275,5 +275,8 @@ export default function parse(line: string) {
             currentModel!.orderBy = parseOrderBy(orderByWords);
         }
         return currentModel;
+    } else if (currentModel) {
+        models.push(currentModel);
+        currentModel = null;
     }
 }
