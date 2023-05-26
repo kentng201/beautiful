@@ -1,7 +1,10 @@
 export function hasModelKeyword(line: string): boolean {
     return (
-        line.match(/\b(select|load|save|find|order|by|from|where|between|like|first|last|limit|offset|and|or)\b/) != null ||
+        line.match(/\b(select|load|save|find|order|by|from|where|between|like|first|last|limit|offset|and|or)\b/) != null
+        ||
         line.match(/\b(bigger|equal|smaller|than|between|like|and|or)\b/) != null
+        ||
+        line.match(/\b(join|left|right|inner)\b/) != null
     )
     && !line.startsWith('.');
 }
@@ -25,7 +28,7 @@ export class Condition {
     }
 }
 
-export class  Join {
+export class Join {
     type: 'left' | 'right' | 'inner';
     modelName: string;
     conditions: Condition[];
@@ -192,6 +195,9 @@ export default function parse(line: string) {
     if (hasModelKeyword(line)) {
         if (line.startsWith('load')) {
             if (currentModel) {
+                if (!currentModel.modelName) {
+                    throw new Error('Model name is not defined');
+                }
                 models.push(currentModel);
             }
             currentModel = new LoadModelQueryObject('', '', [], [], [], [], undefined, 0, 0);
@@ -244,6 +250,9 @@ export default function parse(line: string) {
                 if (currentKeyword == 'load') {
                     currentModel.variableName = word;
                 } else if (currentKeyword == 'from') {
+                    if (currentModel.modelName) {
+                        throw new Error('Model name is already defined');
+                    }
                     currentModel.modelName = word;
                 } else if (currentKeyword == 'select') {
                     selectWords.push(word);
@@ -268,17 +277,20 @@ export default function parse(line: string) {
                 }
             }
         }
-        if (selectWords.length > 0) {
-            currentModel!.fields = parseSelect(selectWords);
+        if (currentModel && selectWords.length > 0) {
+            currentModel.fields = parseSelect(selectWords);
         }
-        if (conditionWords.length > 0) {
-            currentModel!.conditions = parseCondition(conditionWords);
+        if (currentModel && conditionWords.length > 0) {
+            currentModel.conditions = parseCondition(conditionWords);
         }
-        if (orderByWords.length > 0) {
-            currentModel!.orderBy = parseOrderBy(orderByWords);
+        if (currentModel && orderByWords.length > 0) {
+            currentModel.orderBy = parseOrderBy(orderByWords);
         }
         return currentModel;
     } else if (currentModel) {
+        if (!currentModel.modelName) {
+            throw new Error('Model name is not defined');
+        }
         models.push(currentModel);
         currentModel = null;
     }
