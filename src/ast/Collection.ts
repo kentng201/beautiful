@@ -82,17 +82,4 @@ export default class Collection<Model> {
         });
         return this;
     }
-
-    filter() {
-        return this;
-    }
 }
-
-class User {
-    firstName!: string;
-    lastName!: string;
-}
-
-const users = new Collection<User>([]);
-
-users.sort().filter().where('firstName', '=', 'John').get();
