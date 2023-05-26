@@ -63,14 +63,14 @@ const seperateMultipleAttributeLine = (line: string): string[] => {
     return result;
 }
 
-export function getObject(line: string) {
+export default function parse(line: string) {
     // is inside a function body
     if (!line.startsWith('.,') && (isMultipleAttributeLine(line) || isOneLiner(line))) {
         console.log('no', 0);
         const lines = seperateMultipleAttributeLine(line);
         console.log('preparing get object');
         for (let i = 0; i < lines.length; i++) {
-            const output = getObject(lines[i]);
+            const output = parse(lines[i]);
             console.log('output: ', output)
         }
         console.log('done get object');

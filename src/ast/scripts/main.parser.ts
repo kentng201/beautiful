@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import AstObject from 'src/ast/AstObject';
-import { getObject } from 'src/ast/MainParser';
+import parse from 'src/ast/MainParser';
 
 const filePath: string = process.argv[2];
 
@@ -12,7 +12,7 @@ fs.readFile(filePath, 'utf8', (err, data) => {
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
-        const result = getObject(line);
+        const result = parse(line);
         if (result instanceof AstObject) {
             ast.push(result);
         }
