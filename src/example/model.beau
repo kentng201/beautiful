@@ -1,0 +1,73 @@
+.model User
+    username type string
+    password type string
+    id type number
+model.
+
+
+load users
+    select username
+    from User
+    where username equal...ho..........
+    and (id equal 3 or id smaller than 3 or id equal ...test... )
+    or username...kentng201...
+    left join a
+    order by username
+
+load user from User find 1
+load user from User where id equal 1 or id equal 2 last
+
+assign user.username via ... hello world ....
+assign user.id via 2
+
+load newUser from User find 10
+load newUser2 from User find 11
+assign user via newUser.username + newUser2.username ., this one real time when username changed
+
+save user
+save users
+
+new user from User
+soft delete user equal delete user ., true
+hard delete user ., this one forever deleted
+    when NotFound happen
+        console.log ...arghhhhhhhhh...
+    when MissingDatabase happen
+        console.log ...yeahhhhhhhhh...
+    when NoInternet happen
+        console.log ...internet down lar...
+
+if user equal undefined
+    soft remind NoInternet with ...internet down lar... equal console.warn ...internet down lar...
+    hard remind NotFound with ...Not found, how?... equal console.error ...Not found, how?...
+
+load allUsers from User ., this will load all users
+
+assign newUsers via 2 new User array ., this add 2 new users into an array
+assign newUsers via 2 new User collection ., this add 2 new users into an collection
+
+if newUsers is 2 User array
+    console.log ...2 User...
+
+assign intArray via int array 1 2 ., this add 2 new int into an array, which is [1, 2]
+assign dbUsers via User collection newUsers
+
+if intArray is 2 int and intArray is array
+    console.log ...2 number...
+
+if user.username bigger than 2
+    assign user.username via 100 + 20
+else
+    assign user.username via 50 + 20
+
+when user.username smaller than 100
+    assign user.username via user.username + 1
+
+loop 100 times as i
+    console.log i
+    waiting longRunTask
+
+every user in allUsers where user.username bigger than 2
+    console.log user.username
+
+declare console.log message type string
