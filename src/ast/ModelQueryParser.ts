@@ -1,6 +1,6 @@
 export function hasModelKeyword(line: string): boolean {
-    return line.match(/\b(select|load|save|find|order|by|from|where|between|like|first|last|limit|offset)\b/) != null ||
-    line.match(/\b(bigger|equal|smaller|than|between|like)\b/) != null;
+    return line.match(/\b(select|load|save|find|order|by|from|where|between|like|first|last|limit|offset|and|or)\b/) != null ||
+    line.match(/\b(bigger|equal|smaller|than|between|like|and|or)\b/) != null;
 }
 
 // example: load users select username from User where username...ho... and (id..3 or id>3) or username...kentng201... left join a order by username;
@@ -75,14 +75,13 @@ export function parseSelect(selectWords: string[]): string[] {
     let line = selectWords.join(' ');
     return line.replace(/,\s*/g, ',').split(',');
 }
+
+let currentCondition: Condition | undefined;
+let currentOperator: string | undefined;
+let currentKey: string | undefined;
+let traceString = '0';
 export function parseCondition(conditionWords: string[]): Condition[] {
     const conditions: Condition[] = [];
-    let currentCondition: Condition | undefined;
-    let parentCondition: Condition | undefined;
-    let currentOperator: string | undefined;
-    let currentKey: string | undefined;
-
-    let traceString = '0';
 
     for (const word of conditionWords) {
         if (word == '(') {
@@ -117,14 +116,20 @@ export function parseCondition(conditionWords: string[]): Condition[] {
         } else if (currentCondition) {
             const wordIsString = word.match(/(\w+)\.\.\.(.*?)\.\.\./);
             if (wordIsString) {
-                // currentCondition.key = wordIsString[1];
-                // currentCondition.operator = '=';
-                // currentCondition.value = wordIsString[2];
-                // if (!traceString.includes('.')) {
-                //     conditions.push(currentCondition);
-                // } else {
-                    
-                // }
+                currentCondition.key = wordIsString[1];
+                currentCondition.operator = '=';
+                currentCondition.value = wordIsString[2];
+                if (!traceString.includes('.')) {
+                    conditions.push(currentCondition);
+                } else {
+                    const traces = traceString.split('.');
+                    let currentTrace = traces[0];
+                    let currentConditionTrace = conditions[parseInt(currentTrace)];
+                    for (let i = 1; i < traces.length - 1; i++) {
+                        currentConditionTrace = currentConditionTrace.children[currentConditionTrace.children.length - 1];
+                    }
+                    currentConditionTrace.children.push(currentCondition);
+                }
                 currentKey = undefined;
                 currentOperator = undefined;
                 continue;
@@ -174,6 +179,12 @@ function breakParenthesis(word: string) {
     return words;
 }
 
+let currentKeyword: ModelKeyword | undefined;
+let currentBy: 'order' | 'group' | undefined;
+let selectWords: string[] = [];
+let conditionWords: string[] = [];
+let orderByWords: string[] = [];
+
 export default function parse(line: string) {
     if (hasModelKeyword(line)) {
         if (line.startsWith('load')) {
@@ -181,11 +192,20 @@ export default function parse(line: string) {
                 models.push(currentModel);
             }
             currentModel = new LoadModelQueryObject('', '', [], [], [], [], undefined, 0, 0);
+            currentCondition = undefined;
+            currentOperator = undefined;
+            currentKey = undefined;
+            traceString = '0';
+            currentKeyword = undefined;
+            currentBy = undefined;
+            selectWords = [];
+            conditionWords = [];
+            orderByWords = [];
         }
-        line = line.replace('bigger than', '>');
-        line = line.replace('smaller than', '<');
         line = line.replace('bigger than or equal', '>=');
         line = line.replace('smaller than or equal', '<=');
+        line = line.replace('bigger than', '>');
+        line = line.replace('smaller than', '<');
         line = line.replace('equal', '=');
         
         let words = line.split(' ');
@@ -199,11 +219,7 @@ export default function parse(line: string) {
             }
         }
 
-        let currentKeyword: ModelKeyword | undefined;
-        let currentBy: 'order' | 'group' | undefined;
-        const selectWords: string[] = [];
-        const conditionWords: string[] = [];
-        const orderByWords: string[] = [];
+        
         for (const word of newWords) {
             if (modelKeywords.includes(word.toLowerCase())) {
                 currentKeyword = word.trim().toLowerCase() as ModelKeyword;
@@ -222,7 +238,6 @@ export default function parse(line: string) {
             } else if (!currentModel) {
                 continue;
             } else {
-                console.log('word: ', word)
                 if (currentKeyword == 'load') {
                     currentModel.variableName = word;
                 } else if (currentKeyword == 'from') {
@@ -244,7 +259,8 @@ export default function parse(line: string) {
                         orderByWords.push(word);
                     }
                 } else if (currentKeyword == 'where') {
-                    conditionWords.push(word);
+                console.log('word: ', word)
+                conditionWords.push(word);
                 } else {
                 }
             }
