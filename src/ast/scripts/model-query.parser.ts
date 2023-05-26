@@ -10,7 +10,14 @@ fs.readFile(filePath, 'utf8', (err, data) => {
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
-        parse(line);
+        try {
+            parse(line);
+        } catch (error: any) {
+            console.log(error.message);
+            console.log(`at (/${filePath}:${i+1})`);
+            console.log(`Error in line ${i+1}: ${line}`);
+            process.exit(1);
+        }
     }
     const currentModel = getCurrentModel();
     const models = getModels();
