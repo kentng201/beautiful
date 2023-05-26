@@ -187,6 +187,7 @@ function breakParenthesis(word: string) {
 
 let currentKeyword: ModelKeyword | undefined;
 let currentBy: 'order' | 'group' | undefined;
+let currentUsedKeywords: ModelKeyword[] = [];
 let selectWords: string[] = [];
 let conditionWords: string[] = [];
 let orderByWords: string[] = [];
@@ -197,12 +198,6 @@ export default function parse(line: string, lineNo: number) {
     if (hasModelKeyword(line)) {
         if (line.startsWith('load')) {
             if (currentModel) {
-                if (!currentModel.modelName) {
-                    throw new Error(JSON.stringify({
-                        msg: 'SyntaxError: Duplicate declaration of "from"',
-                        lineNo: undefined,
-                    }));
-                }
                 models.push(currentModel);
             }
             currentModel = new LoadModelQueryObject('', '', [], [], [], [], undefined, 0, 0);
@@ -216,6 +211,7 @@ export default function parse(line: string, lineNo: number) {
             selectWords = [];
             conditionWords = [];
             orderByWords = [];
+            currentUsedKeywords = [];
         }
         line = line.replace('bigger than or equal', '>=');
         line = line.replace('smaller than or equal', '<=');
@@ -234,17 +230,35 @@ export default function parse(line: string, lineNo: number) {
             }
         }
 
-        
         for (const word of newWords) {
             if (modelKeywords.includes(word.toLowerCase())) {
                 currentKeyword = word.trim().toLowerCase() as ModelKeyword;
                 if (currentKeyword == 'order') {
                     currentBy = 'order';
                 } else if (currentModel && currentKeyword == 'first') {
+                    if (currentModel.firstOrLast == 'last') {
+                        throw new Error(JSON.stringify({
+                            msg: 'SyntaxError: "first" and "last" cannot be used together',
+                            lineNo: undefined,
+                        }));
+                    }
                     currentModel.firstOrLast = 'first';
                 } else if (currentModel && currentKeyword == 'last') {
+                    if (currentModel.firstOrLast == 'first') {
+                        throw new Error(JSON.stringify({
+                            msg: 'SyntaxError: "first" and "last" cannot be used together',
+                            lineNo: undefined,
+                        }));
+                    }
                     currentModel.firstOrLast = 'last';
                 }
+                if (currentUsedKeywords.includes(currentKeyword)) {
+                    throw new Error(JSON.stringify({
+                        msg: `SyntaxError: Duplicate declaration of "${currentKeyword}"`,
+                        lineNo: undefined,
+                    }));
+                }
+                currentUsedKeywords.push(currentKeyword);
 
                 if (!currentModel) {
                     currentModel = new LoadModelQueryObject('', '', [], [], [], [], undefined, 0, 0);
@@ -277,7 +291,7 @@ export default function parse(line: string, lineNo: number) {
                         orderByWords.push(word);
                     }
                 } else if (currentKeyword == 'where') {
-                conditionWords.push(word);
+                    conditionWords.push(word);
                 } else {
                 }
             }
@@ -295,7 +309,7 @@ export default function parse(line: string, lineNo: number) {
     } else if (currentModel) {
         if (!currentModel.modelName) {
             throw new Error(JSON.stringify({
-                msg: 'SyntaxError: Model name is not defined',
+                msg: 'SyntaxError: load statement must have "from" keyword',
                 lineNo: lastLoadLineNumber,
             }));
         }
