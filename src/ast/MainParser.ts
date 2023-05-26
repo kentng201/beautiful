@@ -63,7 +63,7 @@ const seperateMultipleAttributeLine = (line: string): string[] => {
     return result;
 }
 
-function getObject(line: string) {
+export function getObject(line: string) {
     // is inside a function body
     if (!line.startsWith('.,') && (isMultipleAttributeLine(line) || isOneLiner(line))) {
         console.log('no', 0);
@@ -213,22 +213,3 @@ function getObject(line: string) {
 
     return line;
 }
-
-fs.readFile(filePath, 'utf8', (err, data) => {
-    const lines = data.split('\n');
-
-    const ast: AstObject[] = [];
-
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-        const result = getObject(line);
-        if (result instanceof AstObject) {
-            ast.push(result);
-        }
-    }
-
-    for (const object of ast) {
-        object.removeParentReference();
-    }
-    fs.writeFileSync('ast-result.test.json', JSON.stringify(ast, null, 4));
-});
