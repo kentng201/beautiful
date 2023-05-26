@@ -5,7 +5,7 @@ import FunctionObject from './FunctionObject';
 const filePath: string = process.argv[2];
 
 let mainObject: AstObject | undefined;
-let currentParent: AstObject | undefined;
+let currentAstObject: AstObject | undefined;
 
 let functionObject: FunctionObject | undefined;
 let currentVariable: string | undefined;
@@ -80,22 +80,22 @@ function getObject(line: string) {
         console.log('no', 1);
         const tagName = line.replace('.', '');
         const newObject = new AstObject(tagName, {});
-        if (currentParent) {
-            currentParent.children.push(newObject);
-            newObject.parent = currentParent; // Set parent of new object
+        if (currentAstObject) {
+            currentAstObject.children.push(newObject);
+            newObject.parent = currentAstObject; // Set parent of new object
         } else {
             mainObject = newObject;
         }
-        currentParent = newObject;
+        currentAstObject = newObject;
     // is end of tag
     } else if (line.endsWith('.') && !line.endsWith('...')) {
         console.log('no', 2);
-        if (currentParent && currentParent !== mainObject) {
-            currentParent = currentParent.parent; // Move up to the parent object
+        if (currentAstObject && currentAstObject !== mainObject) {
+            currentAstObject = currentAstObject.parent; // Move up to the parent object
         } else if (mainObject) {
             const newObject = mainObject;
             mainObject = undefined;
-            currentParent = undefined;
+            currentAstObject = undefined;
             return newObject;
         } else {
             console.log('ignoring line:', line);
@@ -128,8 +128,8 @@ function getObject(line: string) {
             currentVariable = key;
 
             if (line.endsWith('}')) {
-                if (currentParent) {
-                    currentParent.attributes[currentVariable] = ['function', functionObject];
+                if (currentAstObject) {
+                    currentAstObject.attributes[currentVariable] = ['function', functionObject];
                 }
                 functionObject = undefined;
             }
@@ -143,10 +143,10 @@ function getObject(line: string) {
             }
             keywordStack.pop();
         } 
-        else if (currentParent) {
+        else if (currentAstObject) {
             console.log('no', 5);
             if (functionObject) {
-                currentParent.attributes[currentVariable!] = ['function', functionObject];
+                currentAstObject.attributes[currentVariable!] = ['function', functionObject];
                 functionObject = undefined;
             } else if (line.includes('=>')) {
                 const [key, value] = line.trimStart().trimEnd().split('..').map(x => x.trim());
@@ -163,7 +163,7 @@ function getObject(line: string) {
                     .filter(param => param !== '')
                     .map(param => [param.trim(), 'any'] as [string, string]);
                 const newFunctionObject = new FunctionObject(key, parameters, []);
-                currentParent.attributes[key] = ['function', newFunctionObject];
+                currentAstObject.attributes[key] = ['function', newFunctionObject];
             }
         }
     // is function body
@@ -179,23 +179,23 @@ function getObject(line: string) {
         }
     } else if (line.startsWith('.,')) {
         console.log('no', 7);
-        if (currentParent) {
+        if (currentAstObject) {
             const [key, value] = line.replace('.,', '').trimStart().trimEnd().split('..');
-            currentParent.attributes[key] = ['comment', value.trim()];
+            currentAstObject.attributes[key] = ['comment', value.trim()];
         }
     } else if (line.includes('...')) {
         console.log('no', 8);
         const [key, ...rest] = line.trimStart().trimEnd().split('...');
         console.log('key, ...rest: ', key, ...rest)
-        if (currentParent) {
+        if (currentAstObject) {
             const value = rest.join('...').replace('...', '');
-            currentParent.attributes[key] = ['string', value];
+            currentAstObject.attributes[key] = ['string', value];
         }
     } else if (line.includes('..')) {
         console.log('no', 9);
         const [key, value] = line.trimStart().trimEnd().split('..');
         
-        if (currentParent) {
+        if (currentAstObject) {
             let type: AttributeType;
             try {
                 const mathVal = value.replace('and', '&&').replace('or', '||');
@@ -204,7 +204,7 @@ function getObject(line: string) {
             } catch (e) {
                 type = 'variable';
             }
-            currentParent.attributes[key] = [type, value.trim()];
+            currentAstObject.attributes[key] = [type, value.trim()];
         }
     } else {
         console.log('ignoring line:', line);
