@@ -1,5 +1,5 @@
 export function hasModelKeyword(line: string): boolean {
-    return line.match(/\b(select|load|save|find|order|by|from|where|between|like|first|last)\b/) != null ||
+    return line.match(/\b(select|load|save|find|order|by|from|where|between|like|first|last|limit|offset)\b/) != null ||
     line.match(/\b(bigger|equal|smaller|than|between|like)\b/) != null;
 }
 
@@ -35,6 +35,7 @@ export class  Join {
 }
 
 export class LoadModelQueryObject {
+    variableName: string;
     modelName: string;
     fields: string[];
     orderBy: [string, 'asc' | 'desc'][];
@@ -44,7 +45,8 @@ export class LoadModelQueryObject {
     limit: number;
     offset: number;
 
-    constructor(modelName: string, fields: string[], orderBy: [string, 'asc' | 'desc'][], conditions: Condition[], join: Join[], firstOrLast: 'first' | 'last' | undefined, limit: number, offset: number) {
+    constructor(variableName: string, modelName: string, fields: string[], orderBy: [string, 'asc' | 'desc'][], conditions: Condition[], join: Join[], firstOrLast: 'first' | 'last' | undefined, limit: number, offset: number) {
+        this.variableName = variableName;
         this.modelName = modelName;
         this.fields = fields;
         this.orderBy = orderBy;
@@ -58,6 +60,14 @@ export class LoadModelQueryObject {
 }
 
 export let currentModel: LoadModelQueryObject | null = null;
+export function getCurrentModel() {
+    return currentModel;
+}
+export const models: LoadModelQueryObject[] = [];
+export function getModels() {
+    return models;
+}
+
 export const modelKeywords = ['select', 'load', 'save', 'find', 'order', 'by', 'from', 'where', 'first', 'last', 'limit', 'offset'];
 export type ModelKeyword = typeof modelKeywords[number];
 
@@ -166,6 +176,12 @@ function breakParenthesis(word: string) {
 
 export default function parse(line: string) {
     if (hasModelKeyword(line)) {
+        if (line.startsWith('load')) {
+            if (currentModel) {
+                models.push(currentModel);
+            }
+            currentModel = new LoadModelQueryObject('', '', [], [], [], [], undefined, 0, 0);
+        }
         line = line.replace('bigger than', '>');
         line = line.replace('smaller than', '<');
         line = line.replace('bigger than or equal', '>=');
@@ -191,6 +207,7 @@ export default function parse(line: string) {
         for (const word of newWords) {
             if (modelKeywords.includes(word.toLowerCase())) {
                 currentKeyword = word.trim().toLowerCase() as ModelKeyword;
+                console.log('currentKeyword: ', currentKeyword)
                 if (currentKeyword == 'order') {
                     currentBy = 'order';
                 } else if (currentKeyword == 'first') {
@@ -200,12 +217,15 @@ export default function parse(line: string) {
                 }
 
                 if (!currentModel) {
-                    currentModel = new LoadModelQueryObject('', [], [], [], [], undefined, 0, 0);
+                    currentModel = new LoadModelQueryObject('', '', [], [], [], [], undefined, 0, 0);
                 }
             } else if (!currentModel) {
                 continue;
             } else {
-                if (currentKeyword == 'from') {
+                console.log('word: ', word)
+                if (currentKeyword == 'load') {
+                    currentModel.variableName = word;
+                } else if (currentKeyword == 'from') {
                     currentModel.modelName = word;
                 } else if (currentKeyword == 'select') {
                     selectWords.push(word);
@@ -215,8 +235,10 @@ export default function parse(line: string) {
                     currentModel.conditions.push(new Condition('none', '_id', '=', word, []));
                 } else if (currentKeyword == 'limit') {
                     currentModel.limit = parseInt(word);
+                    console.log('currentModel.limit: ', currentModel.limit)
                 } else if (currentKeyword == 'offset') {
                     currentModel.offset = parseInt(word);
+                    console.log('currentModel.offset: ', currentModel.offset)
                 } else if (currentKeyword == 'by') {
                     if (currentBy == 'order') {
                         orderByWords.push(word);
