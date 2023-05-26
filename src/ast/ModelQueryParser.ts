@@ -77,14 +77,11 @@ export function parseCondition(conditionWords: string[]): Condition[] {
     for (const word of conditionWords) {
         if (word == '(') {
             traceString += '.0';
-            console.log('traceString: ', traceString)
         } else if (word == ')') {
             let traces = traceString.split('.');
             traces.pop();
             traceString = traces.join('.');
-            console.log('traceString: ', traceString)
         } else if (word == 'and' || word == 'or') {
-            console.log('no', 2);
             currentCondition = new Condition(word, '', '', '', []);
         } else if (currentCondition && currentOperator && currentKey) {
             currentCondition.value = word;
@@ -105,11 +102,9 @@ export function parseCondition(conditionWords: string[]): Condition[] {
             currentKey = undefined;
             currentOperator = undefined;
         } else if (currentCondition && currentKey) {
-            console.log('no', 4);
             currentOperator = word;
             currentCondition.operator = word;
         } else if (currentCondition) {
-            console.log('no', 5);
             const wordIsString = word.match(/(\w+)\.\.\.(.*?)\.\.\./);
             if (wordIsString) {
                 // currentCondition.key = wordIsString[1];
@@ -128,7 +123,6 @@ export function parseCondition(conditionWords: string[]): Condition[] {
                 currentKey = word;
             }
         } else {
-            console.log('no', 6);
             currentCondition = new Condition('none', word, '', '', []);
             currentKey = word;
         }
@@ -171,7 +165,6 @@ function breakParenthesis(word: string) {
 }
 
 export default function parse(line: string) {
-    console.log('line: ', line)
     if (hasModelKeyword(line)) {
         line = line.replace('bigger than', '>');
         line = line.replace('smaller than', '<');
@@ -238,7 +231,6 @@ export default function parse(line: string) {
             currentModel!.fields = parseSelect(selectWords);
         }
         if (conditionWords.length > 0) {
-            console.log('conditionWords: ', conditionWords)
             currentModel!.conditions = parseCondition(conditionWords);
         }
         if (orderByWords.length > 0) {
