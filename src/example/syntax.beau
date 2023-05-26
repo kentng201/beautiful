@@ -1,8 +1,8 @@
-.model User
+model User
     username type string
     password type string
     id type number
-model.
+
 
 
 load users
@@ -30,12 +30,12 @@ save users
 new user from User
 soft delete user equal delete user ., true
 hard delete user ., this one forever deleted
-    when NotFound happen
-        console.log ...arghhhhhhhhh...
-    when MissingDatabase happen
-        console.log ...yeahhhhhhhhh...
-    when NoInternet happen
-        console.log ...internet down lar...
+when NotFound happen
+    console.log ...arghhhhhhhhh...
+when MissingDatabase happen
+    console.log ...yeahhhhhhhhh...
+when NoInternet happen
+    console.log ...internet down lar...
 
 if user equal undefined
     soft remind NoInternet with ...internet down lar... equal console.warn ...internet down lar...
@@ -70,4 +70,9 @@ loop 100 times as i
 every user in allUsers where user.username bigger than 2
     console.log user.username
 
-declare console.log message type string
+declare thisIsAFunction message type string
+    console.log 'hi'
+    if message equal undefined
+        console.log message
+    else
+        console.log message
