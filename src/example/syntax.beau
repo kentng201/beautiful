@@ -1,16 +1,31 @@
 model User
-    username type string
-    password type string
-    id type number
+    id is number
+    username is string
+    password is string
+    address is Address array
 
+    func setPassword password is string username address is Address
+        assign password via hash password
 
+    static func decryptPassword password is string
+        assign password via decrypt password
+        return password
+
+class NumberHelper
+    static func add a is number b is number
+        return a + b
+
+type Address
+    street is string
+    city is decimal
+    country is string
 
 load users
     select username
     from User
-    where username equal...ho..........
-    and (id equal 3 or id smaller than 3 or id equal ...test... )
-    or username...kentng201...
+    where username equal ...ho..........
+    and (id equal 3 or id smaller than 3 or id equal ...test...)
+    or username equal ...kentng201...
     left join a
     order by username
 
@@ -70,7 +85,7 @@ loop 100 times as i
 every user in allUsers where user.username bigger than 2
     console.log user.username
 
-declare thisIsAFunction message type string
+func thisIsAFunction message type string
     console.log 'hi'
     if message equal undefined
         console.log message
