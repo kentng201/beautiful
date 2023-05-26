@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import AstObject from 'src/ast/AstObject';
-import parse from 'src/ast/MainParser';
+import parse from 'src/ast/FrontendParser';
 
 const filePath: string = process.argv[2];
 
