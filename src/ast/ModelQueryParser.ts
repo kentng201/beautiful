@@ -191,12 +191,17 @@ let selectWords: string[] = [];
 let conditionWords: string[] = [];
 let orderByWords: string[] = [];
 
-export default function parse(line: string) {
+let lastLoadLineNumber: number | undefined;
+
+export default function parse(line: string, lineNo: number) {
     if (hasModelKeyword(line)) {
         if (line.startsWith('load')) {
             if (currentModel) {
                 if (!currentModel.modelName) {
-                    throw new Error('SyntaxError: Model name is not defined');
+                    throw new Error(JSON.stringify({
+                        msg: 'SyntaxError: Duplicate declaration of "from"',
+                        lineNo: undefined,
+                    }));
                 }
                 models.push(currentModel);
             }
@@ -207,6 +212,7 @@ export default function parse(line: string) {
             traceString = '0';
             currentKeyword = undefined;
             currentBy = undefined;
+            lastLoadLineNumber = lineNo;
             selectWords = [];
             conditionWords = [];
             orderByWords = [];
@@ -232,7 +238,6 @@ export default function parse(line: string) {
         for (const word of newWords) {
             if (modelKeywords.includes(word.toLowerCase())) {
                 currentKeyword = word.trim().toLowerCase() as ModelKeyword;
-                console.log('currentKeyword: ', currentKeyword)
                 if (currentKeyword == 'order') {
                     currentBy = 'order';
                 } else if (currentModel && currentKeyword == 'first') {
@@ -251,7 +256,10 @@ export default function parse(line: string) {
                     currentModel.variableName = word;
                 } else if (currentKeyword == 'from') {
                     if (currentModel.modelName) {
-                        throw new Error('SyntaxError: Model name is already defined');
+                        throw new Error(JSON.stringify({
+                            msg: 'SyntaxError: Duplicate declaration of "from"',
+                            lineNo: undefined,
+                        }));
                     }
                     currentModel.modelName = word;
                 } else if (currentKeyword == 'select') {
@@ -262,16 +270,13 @@ export default function parse(line: string) {
                     currentModel.conditions.push(new Condition('none', '_id', '=', word, []));
                 } else if (currentKeyword == 'limit') {
                     currentModel.limit = parseInt(word);
-                    console.log('currentModel.limit: ', currentModel.limit)
                 } else if (currentKeyword == 'offset') {
                     currentModel.offset = parseInt(word);
-                    console.log('currentModel.offset: ', currentModel.offset)
                 } else if (currentKeyword == 'by') {
                     if (currentBy == 'order') {
                         orderByWords.push(word);
                     }
                 } else if (currentKeyword == 'where') {
-                console.log('word: ', word)
                 conditionWords.push(word);
                 } else {
                 }
@@ -289,7 +294,10 @@ export default function parse(line: string) {
         return currentModel;
     } else if (currentModel) {
         if (!currentModel.modelName) {
-            throw new Error('SyntaxError: Model name is not defined');
+            throw new Error(JSON.stringify({
+                msg: 'SyntaxError: Model name is not defined',
+                lineNo: lastLoadLineNumber,
+            }));
         }
         models.push(currentModel);
         currentModel = null;
