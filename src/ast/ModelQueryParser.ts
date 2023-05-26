@@ -196,7 +196,7 @@ export default function parse(line: string) {
         if (line.startsWith('load')) {
             if (currentModel) {
                 if (!currentModel.modelName) {
-                    throw new Error('Model name is not defined');
+                    throw new Error('SyntaxError: Model name is not defined');
                 }
                 models.push(currentModel);
             }
@@ -251,7 +251,7 @@ export default function parse(line: string) {
                     currentModel.variableName = word;
                 } else if (currentKeyword == 'from') {
                     if (currentModel.modelName) {
-                        throw new Error('Model name is already defined');
+                        throw new Error('SyntaxError: Model name is already defined');
                     }
                     currentModel.modelName = word;
                 } else if (currentKeyword == 'select') {
@@ -289,7 +289,7 @@ export default function parse(line: string) {
         return currentModel;
     } else if (currentModel) {
         if (!currentModel.modelName) {
-            throw new Error('Model name is not defined');
+            throw new Error('SyntaxError: Model name is not defined');
         }
         models.push(currentModel);
         currentModel = null;
