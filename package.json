@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "biu": "ts-node src/commands/biu.ts",
-    "ast": "ts-node src/ast/index.ts"
+    "parse": "ts-node -r tsconfig-paths/register src/ast/scripts/main.parser.ts",
+    "model-parse":  "ts-node -r tsconfig-paths/register src/ast/scripts/model-query.parser.ts"
   },
   "keywords": [],
   "author": "",
@@ -14,7 +15,7 @@
   "devDependencies": {
     "ts-node": "^10.9.1",
     "tsc-alias": "^1.1.1",
-    "tsconfig-paths": "^4.1.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.0.4"
   },
   "dependencies": {

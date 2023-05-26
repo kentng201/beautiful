@@ -1,0 +1,1 @@
+load user from User order by username  where username like ...%test%... and (age bigger than 18 and age smaller than 30 or (age equal 14) and age equal 20 ) 
