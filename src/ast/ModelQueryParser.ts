@@ -1,6 +1,9 @@
 export function hasModelKeyword(line: string): boolean {
-    return line.match(/\b(select|load|save|find|order|by|from|where|between|like|first|last|limit|offset|and|or)\b/) != null ||
-    line.match(/\b(bigger|equal|smaller|than|between|like|and|or)\b/) != null;
+    return (
+        line.match(/\b(select|load|save|find|order|by|from|where|between|like|first|last|limit|offset|and|or)\b/) != null ||
+        line.match(/\b(bigger|equal|smaller|than|between|like|and|or)\b/) != null
+    )
+    && !line.startsWith('.');
 }
 
 // example: load users select username from User where username...ho... and (id..3 or id>3) or username...kentng201... left join a order by username;
@@ -226,10 +229,10 @@ export default function parse(line: string) {
                 console.log('currentKeyword: ', currentKeyword)
                 if (currentKeyword == 'order') {
                     currentBy = 'order';
-                } else if (currentKeyword == 'first') {
-                    currentModel!.firstOrLast = 'first';
-                } else if (currentKeyword == 'last') {
-                    currentModel!.firstOrLast = 'last';
+                } else if (currentModel && currentKeyword == 'first') {
+                    currentModel.firstOrLast = 'first';
+                } else if (currentModel && currentKeyword == 'last') {
+                    currentModel.firstOrLast = 'last';
                 }
 
                 if (!currentModel) {

@@ -10,6 +10,7 @@ load schedule
         and time smaller than ...09:00...
     limit 5
     offset 2
+    last
 
 ., add a fake thing to trigger last load query pump
 .div test..2 div.
