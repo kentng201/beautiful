@@ -200,7 +200,7 @@ export default function parse(line: string) {
             try {
                 const mathVal = value.replace('and', '&&').replace('or', '||');
                 eval(mathVal);
-                type = 'math';
+                type = 'native';
             } catch (e) {
                 type = 'variable';
             }

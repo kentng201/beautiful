@@ -1,4 +1,4 @@
-import { Condition } from './ModelQueryParser';
+import { Condition, isWhereStatement, parseCondition } from './ModelQueryParser';
 import { StatementKeyword, statementKeywords } from './reserved';
 import { extractAssignStatementToObject, verifyAssignStatement } from './statements/assign';
 import { extractElseStatementToObject, verifyElseStatement } from './statements/else';
@@ -69,6 +69,7 @@ export function verifyStatementSyntax(line: string) {
     }
 }
 
+export let lastKeyword: StatementKeyword | undefined;
 export function convertStatementToObject(line: string): StatementObject | undefined {
     // cleanup comments
     if (line.includes('.,')) {
@@ -131,11 +132,19 @@ export default function parse(line: string, lineNo: number) {
         return;
     } else if (line.startsWith('.,')) {
         return;
+    } else if (lastKeyword && isWhereStatement(line) && currentStatementObject) {
+        line = line.replace('where ', '');
+        const conditions = parseCondition(line);
+        for (const condition of conditions) {
+            currentStatementObject.condition.push(condition);
+        }
+        return;
     } else if (line.startsWith(' ') && line.trim().length > 0 && keywordLineNoStack.length > 0) {
         if (isStatementKeyword(line)) {
             lastFunctionObject = undefined;
             verifyStatementSyntax(line.trim());
             parentStatementObject = currentStatementObject;
+            lastKeyword = line.trim().split(' ')[0] as StatementKeyword;
             const result = convertStatementToObject(line.trim());
             if (result) {
                 const leadingSpaces = line.indexOf(line.trim());
@@ -178,6 +187,7 @@ export default function parse(line: string, lineNo: number) {
     } else if (isStatementKeyword(line)) {
         verifyStatementSyntax(line.trim());
         const result = convertStatementToObject(line.trim());
+        lastKeyword = result?.keyword;
         if (result) {
             currentStatementObject = result;
             if (result.keyword === 'func') {

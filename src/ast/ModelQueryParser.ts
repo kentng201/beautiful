@@ -251,6 +251,12 @@ let orderByWords: string[] = [];
 
 let lastLoadLineNumber: number | undefined;
 
+export function isWhereStatement(line: string): boolean {
+    return line.match(/\b(and)\b/) != null
+        || line.match(/\b(or)\b/) != null
+        || line.match(/\b(where)\b/) != null;
+}
+
 export default function parse(line: string, lineNo: number) {
     if (hasModelKeyword(line)) {
         if (line.startsWith('load')) {

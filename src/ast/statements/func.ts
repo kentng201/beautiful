@@ -25,7 +25,6 @@ export function verifyFuncStatement(line: string) {
 
 export function isArgument(line: string) {
     const words = line.trim().split(' ');
-    console.log('words: ', words);
     if (line.includes('is')) {
         if (words.length === 3 && words[1] === 'is') {
             return true;

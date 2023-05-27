@@ -105,12 +105,11 @@ export function extractAssignStatementToMethod(line: string) {
     try {
         const mathVal = line;
         eval(mathVal);
-        type = 'math';
+        type = 'native';
     } catch (e) {
         type = 'variable';
     }
 
-    console.log('line: ', line);
     object = new AssignMethodObject(type, line);
     return object;
 }
