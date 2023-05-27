@@ -6,3 +6,5 @@ every user in users where user.name not full equal 'John'
             display char + 1
         display key
     display user
+
+load user from User where id == 1

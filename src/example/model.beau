@@ -1,0 +1,21 @@
+model User
+    id is number
+    username is string
+    password is string
+    address is Address array
+
+    func setPassword password is string username address is Address
+        assign password via hash password
+
+    static func decryptPassword password is string
+        assign password via decrypt password
+        return password
+
+class NumberHelper
+    static func add a is number b is number
+        return a + b
+
+type Address
+    street is string
+    city is decimal
+    country is string

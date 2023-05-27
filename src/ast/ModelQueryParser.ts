@@ -1,4 +1,4 @@
-import { ModelKeyword, arithemticOperatorKeywords, logicalArtihmeticOperatorKeywords, logicalOperatorKeywords, modelKeywords, operatorKeywords, reserverdWords } from './reserved';
+import { ModelKeyword, arithemticOperatorKeywords, logicalArtihmeticOperatorKeywords, logicalOperatorKeywords, modelKeywords, operatorKeywords, reserverdWords, statementKeywords } from './reserved';
 
 export function isModalQueryKeyword(line: string): boolean {
     return (
@@ -8,7 +8,8 @@ export function isModalQueryKeyword(line: string): boolean {
         ||
         line.match(/\b(join|left|right|inner)\b/) != null
     )
-        && !line.startsWith('.');
+        && !line.startsWith('.')
+        && !statementKeywords.includes(line.trim().split(' ')[0]);
 }
 
 
@@ -114,7 +115,7 @@ function pumpCondition() {
 }
 
 let conditions: Condition[] = [];
-export function parseCondition(line: string): Condition[] {
+export function parseCondition(line: string, isQuery = true): Condition[] {
     line = line.replace(/\b(mod)\b/g, '%');
     line = line.replace(/\b(more than or equal)\b/g, '>=');
     line = line.replace(/\b(less than or equal)\b/g, '<=');
@@ -144,14 +145,14 @@ export function parseCondition(line: string): Condition[] {
         if (word == '(') {
             traceString += '.0';
         } else if (word == ')') {
-            if (currentCondition) {
+            if (currentCondition && isQuery) {
                 pumpCondition();
             }
             const traces = traceString.split('.');
             traces.pop();
             traceString = traces.join('.');
         } else if (word == 'and' || word == 'or') {
-            if (currentCondition) {
+            if (currentCondition && isQuery) {
                 pumpCondition();
             }
             currentCondition = new Condition(word, '', '', '', []);
@@ -196,7 +197,7 @@ export function parseCondition(line: string): Condition[] {
         }
     }
 
-    if (currentCondition) {
+    if (currentCondition && isQuery) {
         pumpCondition();
     }
 
@@ -252,9 +253,11 @@ let orderByWords: string[] = [];
 let lastLoadLineNumber: number | undefined;
 
 export function isWhereStatement(line: string): boolean {
-    return line.match(/\b(and)\b/) != null
-        || line.match(/\b(or)\b/) != null
-        || line.match(/\b(where)\b/) != null;
+    return !statementKeywords.includes(line.trim().split(' ')[0]) && (
+        line.match(/\b(or)\b/) != null
+        || line.match(/\b(and)\b/) != null
+        || line.match(/\b(where)\b/) != null
+    );
 }
 
 export default function parse(line: string, lineNo: number) {

@@ -1,25 +1,3 @@
-model User
-    id is number
-    username is string
-    password is string
-    address is Address array
-
-    func setPassword password is string username address is Address
-        assign password via hash password
-
-    static func decryptPassword password is string
-        assign password via decrypt password
-        return password
-
-class NumberHelper
-    static func add a is number b is number
-        return a + b
-
-type Address
-    street is string
-    city is decimal
-    country is string
-
 load users
     select username
     from User
@@ -37,25 +15,27 @@ assign user.id via 2
 
 load newUser from User find 10
 load newUser2 from User find 11
-assign user via newUser.username + newUser2.username ., this one real time when username changed
+assign user via newUser.username + newUser2.username 
+., this one real time when username changed
 
-save user
-save users
+., save user
+., save users
 
-soft delete user equal delete user ., true
-hard delete user ., this one forever deleted
-when NotFound happen
-    console.log ...arghhhhhhhhh...
-when MissingDatabase happen
-    console.log ...yeahhhhhhhhh...
-when NoInternet happen
-    console.log ...internet down lar...
+., soft delete user equal delete user ., true
+., hard delete user ., this one forever deleted
+., when NotFound happen
+.,     console.log ...arghhhhhhhhh...
+., when MissingDatabase happen
+.,     console.log ...yeahhhhhhhhh...
+., when NoInternet happen
+.,     console.log ...internet down lar...
 
-if user equal undefined
+if testUser equal 10
+    console.log ...10...
     soft remind NoInternet with ...internet down lar... equal console.warn ...internet down lar...
     hard remind NotFound with ...Not found, how?... equal console.error ...Not found, how?...
 
-load allUsers from User ., this will load all users
+., load allUsers from User ., this will load all users
 
 assign newUsers via 2 new User array ., this add 2 new users into an array
 assign newUsers via 2 new User collection ., this add 2 new users into an collection

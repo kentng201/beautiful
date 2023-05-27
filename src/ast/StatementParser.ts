@@ -130,6 +130,7 @@ export let lastFunctionObject: StatementObject | undefined;
 
 export default function parse(line: string, lineNo: number) {
     currentLineNo = lineNo;
+    line = line.split('.,')[0]; // remove comments
     if (line.trim().length === 0) {
         return;
     } else if (line.startsWith('.,')) {
@@ -140,7 +141,7 @@ export default function parse(line: string, lineNo: number) {
         } else {
             line = line.replace(line.trim().split(' ')[0], '');
         }
-        const conditions = parseCondition(line);
+        const conditions = parseCondition(line, false);
         if (currentStatementObject) {
             for (const condition of conditions) {
                 currentStatementObject.condition.push(condition);
@@ -192,7 +193,7 @@ export default function parse(line: string, lineNo: number) {
             }
             currentStatementObject?.body.push(line.trim());
         }
-    } else if ((lastKeyword == 'load' && getCurrentModel()) || isModalQueryKeyword(line.trim())) {
+    } else if ((lastKeyword == 'load' && getCurrentModel() && !statementKeywords.includes(line.trim().split(' ')[0])) || isModalQueryKeyword(line.trim())) {
         if (line.trim().startsWith('load')) {
             lastKeyword = 'load';
             parseQuery(line, lineNo);
@@ -200,7 +201,6 @@ export default function parse(line: string, lineNo: number) {
             if (model) {
                 statements.push(model);
             }
-            return;
         } else if (lastKeyword == 'load') {
             parseQuery(line.trimStart(), lineNo);
         }
