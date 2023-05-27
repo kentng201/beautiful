@@ -2,7 +2,7 @@ import { ModelKeyword, arithemticOperatorKeywords, logicalArtihmeticOperatorKeyw
 
 export function hasModelKeyword(line: string): boolean {
     return (
-        line.match(/\b(select|load|save|find|order|by|from|where|between|like|first|last|limit|offset|and|or)\b/) != null
+        line.match(/\b(select|load|find|order|by|from|where|between|like|first|last|limit|offset|and|or)\b/) != null
         ||
         line.match(/\b(more|equal|less|than|between|like|and|or)\b/) != null
         ||
@@ -257,7 +257,8 @@ export default function parse(line: string, lineNo: number) {
             if (currentModel) {
                 models.push(currentModel);
             }
-            currentModel = new LoadModelQueryObject('', '', [], [], [], [], undefined, 0, 0);
+            const variableName = line.split(' ')[1];
+            currentModel = new LoadModelQueryObject(variableName, '', [], [], [], [], undefined, 0, 0);
             currentCondition = undefined;
             currentOperator = undefined;
             currentKey = undefined;
