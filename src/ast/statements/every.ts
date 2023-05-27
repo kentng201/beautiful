@@ -1,5 +1,6 @@
 import { parseCondition } from '../ModelQueryParser';
-import { StatementObject, statementKeywords } from '../StatementParser';
+import { StatementObject } from '../StatementParser';
+import { reserverdWords } from '../reserved';
 
 export function verifyEveryStatement(line: string) {
     if (!line.startsWith('every')) {
@@ -15,9 +16,15 @@ export function verifyEveryStatement(line: string) {
         }));
     }
     const words = line.split(' ');
-    if (words.length < 3 || words[2] != 'in') {
+    if (words.length >= 3 && words[2] != 'in') {
         throw new Error(JSON.stringify({
             msg: 'SyntaxError: Missing identifier "in"',
+            lineNo: undefined,
+        }));
+    }
+    if (words.length >= 5 && words[4] != 'where') {
+        throw new Error(JSON.stringify({
+            msg: 'SyntaxError: Missing identifier "where"',
             lineNo: undefined,
         }));
     }
@@ -27,21 +34,9 @@ export function verifyEveryStatement(line: string) {
             lineNo: undefined,
         }));
     }
-    if (statementKeywords.includes(words[1])) {
+    if (reserverdWords.includes(words[1])) {
         throw new Error(JSON.stringify({
             msg: `SyntaxError: "${words[1]}" is a reserved keyword`,
-            lineNo: undefined,
-        }));
-    }
-    const conditionStrings = line.replace(`every ${words[1]} in ${words[3]}`, '')
-        .trimStart()
-        .split(' ');
-    if (conditionStrings.length > 0 && conditionStrings[0] == '') {
-        return;
-    }
-    if (conditionStrings.length > 0 && conditionStrings[0] != 'where') {
-        throw new Error(JSON.stringify({
-            msg: 'SyntaxError: Missing identifier "where"',
             lineNo: undefined,
         }));
     }

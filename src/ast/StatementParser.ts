@@ -1,21 +1,11 @@
 import { Condition } from './ModelQueryParser';
+import { StatementKeyword, statementKeywords } from './reserved';
 import { extractElseStatementToObject, verifyElseStatement } from './statements/else';
 import { extractEveryStatementToObject, verifyEveryStatement } from './statements/every';
 import { extractForStatementToObject, verifyForStatement } from './statements/for';
 import { extractIfStatementToObject, verifyIfStatement } from './statements/if';
+import { extractLoopStatementToObject, verifyLoopStatement } from './statements/loop';
 import { extractWhileStatementToObject, verifyWhileStatement } from './statements/while';
-
-export const statementKeywords = ['if', 'else', 'for', 'every', 'switch', 'while', 'loop',];
-export type StatementKeyword = typeof statementKeywords[number];
-
-export const loopControlKeywords = ['break', 'continue', 'return',];
-export const expressionKeywords = ['where', 'select', 'from', 'order by', 'group by', 'having', 'limit', 'offset', 'distinct', 'as', 'in', 'not in', 'exists', 'not exists', 'between', 'like', 'is', 'is not', 'null', 'not null', 'union', 'union all', 'intersect', 'except', 'case', 'when', 'then', 'else', 'end', 'cast', 'as', 'coalesce', 'nullif', 'in', 'not in', 'exists', 'not exists', 'between', 'like', 'is', 'is not', 'null', 'not null', 'union', 'union all', 'intersect', 'except', 'case', 'when', 'then', 'else', 'end', 'cast', 'as', 'coalesce', 'nullif',];
-
-export const logicaKeywords = ['and', 'or',];
-export const operatorKeywords = ['==', '===', '>', '>=', '<', '<=', 'more than', 'less than', 'equal', 'full equal', 'between', 'like', 'is',];
-
-export const whereRegex = /where\s*\((.*)\)/;
-export const expressionRegex = /(.*)\s*(==|===|>|>=|<|<=|more than|less than|equal|full equal|between|like|is)\s*(.*)/;
 
 export class StatementObject {
     keyword: StatementKeyword;
@@ -41,17 +31,17 @@ export function verifyStatementSyntax(line: string) {
     if (line.includes('for ')) {
         verifyForStatement(line); return;
     }
+    if (line.includes('switch ')) {
+        // verifySwitchStatement(line); return;
+    }
+    if (line.includes('loop ')) {
+        verifyLoopStatement(line); return;
+    }
     if (line.includes('else')) {
         verifyElseStatement(line); return;
     }
     if (line.includes('if ')) {
         verifyIfStatement(line); return;
-    }
-    if (line.includes('switch ')) {
-        // verifySwitchStatement(line); return;
-    }
-    if (line.includes('loop ')) {
-        // verifyLoopStatement(line); return;
     }
 }
 
@@ -62,15 +52,6 @@ export function convertStatementToObject(line: string): StatementObject | undefi
     if (line.includes('while ')) {
         return extractWhileStatementToObject(line);
     }
-    if (line.includes('else')) {
-        return extractElseStatementToObject(line);
-    }
-    if (line.includes('if ')) {
-        return extractIfStatementToObject(line);
-    }
-    if (line.includes('else')) {
-        return extractElseStatementToObject(line);
-    }
     if (line.includes('for ')) {
         return extractForStatementToObject(line);
     }
@@ -78,7 +59,13 @@ export function convertStatementToObject(line: string): StatementObject | undefi
         // return extractSwitchStatementToObject(line);
     }
     if (line.includes('loop ')) {
-        // return extractLoopStatementToObject(line);
+        return extractLoopStatementToObject(line);
+    }
+    if (line.includes('else')) {
+        return extractElseStatementToObject(line);
+    }
+    if (line.includes('if ')) {
+        return extractIfStatementToObject(line);
     }
 
     return undefined;

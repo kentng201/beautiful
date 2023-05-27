@@ -16,3 +16,6 @@ every user in users where user.name not full equal 'John'
 
 while num1 less than 10 and test more than 10
     num1 plus 10
+
+loop 100 times as i where i + 1 less than 100
+    console.log 'hello world'

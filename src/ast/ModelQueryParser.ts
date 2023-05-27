@@ -1,4 +1,4 @@
-import { expressionKeywords, logicaKeywords, loopControlKeywords, statementKeywords } from './StatementParser';
+import { ModelKeyword, logicalOperatorKeywords, modelKeywords, operatorKeywords, reserverdWords } from './reserved';
 
 export function hasModelKeyword(line: string): boolean {
     return (
@@ -11,8 +11,6 @@ export function hasModelKeyword(line: string): boolean {
         && !line.startsWith('.');
 }
 
-export const operatorKeywords = ['more than', 'less than', 'equal', 'not equal', 'full equal', 'not full equal', 'more than or equal', 'less than or equal',];
-export const logicalOperatorKeywords = ['>=', '<=', '>', '<', '===', '!==', '!=', '=', 'like', 'between',];
 
 export class Condition {
     join: 'and' | 'or' | 'none' | 'childrens';
@@ -76,9 +74,6 @@ export const models: LoadModelQueryObject[] = [];
 export function getModels() {
     return models;
 }
-
-export const modelKeywords = ['select', 'load', 'save', 'find', 'order', 'by', 'from', 'where', 'first', 'last', 'limit', 'offset',];
-export type ModelKeyword = typeof modelKeywords[number];
 
 export function parseSelect(selectWords: string[]): string[] {
     const line = selectWords.join(' ');
@@ -149,12 +144,6 @@ export function parseCondition(line: string): Condition[] {
             currentOperator = word;
             currentCondition.operator = word;
         } else if (currentCondition) {
-            const reserverdWords = statementKeywords
-                .concat(modelKeywords)
-                .concat(loopControlKeywords)
-                .concat(expressionKeywords)
-                .concat(logicaKeywords)
-                .concat(operatorKeywords);
             if (reserverdWords.includes(word)) {
                 throw new Error(JSON.stringify({
                     msg: `SyntaxError: "${word}" is a reserved word`,
