@@ -80,9 +80,6 @@ if user.username bigger than 2
 else
     assign user.username via 50 + 20
 
-when user.username smaller than 100
-    assign user.username via user.username + 1
-
 loop 100 times as i where i equal 2
     console.log i
     wait longRunTask
