@@ -1,3 +1,4 @@
+import { parseCondition } from '../ModelQueryParser';
 import { StatementObject } from '../StatementParser';
 import { reserverdWords } from '../reserved';
 
@@ -27,7 +28,6 @@ export function verifyLoopStatement(line: string) {
             lineNo: undefined,
         }));
     }
-    console.log('words: ', words);
     if (words.length >= 5 && reserverdWords.includes(words[4])) {
         throw new Error(JSON.stringify({
             msg: `SyntaxError: "${words[4]}" is a reserved keyword`,
@@ -44,6 +44,15 @@ export function verifyLoopStatement(line: string) {
 
 export function extractLoopStatementToObject(line: string) {
     const words = line.split(' ');
-    console.log('words: ', words);
-    return new StatementObject('loop', '');
+    let expression = `${words[1]} ${words[2]}`;
+    if (words.length >= 5) {
+        expression += ` ${words[3]} ${words[4]}`;
+    }
+    line = line.replace(`loop ${expression}`, '').trim();
+    if (line.length > 0) {
+        line = line.replace('where', '').trim();
+        const conditions = parseCondition(line);
+        return new StatementObject('loop', expression, conditions);
+    }
+    return new StatementObject('loop', expression);
 }

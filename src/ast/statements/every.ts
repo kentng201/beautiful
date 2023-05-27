@@ -45,8 +45,11 @@ export function verifyEveryStatement(line: string) {
 export function extractEveryStatementToObject(line: string) {
     const words = line.split(' ');
     const expression = `${words[1]} in ${words[3]}`;
-    const conditionString = line.replace(`every ${expression}`, '')
-        .replace('where ', '');
-    const conditions = parseCondition(conditionString);
-    return new StatementObject('every', expression, conditions);
+    line = line.replace(`every ${expression}`, '');
+    if (line.length > 0) {
+        line = line.replace('where', '').trim();
+        const conditions = parseCondition(line);
+        return new StatementObject('loop', expression, conditions);
+    }
+    return new StatementObject('every', expression);
 }
