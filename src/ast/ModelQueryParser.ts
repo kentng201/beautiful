@@ -86,8 +86,18 @@ let currentCondition: Condition | undefined;
 let currentOperator: string | undefined;
 let currentKey: string | undefined;
 let traceString = '0';
-export function parseCondition(conditionWords: string[]): Condition[] {
+export function parseCondition(line: string): Condition[] {
+    line = line.replace('bigger than or equal', '>=');
+    line = line.replace('smaller than or equal', '<=');
+    line = line.replace('bigger than', '>');
+    line = line.replace('smaller than', '<');
+    line = line.replace('not full equal', '!==');
+    line = line.replace('full equal', '===');
+    line = line.replace('not equal', '!=');
+    line = line.replace('equal', '=');
+
     const conditions: Condition[] = [];
+    const conditionWords: string[] = line.split(' ');
 
     for (const word of conditionWords) {
         if (word == '(') {
@@ -217,6 +227,9 @@ export default function parse(line: string, lineNo: number) {
         line = line.replace('smaller than or equal', '<=');
         line = line.replace('bigger than', '>');
         line = line.replace('smaller than', '<');
+        line = line.replace('not full equal', '!==');
+        line = line.replace('full equal', '===');
+        line = line.replace('not equal', '!=');
         line = line.replace('equal', '=');
         
         let words = line.split(' ');
@@ -300,7 +313,7 @@ export default function parse(line: string, lineNo: number) {
             currentModel.fields = parseSelect(selectWords);
         }
         if (currentModel && conditionWords.length > 0) {
-            currentModel.conditions = parseCondition(conditionWords);
+            currentModel.conditions = parseCondition(conditionWords.join(' '));
         }
         if (currentModel && orderByWords.length > 0) {
             currentModel.orderBy = parseOrderBy(orderByWords);

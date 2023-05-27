@@ -1,4 +1,5 @@
 import { Condition, parseCondition } from "./ModelQueryParser";
+import { extractElseStatementToObject, verifyElseStatement } from "./statements/else";
 import { extractIfStatementToObject, verifyIfStatement } from "./statements/if";
 
 export let statementKeywords = ['if', 'else', 'when', 'for', 'every', 'switch', 'while', 'case', 'loop']
@@ -27,10 +28,10 @@ export class StatementObject {
 }
 
 export function verifyStatementSyntax(line: string) {
-    if (line.includes('if ')) {
-        verifyIfStatement(line);
-    } else if (line.includes('else ')) {
+    if (line.includes('else')) {
         verifyElseStatement(line);
+    } else if (line.includes('if ')) {
+        verifyIfStatement(line);
     } else if (line.includes('when ')) {
         // verifyWhenStatement(line);
     } else if (line.includes('for ')) {
@@ -49,9 +50,30 @@ export function verifyStatementSyntax(line: string) {
 }
 
 export function convertStatementToObject(line: string): StatementObject | undefined {
+    if (line.includes('else')) {
+        return extractElseStatementToObject(line);
+    }
     if (line.includes('if ')) {
         return extractIfStatementToObject(line);
     }
+    if (line.includes('else')) {
+        return extractElseStatementToObject(line);
+    } else if (line.includes('when ')) {
+        // return extractWhenStatementToObject(line);
+    } else if (line.includes('for ')) {
+        // return extractForStatementToObject(line);
+    } else if (line.includes('every ')) {
+        // return extractEveryStatementToObject(line);
+    } else if (line.includes('switch ')) {
+        // return extractSwitchStatementToObject(line);
+    } else if (line.includes('while ')) {
+        // return extractWhileStatementToObject(line);
+    } else if (line.includes('case ')) {
+        // return extractCaseStatementToObject(line);
+    } else if (line.includes('loop ')) {
+        // return extractLoopStatementToObject(line);
+    }
+
     return undefined;
 }
 

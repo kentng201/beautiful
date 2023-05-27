@@ -14,6 +14,11 @@ export function verifyElseStatement(line: string) {
 export function extractElseStatementToObject(line: string) {
     if (line == 'else') {
         return new StatementObject('else', '');
+    } else if (line.includes('else if')) {
+        const expressionWithConditions = line.replace('else if', '');
+        console.log('expressionWithConditions: ', expressionWithConditions)
+        const conditions = parseCondition(expressionWithConditions);
+        return new StatementObject('else', '', conditions);
     }
     throw new Error(JSON.stringify({
         message: '"else" should be at the beginning of the line',

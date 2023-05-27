@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import * as fs from 'fs';
 import AstObject from 'src/ast/AstObject';
 import parse from 'src/ast/FrontendParser';
@@ -6,6 +7,10 @@ const filePath: string = process.argv[2];
 
 
 fs.readFile(filePath, 'utf8', (err, data) => {
+    if (!data) {
+        console.log(chalk.red(`File ${filePath} not found`));
+        process.exit(1);
+    }
     const lines = data.split('\n');
 
     const ast: AstObject[] = [];

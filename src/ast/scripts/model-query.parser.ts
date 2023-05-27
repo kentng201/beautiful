@@ -1,11 +1,15 @@
-import * as fs from 'fs';
 import chalk from 'chalk';
+import * as fs from 'fs';
 import parse, { getCurrentModel, getModels } from '../ModelQueryParser';
 
 const filePath: string = process.argv[2];
 
 
 fs.readFile(filePath, 'utf8', (err, data) => {
+    if (!data) {
+        console.log(chalk.red(`File ${filePath} not found`));
+        process.exit(1);
+    }
     const lines = data.split('\n');
 
     for (let i = 0; i < lines.length; i++) {

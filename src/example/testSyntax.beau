@@ -1,0 +1,9 @@
+assign num1 via 1
+assign num2 via 2
+assign mummy via '012-345-6789'
+
+if num1 equal num2
+    display 1
+    call mummy
+else if num1 not equal num2
+    display 2
