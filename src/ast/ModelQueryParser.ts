@@ -97,9 +97,18 @@ export function parseCondition(line: string): Condition[] {
     line = line.replace('equal', '=');
 
     const conditions: Condition[] = [];
-    const conditionWords: string[] = line.split(' ');
+    const words: string[] = line.split(' ');
+    let newWords: any[] = [];
+    for (let i = 0; i < words.length; i++) {
+        if (words[i].includes('(') || words[i].includes(')')) {
+            const tempWords = breakParenthesis(words[i]);
+            newWords = newWords.concat(tempWords);
+        } else {
+            newWords.push(words[i]);
+        }
+    }
 
-    for (const word of conditionWords) {
+    for (const word of newWords) {
         if (word == '(') {
             traceString += '.0';
         } else if (word == ')') {
@@ -109,6 +118,28 @@ export function parseCondition(line: string): Condition[] {
         } else if (word == 'and' || word == 'or') {
             currentCondition = new Condition(word, '', '', '', []);
         } else if (currentCondition && currentOperator && currentKey) {
+            if (word == 'and' && currentOperator == 'and') {
+                throw new Error(JSON.stringify({
+                    msg: 'SyntaxError: Duplicate identitfier "and"',
+                    lineNo: undefined,
+                }));
+            } else if (word == 'or' && currentOperator == 'or') {
+                throw new Error(JSON.stringify({
+                    msg: 'SyntaxError: Duplicate identitfier "or"',
+                    lineNo: undefined,
+                }));
+            } else if (word == 'and' && currentOperator == 'or') {
+                throw new Error(JSON.stringify({
+                    msg: 'SyntaxError: "and" and "or" cannot be used together',
+                    lineNo: undefined,
+                }));
+            } else if (word == 'or' && currentOperator == 'and') {
+                throw new Error(JSON.stringify({
+                    msg: 'SyntaxError: "and" and "or" cannot be used together',
+                    lineNo: undefined,
+                }));
+            }
+
             currentCondition.value = word;
 
             if (!traceString.includes('.')) {
@@ -122,11 +153,11 @@ export function parseCondition(line: string): Condition[] {
                 }
                 currentConditionTrace.children.push(currentCondition);
             }
-
             currentCondition = undefined;
             currentKey = undefined;
             currentOperator = undefined;
         } else if (currentCondition && currentKey) {
+            
             currentOperator = word;
             currentCondition.operator = word;
         } else if (currentCondition) {
@@ -158,6 +189,12 @@ export function parseCondition(line: string): Condition[] {
             currentKey = word;
         }
     }
+
+    currentCondition = undefined;
+    currentOperator = undefined;
+    currentKey = undefined;
+    traceString = '0';
+
     return conditions;
 }
 export function parseOrderBy(orderByWords: string[]): [string, 'asc' | 'desc'][] {
@@ -267,7 +304,7 @@ export default function parse(line: string, lineNo: number) {
                 }
                 if (currentUsedKeywords.includes(currentKeyword)) {
                     throw new Error(JSON.stringify({
-                        msg: `SyntaxError: Duplicate declaration of "${currentKeyword}"`,
+                        msg: `SyntaxError: Duplicate identitfier "${currentKeyword}"`,
                         lineNo: undefined,
                     }));
                 }
