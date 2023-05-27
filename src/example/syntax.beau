@@ -42,7 +42,6 @@ assign user via newUser.username + newUser2.username ., this one real time when 
 save user
 save users
 
-new user from User
 soft delete user equal delete user ., true
 hard delete user ., this one forever deleted
 when NotFound happen

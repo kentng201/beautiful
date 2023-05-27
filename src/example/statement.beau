@@ -2,6 +2,8 @@ assign num1 via 1
 assign num2 via 2
 assign mummy via '012-345-6789'
 
+load user from User find 1
+
 if num1 equal num2 and (num2 equal 100 or num2 equal 200+300)
     display 1
     call mummy
