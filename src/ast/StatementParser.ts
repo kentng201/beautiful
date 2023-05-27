@@ -11,13 +11,18 @@ export class StatementObject {
     keyword: StatementKeyword;
     expression: string;
     condition: Condition[] = [];
-    body: string[] = [];
+    body: (string | StatementObject)[] = [];
+    parent?: StatementObject;
 
     constructor(keyword: StatementKeyword, expression: string, condition: Condition[] = [], body: string[] = []) {
         this.keyword = keyword;
         this.expression = expression;
         this.condition = condition;
         this.body = body;
+    }
+    removeParentReference() {
+        delete this.parent;
+        this.body.forEach(child => child instanceof StatementObject ? child.removeParentReference() : '');
     }
 }
 
@@ -67,17 +72,27 @@ export function convertStatementToObject(line: string): StatementObject | undefi
     if (line.includes('if ')) {
         return extractIfStatementToObject(line);
     }
-
     return undefined;
 }
 
 export let currentLineNo: number | undefined;
-export const currentKeywordStackLineNo: number[] = [];
+export const keywordLineNoStack: number[] = [];
+export const spacingStack: number[] = [];
 export let currentStatementObject: StatementObject | undefined;
+export let parentStatementObject: StatementObject | undefined;
 export const statements: StatementObject[] = [];
 export function getStatements() {
+    for (const object of statements) {
+        object.removeParentReference();
+    }
     return statements;
 }
+
+function isStatementKeyword(line: string) {
+    return statementKeywords.includes(line.trim().split(' ')[0]);
+}
+
+let decreaseSpacing = false;
 
 export default function parse(line: string, lineNo: number) {
     currentLineNo = lineNo;
@@ -85,12 +100,52 @@ export default function parse(line: string, lineNo: number) {
         return;
     } else if (line.startsWith('.,')) {
         return;
-    } else if (statementKeywords.includes(line.trim().split(' ')[0])) {
-        verifyStatementSyntax(line);
-        const result = convertStatementToObject(line);
+    } else if (line.startsWith(' ') && line.trim().length > 0 && keywordLineNoStack.length > 0) {
+        if (isStatementKeyword(line)) {
+            verifyStatementSyntax(line.trim());
+            parentStatementObject = currentStatementObject;
+            console.log('parentStatementObject: ', parentStatementObject);
+            const result = convertStatementToObject(line.trim());
+            if (result) {
+                const leadingSpaces = line.indexOf(line.trim());
+                console.log('leadingSpaces: ', leadingSpaces);
+                if (spacingStack[spacingStack.length - 1] < leadingSpaces) {
+                    spacingStack.push(line.indexOf(line.trim()));
+                }
+                currentStatementObject = result;
+                currentStatementObject.parent = parentStatementObject;
+                if (parentStatementObject) {
+                    parentStatementObject.body.push(result);
+                }
+            } else {
+                parentStatementObject = undefined;
+            }
+        } else {
+            const leadingSpaces = line.indexOf(line.trim());
+            if (spacingStack[spacingStack.length - 1] < leadingSpaces) {
+                spacingStack.push(line.indexOf(line.trim()));
+            }
+            for (let i = 0; i < spacingStack.length; i++) {
+                if (spacingStack[spacingStack.length - 2] > leadingSpaces) {
+                    spacingStack.pop();
+                    parentStatementObject = parentStatementObject?.parent;
+                    currentStatementObject = parentStatementObject;
+                    decreaseSpacing = true;
+                } else {
+                    break;
+                }
+            }
+            currentStatementObject?.body.push(`( ${line.trim()} )`);
+        }
+    } else if (isStatementKeyword(line)) {
+        verifyStatementSyntax(line.trim());
+        const result = convertStatementToObject(line.trim());
         if (result) {
             currentStatementObject = result;
-            currentKeywordStackLineNo.push(lineNo);
+            keywordLineNoStack.push(lineNo);
+            if (spacingStack.length == 0) {
+                spacingStack.push(line.indexOf(line.trim()));
+            }
             statements.push(result);
         }
     }

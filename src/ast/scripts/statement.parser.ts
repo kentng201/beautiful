@@ -13,7 +13,7 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     const lines = data.split('\n');
 
     for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
+        const line = lines[i];
         try {
             parse(line, i + 1);
         } catch (error: any) {

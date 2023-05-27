@@ -11,8 +11,12 @@ else if num1 not equal num2
 assign users via 2 new User collection
 every user in users where user.name not full equal 'John'
     every key in user
+        every char in key
+            if char equal 'a'
+                display char
+            display char + 1
         display key
-        display user[key]
+    display user
 
 while num1 less than 10 and test more than 10
     num1 plus 10

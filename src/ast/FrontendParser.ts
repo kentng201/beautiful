@@ -9,7 +9,7 @@ let currentAstObject: AstObject | undefined;
 
 let functionObject: FunctionObject | undefined;
 let currentVariable: string | undefined;
-let keywordStack: string[] = [];
+const keywordStack: string[] = [];
 
 const isMultipleAttributeLine = (line: string) => {
     const attributes = line.match(/(?<!\.)\.(?!\.)\.(?!\.)/) || [];
@@ -24,7 +24,7 @@ const isOneLiner = (line: string) => {
     const hasEndTag = line.endsWith('.') && !line.endsWith('...');
     const hasAttributes = !!(attributes && attributes.length > 1);
     return hasAttributes && (hasStartTag || hasEndTag);
-}
+};
 
 const seperateMultipleAttributeLine = (line: string): string[] => {
     const hasStartTag = line.startsWith('.') && !line.startsWith('.,');
@@ -61,7 +61,7 @@ const seperateMultipleAttributeLine = (line: string): string[] => {
     }
     if (endTag) result.push(endTag);
     return result;
-}
+};
 
 export default function parse(line: string) {
     // is inside a function body
@@ -71,12 +71,12 @@ export default function parse(line: string) {
         console.log('preparing get object');
         for (let i = 0; i < lines.length; i++) {
             const output = parse(lines[i]);
-            console.log('output: ', output)
+            console.log('output: ', output);
         }
         console.log('done get object');
         // is start of tag
     } else if (line.startsWith('.') && !line.startsWith('.,')) {
-        console.log('line: ', line)
+        console.log('line: ', line);
         console.log('no', 1);
         const tagName = line.replace('.', '');
         const newObject = new AstObject(tagName, {});
@@ -101,7 +101,7 @@ export default function parse(line: string) {
             console.log('ignoring line:', line);
         }
         // is start of a class/function/keyword
-    } else if (line.endsWith("{")) {
+    } else if (line.endsWith('{')) {
         console.log('no', 3);
         const isFunction = line.match(/(\([a-zA-Z0-9_, ]*\) (=>*) {)/) !== null;
         const isClass = line.match(/(class [a-zA-Z0-9_]* {)/) !== null;
@@ -135,7 +135,7 @@ export default function parse(line: string) {
             }
         }
         // is end of a class/function/keyword
-    } else if (line.endsWith("}")) {
+    } else if (line.endsWith('}')) {
         console.log('no', 4);
         if (keywordStack.length > 0) {
             if (functionObject) {
@@ -150,7 +150,7 @@ export default function parse(line: string) {
                 functionObject = undefined;
             } else if (line.includes('=>')) {
                 const [key, value] = line.trimStart().trimEnd().split('..').map(x => x.trim());
-                console.log('func key, value: ', key, value)
+                console.log('func key, value: ', key, value);
                 const parameters = value
                     .replace('{', '')
                     .replace('}', '')
@@ -186,7 +186,7 @@ export default function parse(line: string) {
     } else if (line.includes('...')) {
         console.log('no', 8);
         const [key, ...rest] = line.trimStart().trimEnd().split('...');
-        console.log('key, ...rest: ', key, ...rest)
+        console.log('key, ...rest: ', key, ...rest);
         if (currentAstObject) {
             const value = rest.join('...').replace('...', '');
             currentAstObject.attributes[key] = ['string', value];
