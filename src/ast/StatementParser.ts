@@ -1,4 +1,4 @@
-import { Condition, isWhereStatement, parseCondition } from './ModelQueryParser';
+import parseQuery, { Condition, LoadModelQueryObject, getCurrentModel, getModels, isModalQueryKeyword, isWhereStatement, parseCondition } from './ModelQueryParser';
 import { StatementKeyword, statementKeywords } from './reserved';
 import { extractAssignStatementToObject, verifyAssignStatement } from './statements/assign';
 import { extractElseStatementToObject, verifyElseStatement } from './statements/else';
@@ -112,10 +112,12 @@ export const keywordLineNoStack: number[] = [];
 export const spacingStack: number[] = [];
 export let currentStatementObject: StatementObject | undefined;
 export let parentStatementObject: StatementObject | undefined;
-export const statements: StatementObject[] = [];
+export const statements: (StatementObject | LoadModelQueryObject)[] = [];
 export function getStatements() {
     for (const object of statements) {
-        object.removeParentReference();
+        if (object instanceof StatementObject) {
+            object.removeParentReference();
+        }
     }
     return statements;
 }
@@ -132,14 +134,20 @@ export default function parse(line: string, lineNo: number) {
         return;
     } else if (line.startsWith('.,')) {
         return;
-    } else if (lastKeyword && isWhereStatement(line) && currentStatementObject) {
-        line = line.replace('where ', '');
+    } else if (isWhereStatement(line) && lastKeyword != 'load') {
+        if (line.match(/\b(where)\b/)) {
+            line = line.split('where')[1];
+        } else {
+            line = line.replace(line.trim().split(' ')[0], '');
+        }
         const conditions = parseCondition(line);
-        for (const condition of conditions) {
-            currentStatementObject.condition.push(condition);
+        if (currentStatementObject) {
+            for (const condition of conditions) {
+                currentStatementObject.condition.push(condition);
+            }
         }
         return;
-    } else if (line.startsWith(' ') && line.trim().length > 0 && keywordLineNoStack.length > 0) {
+    } else if (line.startsWith(' ') && line.trim().length > 0 && keywordLineNoStack.length > 0 && lastKeyword != 'load') {
         if (isStatementKeyword(line)) {
             lastFunctionObject = undefined;
             verifyStatementSyntax(line.trim());
@@ -183,6 +191,18 @@ export default function parse(line: string, lineNo: number) {
                 }
             }
             currentStatementObject?.body.push(line.trim());
+        }
+    } else if ((lastKeyword == 'load' && getCurrentModel()) || isModalQueryKeyword(line.trim())) {
+        if (line.trim().startsWith('load')) {
+            lastKeyword = 'load';
+            parseQuery(line, lineNo);
+            const model = getCurrentModel();
+            if (model) {
+                statements.push(model);
+            }
+            return;
+        } else if (lastKeyword == 'load') {
+            parseQuery(line.trimStart(), lineNo);
         }
     } else if (isStatementKeyword(line)) {
         verifyStatementSyntax(line.trim());

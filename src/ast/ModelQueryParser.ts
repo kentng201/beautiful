@@ -1,6 +1,6 @@
 import { ModelKeyword, arithemticOperatorKeywords, logicalArtihmeticOperatorKeywords, logicalOperatorKeywords, modelKeywords, operatorKeywords, reserverdWords } from './reserved';
 
-export function hasModelKeyword(line: string): boolean {
+export function isModalQueryKeyword(line: string): boolean {
     return (
         line.match(/\b(select|load|find|order|by|from|where|between|like|first|last|limit|offset|and|or)\b/) != null
         ||
@@ -258,7 +258,7 @@ export function isWhereStatement(line: string): boolean {
 }
 
 export default function parse(line: string, lineNo: number) {
-    if (hasModelKeyword(line)) {
+    if (isModalQueryKeyword(line)) {
         if (line.startsWith('load')) {
             if (currentModel) {
                 models.push(currentModel);
