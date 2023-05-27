@@ -13,6 +13,7 @@ export function hasModelKeyword(line: string): boolean {
 
 
 export class Condition {
+    name = 'condition';
     join: 'and' | 'or' | 'none' | 'childrens';
     key: string;
     operator: string;
@@ -30,6 +31,7 @@ export class Condition {
 }
 
 export class Join {
+    name = 'join';
     type: 'left' | 'right' | 'inner';
     modelName: string;
     conditions: Condition[];
@@ -42,6 +44,7 @@ export class Join {
 }
 
 export class LoadModelQueryObject {
+    name = 'query';
     variableName: string;
     modelName: string;
     fields: string[];
@@ -112,17 +115,18 @@ function pumpCondition() {
 
 let conditions: Condition[] = [];
 export function parseCondition(line: string): Condition[] {
-    line = line.replace('more than or equal', '>=');
-    line = line.replace('less than or equal', '<=');
-    line = line.replace('more than', '>');
-    line = line.replace('less than', '<');
-    line = line.replace('not full equal', '!==');
-    line = line.replace('full equal', '===');
-    line = line.replace('not equal', '!=');
-    line = line.replace('equal', '=');
-    line = line.replace('is an', '~=');
-    line = line.replace('is a', '~=');
-    line = line.replace('is', '~=');
+    line = line.replace(/\b(mod)\b/g, '%');
+    line = line.replace(/\b(more than or equal)\b/g, '>=');
+    line = line.replace(/\b(less than or equal)\b/g, '<=');
+    line = line.replace(/\b(more than)\b/g, '>');
+    line = line.replace(/\b(less than)\b/g, '<');
+    line = line.replace(/\b(not full equal)\b/g, '!==');
+    line = line.replace(/\b(full equal)\b/g, '===');
+    line = line.replace(/\b(not equal)\b/g, '!=');
+    line = line.replace(/\b(equal)\b/g, '==');
+    line = line.replace(/\b(is an)\b/g, '~=');
+    line = line.replace(/\b(is a)\b/g, '~=');
+    line = line.replace(/\b(is)\b/g, '~=');
 
     conditions = [];
     const words: string[] = line.split(' ');
@@ -262,17 +266,18 @@ export default function parse(line: string, lineNo: number) {
             orderByWords = [];
             currentUsedKeywords = [];
         }
-        line = line.replace('more than or equal', '>=');
-        line = line.replace('less than or equal', '<=');
-        line = line.replace('more than', '>');
-        line = line.replace('less than', '<');
-        line = line.replace('not full equal', '!==');
-        line = line.replace('full equal', '===');
-        line = line.replace('not equal', '!=');
-        line = line.replace('equal', '=');
-        line = line.replace('is an', '~=');
-        line = line.replace('is a', '~=');
-        line = line.replace('is', '~=');
+        line = line.replace(/\b(mod)\b/g, '%');
+        line = line.replace(/\b(more than or equal)\b/g, '>=');
+        line = line.replace(/\b(less than or equal)\b/g, '<=');
+        line = line.replace(/\b(more than)\b/g, '>');
+        line = line.replace(/\b(less than)\b/g, '<');
+        line = line.replace(/\b(not full equal)\b/g, '!==');
+        line = line.replace(/\b(full equal)\b/g, '===');
+        line = line.replace(/\b(not equal)\b/g, '!=');
+        line = line.replace(/\b(equal)\b/g, '==');
+        line = line.replace(/\b(is an)\b/g, '~=');
+        line = line.replace(/\b(is a)\b/g, '~=');
+        line = line.replace(/\b(is)\b/g, '~=');
 
         const words = line.split(' ');
         let newWords: any[] = [];
