@@ -87,7 +87,7 @@ loop 100 times as i where i equal 2
 every user in allUsers where user.id more than 2
     console.log user.username
 
-func thisIsAFunction message type string
+func thisIsAFunction message is string
     console.log 'hi'
     if message equal undefined
         console.log message

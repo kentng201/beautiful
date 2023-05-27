@@ -4,6 +4,7 @@ import { extractAssignStatementToObject, verifyAssignStatement } from './stateme
 import { extractElseStatementToObject, verifyElseStatement } from './statements/else';
 import { extractEveryStatementToObject, verifyEveryStatement } from './statements/every';
 import { extractForStatementToObject, verifyForStatement } from './statements/for';
+import { extractFuncStatementToObject, verifyFuncStatement } from './statements/func';
 import { extractIfStatementToObject, verifyIfStatement } from './statements/if';
 import { extractLoopStatementToObject, verifyLoopStatement } from './statements/loop';
 import { extractWhileStatementToObject, verifyWhileStatement } from './statements/while';
@@ -12,6 +13,7 @@ export class StatementObject<T = any> {
     name: string = 'statement';
     keyword: StatementKeyword;
     expression: T;
+    arguments?: string;
     condition: Condition[] = [];
     body: (string | StatementObject<T>)[] = [];
     parent?: StatementObject<T>;
@@ -31,6 +33,9 @@ export class StatementObject<T = any> {
 export function verifyStatementSyntax(line: string) {
     if (line.includes('assign')) {
         verifyAssignStatement(line); return;
+    }
+    if (line.includes('func')) {
+        verifyFuncStatement(line); return;
     }
     if (line.includes('every ')) {
         verifyEveryStatement(line); return;
@@ -64,6 +69,9 @@ export function convertStatementToObject(line: string): StatementObject | undefi
 
     if (line.includes('assign')) {
         return extractAssignStatementToObject(line);
+    }
+    if (line.includes('func')) {
+        return extractFuncStatementToObject(line);
     }
     if (line.includes('every ')) {
         return extractEveryStatementToObject(line);

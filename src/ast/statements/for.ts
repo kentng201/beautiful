@@ -1,4 +1,3 @@
-import { parseCondition } from '../ModelQueryParser';
 import { StatementObject } from '../StatementParser';
 
 export function verifyForStatement(line: string) {
