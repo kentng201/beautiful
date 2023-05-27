@@ -51,6 +51,12 @@ export function verifyStatementSyntax(line: string) {
 }
 
 export function convertStatementToObject(line: string): StatementObject | undefined {
+    // cleanup comments
+    if (line.includes('.,')) {
+        const lineWithComments = line.split('.,')[0];
+        line = lineWithComments[0];
+    }
+
     if (line.includes('every ')) {
         return extractEveryStatementToObject(line);
     }
