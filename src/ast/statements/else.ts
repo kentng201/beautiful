@@ -34,6 +34,6 @@ export function extractElseStatementToObject(line: string) {
     } else if (line.includes('else if ')) {
         const expressionWithConditions = line.replace('else if ', '');
         const conditions = parseCondition(expressionWithConditions);
-        return new StatementObject('else', '', conditions);
+        return new StatementObject('else if', '', conditions);
     }
 }
