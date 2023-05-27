@@ -1,5 +1,7 @@
 import { Condition, parseCondition } from "./ModelQueryParser";
 import { extractElseStatementToObject, verifyElseStatement } from "./statements/else";
+import { extractEveryStatementToObject, verifyEveryStatement } from "./statements/every";
+import { extractForStatementToObject, verifyForStatement } from "./statements/for";
 import { extractIfStatementToObject, verifyIfStatement } from "./statements/if";
 
 export let statementKeywords = ['if', 'else', 'for', 'every', 'switch', 'while', 'case', 'loop']
@@ -28,26 +30,36 @@ export class StatementObject {
 }
 
 export function verifyStatementSyntax(line: string) {
+    if (line.includes('every ')) {
+        verifyEveryStatement(line); return;
+    }
+    if (line.includes('for ')) {
+        verifyForStatement(line); return;
+    }
     if (line.includes('else')) {
-        verifyElseStatement(line);
-    } else if (line.includes('if ')) {
-        verifyIfStatement(line);
-    } else if (line.includes('for ')) {
-        // verifyForStatement(line);
-    } else if (line.includes('every ')) {
-        // verifyEveryStatement(line);
-    } else if (line.includes('switch ')) {
-        // verifySwitchStatement(line);
-    } else if (line.includes('while ')) {
-        // verifyWhileStatement(line);
-    } else if (line.includes('case ')) {
-        // verifyCaseStatement(line);
-    } else if (line.includes('loop ')) {
-        // verifyLoopStatement(line);
+        verifyElseStatement(line); return;
+    }
+    if (line.includes('if ')) {
+        verifyIfStatement(line); return;
+    }
+    if (line.includes('switch ')) {
+        // verifySwitchStatement(line); return;
+    }
+    if (line.includes('while ')) {
+        // verifyWhileStatement(line); return;
+    }
+    if (line.includes('case ')) {
+        // verifyCaseStatement(line); return;
+    }
+    if (line.includes('loop ')) {
+        // verifyLoopStatement(line); return;
     }
 }
 
 export function convertStatementToObject(line: string): StatementObject | undefined {
+    if (line.includes('every ')) {
+        return extractEveryStatementToObject(line);
+    }
     if (line.includes('else')) {
         return extractElseStatementToObject(line);
     }
@@ -56,17 +68,20 @@ export function convertStatementToObject(line: string): StatementObject | undefi
     }
     if (line.includes('else')) {
         return extractElseStatementToObject(line);
-    } else if (line.includes('for ')) {
-        // return extractForStatementToObject(line);
-    } else if (line.includes('every ')) {
-        // return extractEveryStatementToObject(line);
-    } else if (line.includes('switch ')) {
+    }
+    if (line.includes('for ')) {
+        return extractForStatementToObject(line);
+    }
+    if (line.includes('switch ')) {
         // return extractSwitchStatementToObject(line);
-    } else if (line.includes('while ')) {
+    }
+    if (line.includes('while ')) {
         // return extractWhileStatementToObject(line);
-    } else if (line.includes('case ')) {
+    }
+    if (line.includes('case ')) {
         // return extractCaseStatementToObject(line);
-    } else if (line.includes('loop ')) {
+    }
+    if (line.includes('loop ')) {
         // return extractLoopStatementToObject(line);
     }
 
