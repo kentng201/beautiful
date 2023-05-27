@@ -7,3 +7,12 @@ if num1 equal num2 and (num2 equal 100 or num2 equal 200)
     call mummy
 else if num1 not equal num2
     display 2
+
+assign users via 2 new User collection
+every user in users where user.name not full equal 'John'
+    every key in user
+        display key
+        display user[key]
+
+while num1 less than 10
+    num1 plus 10

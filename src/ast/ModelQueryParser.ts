@@ -2,14 +2,15 @@ export function hasModelKeyword(line: string): boolean {
     return (
         line.match(/\b(select|load|save|find|order|by|from|where|between|like|first|last|limit|offset|and|or)\b/) != null
         ||
-        line.match(/\b(bigger|equal|smaller|than|between|like|and|or)\b/) != null
+        line.match(/\b(more|equal|less|than|between|like|and|or)\b/) != null
         ||
         line.match(/\b(join|left|right|inner)\b/) != null
     )
         && !line.startsWith('.');
 }
 
-// example: load users select username from User where username...ho... and (id..3 or id>3) or username...kentng201... left join a order by username;
+export const operatorKeywords = ['more than', 'less than', 'equal', 'not equal', 'full equal', 'not full equal', 'more than or equal', 'less than or equal',];
+export const logicalOperatorKeywords = ['>=', '<=', '>', '<', '===', '!==', '!=', '=',];
 
 export class Condition {
     join: 'and' | 'or' | 'none' | 'childrens';
@@ -74,11 +75,11 @@ export function getModels() {
     return models;
 }
 
-export const modelKeywords = ['select', 'load', 'save', 'find', 'order', 'by', 'from', 'where', 'first', 'last', 'limit', 'offset'];
+export const modelKeywords = ['select', 'load', 'save', 'find', 'order', 'by', 'from', 'where', 'first', 'last', 'limit', 'offset',];
 export type ModelKeyword = typeof modelKeywords[number];
 
 export function parseSelect(selectWords: string[]): string[] {
-    let line = selectWords.join(' ');
+    const line = selectWords.join(' ');
     return line.replace(/,\s*/g, ',').split(',');
 }
 
@@ -87,10 +88,10 @@ let currentOperator: string | undefined;
 let currentKey: string | undefined;
 let traceString = '0';
 export function parseCondition(line: string): Condition[] {
-    line = line.replace('bigger than or equal', '>=');
-    line = line.replace('smaller than or equal', '<=');
-    line = line.replace('bigger than', '>');
-    line = line.replace('smaller than', '<');
+    line = line.replace('more than or equal', '>=');
+    line = line.replace('less than or equal', '<=');
+    line = line.replace('more than', '>');
+    line = line.replace('less than', '<');
     line = line.replace('not full equal', '!==');
     line = line.replace('full equal', '===');
     line = line.replace('not equal', '!=');
@@ -112,7 +113,7 @@ export function parseCondition(line: string): Condition[] {
         if (word == '(') {
             traceString += '.0';
         } else if (word == ')') {
-            let traces = traceString.split('.');
+            const traces = traceString.split('.');
             traces.pop();
             traceString = traces.join('.');
         } else if (word == 'and' || word == 'or') {
@@ -146,7 +147,7 @@ export function parseCondition(line: string): Condition[] {
                 conditions.push(currentCondition);
             } else {
                 const traces = traceString.split('.');
-                let currentTrace = traces[0];
+                const currentTrace = traces[0];
                 let currentConditionTrace = conditions[parseInt(currentTrace)];
                 for (let i = 1; i < traces.length - 1; i++) {
                     currentConditionTrace = currentConditionTrace.children[currentConditionTrace.children.length - 1];
@@ -157,7 +158,12 @@ export function parseCondition(line: string): Condition[] {
             currentKey = undefined;
             currentOperator = undefined;
         } else if (currentCondition && currentKey) {
-
+            if (!operatorKeywords.includes(word) && !logicalOperatorKeywords.includes(word)) {
+                throw new Error(JSON.stringify({
+                    msg: `SyntaxError: Unexpected identifier "${word}"`,
+                    lineNo: undefined,
+                }));
+            }
             currentOperator = word;
             currentCondition.operator = word;
         } else if (currentCondition) {
@@ -170,7 +176,7 @@ export function parseCondition(line: string): Condition[] {
                     conditions.push(currentCondition);
                 } else {
                     const traces = traceString.split('.');
-                    let currentTrace = traces[0];
+                    const currentTrace = traces[0];
                     let currentConditionTrace = conditions[parseInt(currentTrace)];
                     for (let i = 1; i < traces.length - 1; i++) {
                         currentConditionTrace = currentConditionTrace.children[currentConditionTrace.children.length - 1];
@@ -204,9 +210,9 @@ export function parseOrderBy(orderByWords: string[]): [string, 'asc' | 'desc'][]
     for (const word of orderByArray) {
         const words = word.split(' ');
         if (words.length == 1) {
-            orderBy.push([words[0], 'asc']);
+            orderBy.push([words[0], 'asc',]);
         } else {
-            orderBy.push([words[0], words[1] as 'asc' | 'desc']);
+            orderBy.push([words[0], words[1] as 'asc' | 'desc',]);
         }
     }
     return orderBy;
@@ -260,16 +266,16 @@ export default function parse(line: string, lineNo: number) {
             orderByWords = [];
             currentUsedKeywords = [];
         }
-        line = line.replace('bigger than or equal', '>=');
-        line = line.replace('smaller than or equal', '<=');
-        line = line.replace('bigger than', '>');
-        line = line.replace('smaller than', '<');
+        line = line.replace('more than or equal', '>=');
+        line = line.replace('less than or equal', '<=');
+        line = line.replace('more than', '>');
+        line = line.replace('less than', '<');
         line = line.replace('not full equal', '!==');
         line = line.replace('full equal', '===');
         line = line.replace('not equal', '!=');
         line = line.replace('equal', '=');
 
-        let words = line.split(' ');
+        const words = line.split(' ');
         let newWords: any[] = [];
         for (let i = 0; i < words.length; i++) {
             if (words[i].includes('(') || words[i].includes(')')) {

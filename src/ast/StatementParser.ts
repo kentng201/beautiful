@@ -3,17 +3,18 @@ import { extractElseStatementToObject, verifyElseStatement } from "./statements/
 import { extractEveryStatementToObject, verifyEveryStatement } from "./statements/every";
 import { extractForStatementToObject, verifyForStatement } from "./statements/for";
 import { extractIfStatementToObject, verifyIfStatement } from "./statements/if";
+import { extractWhileStatementToObject, verifyWhileStatement } from "./statements/while";
 
-export let statementKeywords = ['if', 'else', 'for', 'every', 'switch', 'while', 'case', 'loop']
+export let statementKeywords = ['if', 'else', 'for', 'every', 'switch', 'while', 'loop']
 export type StatementKeyword = typeof statementKeywords[number];
 
 export let loopControlKeywords = ['break', 'continue', 'return'];
 
 export let logicaKeywords = ['and', 'or'];
-export let operatorKeywords = ['==', '===', '>', '>=', '<', '<=', 'bigger than', 'smaller than', 'equal', 'full equal', 'between', 'like', 'is']
+export let operatorKeywords = ['==', '===', '>', '>=', '<', '<=', 'more than', 'less than', 'equal', 'full equal', 'between', 'like', 'is']
 
 export let whereRegex = /where\s*\((.*)\)/;
-export let expressionRegex = /(.*)\s*(==|===|>|>=|<|<=|bigger than|smaller than|equal|full equal|between|like|is)\s*(.*)/;
+export let expressionRegex = /(.*)\s*(==|===|>|>=|<|<=|more than|less than|equal|full equal|between|like|is)\s*(.*)/;
 
 export class StatementObject {
     keyword: StatementKeyword;
@@ -46,10 +47,7 @@ export function verifyStatementSyntax(line: string) {
         // verifySwitchStatement(line); return;
     }
     if (line.includes('while ')) {
-        // verifyWhileStatement(line); return;
-    }
-    if (line.includes('case ')) {
-        // verifyCaseStatement(line); return;
+        verifyWhileStatement(line); return;
     }
     if (line.includes('loop ')) {
         // verifyLoopStatement(line); return;
@@ -76,10 +74,7 @@ export function convertStatementToObject(line: string): StatementObject | undefi
         // return extractSwitchStatementToObject(line);
     }
     if (line.includes('while ')) {
-        // return extractWhileStatementToObject(line);
-    }
-    if (line.includes('case ')) {
-        // return extractCaseStatementToObject(line);
+        return extractWhileStatementToObject(line);
     }
     if (line.includes('loop ')) {
         // return extractLoopStatementToObject(line);

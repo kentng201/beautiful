@@ -1,13 +1,13 @@
 load user 
     from User 
     order by username 
-    where username like ...%test%... and (age bigger than 18 and age smaller than 30 or (age equal 14) and age equal 20 ) 
+    where username like ...%test%... and (age more than 18 and age less than 30 or (age equal 14) and age equal 20 ) 
 
 
 load schedule 
     from Schedule
-    where time bigger than or equal ...07:00... 
-        and time smaller than ...09:00...
+    where time more than or equal ...07:00... 
+        and time less than ...09:00...
     limit 5
     offset 2
     last

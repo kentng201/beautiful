@@ -24,7 +24,7 @@ load users
     select username
     from User
     where username equal ...ho..........
-    and (id equal 3 or id smaller than 3 or id equal ...test...)
+    and (id equal 3 or id less than 3 or id equal ...test...)
     or username equal ...kentng201...
     left join a
     order by username
@@ -75,7 +75,7 @@ if amount is an int
     console.log ...hi...
 
 
-if user.username bigger than 2
+if user.username more than 2
     assign user.username via 100 + 20
 else
     assign user.username via 50 + 20
@@ -84,7 +84,7 @@ loop 100 times as i where i equal 2
     console.log i
     wait longRunTask
 
-every user in allUsers where user.id bigger than 2
+every user in allUsers where user.id more than 2
     console.log user.username
 
 func thisIsAFunction message type string
