@@ -1,6 +1,6 @@
 every user in users where user.name not full equal 'John'
     every key in user
-        every char in key
+        every char in key where char not equal 'a'
             if char equal 'a'
                 display char
             display char + 1
