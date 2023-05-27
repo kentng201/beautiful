@@ -1,6 +1,5 @@
 import chalk from 'chalk';
 import * as fs from 'fs';
-import chalk from 'chalk';
 import parse, { getStatements } from '../StatementParser';
 
 const filePath: string = process.argv[2];
@@ -27,5 +26,8 @@ fs.readFile(filePath, 'utf8', (err, data) => {
         }
     }
     const statements = getStatements();
-    fs.writeFileSync('statements.test.json', JSON.stringify(statements, null, 4));
+    if (!fs.existsSync('src/output')) {
+        fs.mkdirSync('src/output');
+    }
+    fs.writeFileSync('src/output/statement.test.json', JSON.stringify(statements, null, 4));
 });

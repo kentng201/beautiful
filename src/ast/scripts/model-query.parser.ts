@@ -29,5 +29,8 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     if (currentModel) {
         models.push(currentModel);
     }
-    fs.writeFileSync('model-query-parser.test.json', JSON.stringify(models, null, 4));
+    if (!fs.existsSync('src/output')) {
+        fs.mkdirSync('src/output');
+    }
+    fs.writeFileSync('src/output/query.test.json', JSON.stringify(models, null, 4));
 });

@@ -26,5 +26,8 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     for (const object of ast) {
         object.removeParentReference();
     }
-    fs.writeFileSync('main-parser.test.json', JSON.stringify(ast, null, 4));
+    if (!fs.existsSync('src/output')) {
+        fs.mkdirSync('src/output');
+    }
+    fs.writeFileSync('src/output/frontend.test.json', JSON.stringify(ast, null, 4));
 });
