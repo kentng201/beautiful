@@ -1,4 +1,4 @@
-import { ModelKeyword, logicalOperatorKeywords, modelKeywords, operatorKeywords, reserverdWords } from './reserved';
+import { ModelKeyword, arithemticOperatorKeywords, logicalArtihmeticOperatorKeywords, logicalOperatorKeywords, modelKeywords, operatorKeywords, reserverdWords } from './reserved';
 
 export function hasModelKeyword(line: string): boolean {
     return (
@@ -84,6 +84,33 @@ let currentCondition: Condition | undefined;
 let currentOperator: string | undefined;
 let currentKey: string | undefined;
 let traceString = '0';
+function isNumeric(value: string) {
+    return /^-?\d*\.?\d+$/.test(value);
+}
+function isString(value: string) {
+    return /^".*"$/.test(value) || /^'.*'$/.test(value) || /^\.\.\..*\.\.\.$/.test(value);
+}
+
+function pumpCondition() {
+    if (!traceString.includes('.') && currentCondition) {
+        conditions.push(currentCondition);
+    } else if (currentCondition) {
+        const traces = traceString.split('.');
+        const currentTrace = traces[0];
+        let currentConditionTrace = conditions[parseInt(currentTrace)];
+        for (let i = 1; i < traces.length - 1; i++) {
+            currentConditionTrace = currentConditionTrace.children[currentConditionTrace.children.length - 1];
+        }
+        currentConditionTrace.children.push(currentCondition);
+    }
+    currentCondition = undefined;
+    currentKey = undefined;
+    currentOperator = undefined;
+
+    return conditions;
+}
+
+let conditions: Condition[] = [];
 export function parseCondition(line: string): Condition[] {
     line = line.replace('more than or equal', '>=');
     line = line.replace('less than or equal', '<=');
@@ -93,8 +120,11 @@ export function parseCondition(line: string): Condition[] {
     line = line.replace('full equal', '===');
     line = line.replace('not equal', '!=');
     line = line.replace('equal', '=');
+    line = line.replace('is an', '~=');
+    line = line.replace('is a', '~=');
+    line = line.replace('is', '~=');
 
-    const conditions: Condition[] = [];
+    conditions = [];
     const words: string[] = line.split(' ');
     let newWords: any[] = [];
     for (let i = 0; i < words.length; i++) {
@@ -114,27 +144,27 @@ export function parseCondition(line: string): Condition[] {
             traces.pop();
             traceString = traces.join('.');
         } else if (word == 'and' || word == 'or') {
+            if (currentCondition) {
+                pumpCondition();
+            }
             currentCondition = new Condition(word, '', '', '', []);
             currentKey = undefined;
             currentOperator = undefined;
         } else if (currentCondition && currentOperator && currentKey) {
-            currentCondition.value = word;
-
-            if (!traceString.includes('.')) {
-                conditions.push(currentCondition);
+            if (currentCondition.value != '') {
+                currentCondition.value += ' ' + word;
             } else {
-                const traces = traceString.split('.');
-                const currentTrace = traces[0];
-                let currentConditionTrace = conditions[parseInt(currentTrace)];
-                for (let i = 1; i < traces.length - 1; i++) {
-                    currentConditionTrace = currentConditionTrace.children[currentConditionTrace.children.length - 1];
-                }
-                currentConditionTrace.children.push(currentCondition);
+                currentCondition.value = word;
             }
-            currentCondition = undefined;
-            currentKey = undefined;
-            currentOperator = undefined;
         } else if (currentCondition && currentKey) {
+            if (arithemticOperatorKeywords.includes(word) || logicalArtihmeticOperatorKeywords.includes(word)) {
+                currentKey += ' ' + word;
+                continue;
+            }
+            if (isNumeric(word) || isString(word) || word == 'true' || word == 'false' || word == 'null' || word == 'undefined') {
+                currentKey += ' ' + word;
+                continue;
+            }
             if (!operatorKeywords.includes(word) && !logicalOperatorKeywords.includes(word)) {
                 throw new Error(JSON.stringify({
                     msg: `SyntaxError: Unexpected identifier "${word}"`,
@@ -142,6 +172,7 @@ export function parseCondition(line: string): Condition[] {
                 }));
             }
             currentOperator = word;
+            currentCondition.key = currentKey;
             currentCondition.operator = word;
         } else if (currentCondition) {
             if (reserverdWords.includes(word)) {
@@ -156,6 +187,10 @@ export function parseCondition(line: string): Condition[] {
             currentCondition = new Condition('none', word, '', '', []);
             currentKey = word;
         }
+    }
+
+    if (currentCondition) {
+        pumpCondition();
     }
 
     currentCondition = undefined;
@@ -236,6 +271,9 @@ export default function parse(line: string, lineNo: number) {
         line = line.replace('full equal', '===');
         line = line.replace('not equal', '!=');
         line = line.replace('equal', '=');
+        line = line.replace('is an', '~=');
+        line = line.replace('is a', '~=');
+        line = line.replace('is', '~=');
 
         const words = line.split(' ');
         let newWords: any[] = [];
