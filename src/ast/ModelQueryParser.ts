@@ -196,6 +196,10 @@ export function parseCondition(line: string): Condition[] {
         }
     }
 
+    if (currentCondition) {
+        pumpCondition();
+    }
+
     currentCondition = undefined;
     currentOperator = undefined;
     currentKey = undefined;
