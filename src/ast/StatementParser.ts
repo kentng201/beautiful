@@ -14,7 +14,7 @@ export class StatementObject {
     body: (string | StatementObject)[] = [];
     parent?: StatementObject;
 
-    constructor(keyword: StatementKeyword, expression: string, condition: Condition[] = [], body: string[] = []) {
+    constructor(keyword: StatementKeyword, expression: string, condition: Condition[] = [], body: (string | StatementObject)[] = []) {
         this.keyword = keyword;
         this.expression = expression;
         this.condition = condition;
@@ -132,7 +132,7 @@ export default function parse(line: string, lineNo: number) {
                     break;
                 }
             }
-            currentStatementObject?.body.push(`( ${line.trim()} )`);
+            currentStatementObject?.body.push(line.trim());
         }
     } else if (isStatementKeyword(line)) {
         verifyStatementSyntax(line.trim());
