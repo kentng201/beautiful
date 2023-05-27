@@ -1,5 +1,5 @@
 export const operatorKeywords = ['more than', 'less than', 'equal', 'not equal', 'full equal', 'not full equal', 'more than or equal', 'less than or equal', 'is a', 'is an', 'is', 'a', 'an'];
-export const logicalOperatorKeywords = ['>=', '<=', '>', '<', '===', '!==', '!=', '=', '~=', 'like', 'between'];
+export const logicalOperatorKeywords = ['>=', '<=', '>', '<', '===', '!==', '!=', '==', '~=', 'like', 'between'];
 
 export const arithemticOperatorKeywords = ['add', 'minus', 'multiply', 'divide', 'mod', 'power'];
 export const logicalArtihmeticOperatorKeywords = ['+', '-', '*', '/', '%', '**', '++', '--'];
