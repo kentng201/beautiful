@@ -1,4 +1,4 @@
-import FunctionObject from "./FunctionObject";
+import FunctionObject from './FunctionObject';
 
 export type AttributeType = 'string' | 'variable' | 'math' | 'function' | 'comment';
 
