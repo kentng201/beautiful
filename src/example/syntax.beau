@@ -67,8 +67,13 @@ if newUsers is 2 User array
 assign intArray via int array 1 2 ., this add 2 new int into an array, which is [1, 2]
 assign dbUsers via User collection newUsers
 
-if intArray is 2 int and intArray is array
+if intArray is 2 int and intArray is a collection
     console.log ...2 number...
+
+assign amount via 1
+if amount is an int
+    console.log ...hi...
+
 
 if user.username bigger than 2
     assign user.username via 100 + 20
@@ -78,11 +83,11 @@ else
 when user.username smaller than 100
     assign user.username via user.username + 1
 
-loop 100 times as i
+loop 100 times as i where i equal 2
     console.log i
-    waiting longRunTask
+    wait longRunTask
 
-every user in allUsers where user.username bigger than 2
+every user in allUsers where user.id bigger than 2
     console.log user.username
 
 func thisIsAFunction message type string
