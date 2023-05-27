@@ -10,12 +10,12 @@ load users
 load user from User find 1
 load user from User where id equal 1 or id equal 2 last
 
-assign user.username via ... hello world ....
-assign user.id via 2
+set user.username to ... hello world ....
+set user.id to 2
 
 load newUser from User find 10
 load newUser2 from User find 11
-assign user via newUser.username + newUser2.username 
+set user to newUser.username + newUser2.username 
 ., this one real time when username changed
 
 ., save user
@@ -37,27 +37,27 @@ if testUser equal 10
 
 ., load allUsers from User ., this will load all users
 
-assign newUsers via 2 new User array ., this add 2 new users into an array
-assign newUsers via 2 new User collection ., this add 2 new users into an collection
+set newUsers to 2 new User array ., this add 2 new users into an array
+set newUsers to 2 new User collection ., this add 2 new users into an collection
 
 if newUsers is 2 User array
     console.log ...2 User...
 
-assign intArray via int array 1 2 ., this add 2 new int into an array, which is [1, 2]
-assign dbUsers via User collection newUsers
+set intArray to int array 1 2 ., this add 2 new int into an array, which is [1, 2]
+set dbUsers to User collection newUsers
 
 if intArray is 2 int and intArray is a collection
     console.log ...2 number...
 
-assign amount via 1
+set amount to 1
 if amount is an int
     console.log ...hi...
 
 
 if user.username more than 2
-    assign user.username via 100 + 20
+    set user.username to 100 + 20
 else
-    assign user.username via 50 + 20
+    set user.username to 50 + 20
 
 loop 100 times as i where i equal 2
     console.log i

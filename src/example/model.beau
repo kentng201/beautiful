@@ -5,10 +5,10 @@ model User
     address is Address array
 
     func setPassword password is string username address is Address
-        assign password via hash password
+        set password to hash password
 
     static func decryptPassword password is string
-        assign password via decrypt password
+        set password to decrypt password
         return password
 
 class NumberHelper

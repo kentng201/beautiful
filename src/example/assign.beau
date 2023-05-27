@@ -1,20 +1,20 @@
-assign basicInt via 2
-assign booleanAssign via true
-assign basicInt via (10 + 2) power 2
-assign allUsers via 100 new User
+set basicInt to 2
+set booleanAssign to true
+set basicInt to (10 + 2) power 2
+set allUsers to 100 new User
 
-assign noNameUsers via filter allUsers where username == true
-assign sortedUsers via sort allUsers by username asc
-assign testUser via pick allUsers as user where username equal 2
-assign nameOnly via map allUsers as user return new string array user.username user.password
+set noNameUsers to filter allUsers where username == true
+set sortedUsers to sort allUsers by username asc
+set testUser to pick allUsers as user where username equal 2
+set nameOnly to map allUsers as user return new string array user.username user.password
 
 
-assign newUsers via new User array
-assign newUsers via 2 new string array '' ''
-assign newUsers via 2 new User collection
+set newUsers to new User array
+set newUsers to 2 new string array '' ''
+set newUsers to 2 new User collection
 
-assign body via HttpBody header1..test header2..test
-assign header via HttpHeader header1..test header2..test
-assign apiResult via GET 'https://api.github.com/users/defunkt' body header
+set body to HttpBody header1..test header2..test
+set header to HttpHeader header1..test header2..test
+set apiResult to GET 'https://api.github.com/users/defunkt' body header
 
-assign test via console.log 'test'
+set test to console.log 'test'

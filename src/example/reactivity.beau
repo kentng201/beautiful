@@ -1,4 +1,4 @@
-assign arg1 via object line1..2 line2...test... line3..true
-assign arg2 via object line1..2 line2...test... line3..false
+set arg1 to object line1..2 line2...test... line3..true
+set arg2 to object line1..2 line2...test... line3..false
 
-assign all via arg1 + arg2
+set all to arg1 + arg2

@@ -1,6 +1,6 @@
-assign num1 via 1
-assign num2 via 2
-assign mummy via '012-345-6789'
+set num1 to 1
+set num2 to 2
+set mummy to '012-345-6789'
 
 load user from User find 1
 
@@ -10,7 +10,7 @@ if num1 equal num2 and (num2 equal 100 or num2 equal 200+300)
 else if num1 not equal num2
     display 2
 
-assign users via 2 new User collection
+set users to 2 new User collection
 every user in users where user.name not full equal 'John'
     every key in user
         every char in key
