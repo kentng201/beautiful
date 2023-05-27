@@ -29,6 +29,9 @@ export class StatementObject<T = any> {
 }
 
 export function verifyStatementSyntax(line: string) {
+    if (line.includes('assign')) {
+        verifyAssignStatement(line); return;
+    }
     if (line.includes('every ')) {
         verifyEveryStatement(line); return;
     }
@@ -50,9 +53,6 @@ export function verifyStatementSyntax(line: string) {
     if (line.includes('if ')) {
         verifyIfStatement(line); return;
     }
-    if (line.includes('assign')) {
-        verifyAssignStatement(line); return;
-    }
 }
 
 export function convertStatementToObject(line: string): StatementObject | undefined {
@@ -62,6 +62,9 @@ export function convertStatementToObject(line: string): StatementObject | undefi
         line = lineWithComments[0];
     }
 
+    if (line.includes('assign')) {
+        return extractAssignStatementToObject(line);
+    }
     if (line.includes('every ')) {
         return extractEveryStatementToObject(line);
     }
@@ -82,9 +85,6 @@ export function convertStatementToObject(line: string): StatementObject | undefi
     }
     if (line.includes('if ')) {
         return extractIfStatementToObject(line);
-    }
-    if (line.includes('assign')) {
-        return extractAssignStatementToObject(line);
     }
     return undefined;
 }

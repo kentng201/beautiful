@@ -87,10 +87,10 @@ let currentCondition: Condition | undefined;
 let currentOperator: string | undefined;
 let currentKey: string | undefined;
 let traceString = '0';
-function isNumeric(value: string) {
+export function isNumeric(value: string) {
     return /^-?\d*\.?\d+$/.test(value);
 }
-function isString(value: string) {
+export function isString(value: string) {
     return /^".*"$/.test(value) || /^'.*'$/.test(value) || /^\.\.\..*\.\.\.$/.test(value);
 }
 

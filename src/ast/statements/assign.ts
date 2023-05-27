@@ -1,6 +1,8 @@
 import { StatementObject } from '../StatementParser';
 import { verifyFilterSyntax } from './assignment/filter';
+import { verifyHttpSyntax } from './assignment/http';
 import { verifyMapSyntax } from './assignment/map';
+import { verifyNewSyntax } from './assignment/new';
 import { verifyPickSyntax } from './assignment/pick';
 
 export function verifyAssignStatement(line: string) {
@@ -56,16 +58,10 @@ export function verifyAssignSyntax(method: string, body: string) {
         // verifySortSyntax(body);
     } else if (method == 'pick') {
         verifyPickSyntax(body);
-    } else if (method == 'GET') {
-        // verifyGetSyntax(body);
-    } else if (method == 'POST') {
-        // verifyPostSyntax(body);
-    } else if (method == 'PUT') {
-        // verifyPutSyntax(body);
-    } else if (method == 'DELETE') {
-        // verifyDeleteSyntax(body);
+    } else if (method == 'GET' || method == 'POST' || method == 'PUT' || method == 'DELETE') {
+        verifyHttpSyntax(body);
     } else if (method == 'new') {
-        // verifyNewSyntax(body);
+        verifyNewSyntax(body);
     }
 }
 
@@ -87,7 +83,7 @@ export function extractAssignStatementToMethod(line: string) {
     }
     object = new AssignMethodObject(method, body);
     verifyAssignSyntax(method, body);
-    if (object) return object;
+    if (object && body) return object;
 
     line = line.replace(/\b(or)\b/g, '||');
     line = line.replace(/\b(and)\b/g, '&&');
@@ -114,6 +110,7 @@ export function extractAssignStatementToMethod(line: string) {
         type = 'variable';
     }
 
+    console.log('line: ', line);
     object = new AssignMethodObject(type, line);
     return object;
 }
