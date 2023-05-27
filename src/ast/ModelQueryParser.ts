@@ -140,6 +140,9 @@ export function parseCondition(line: string): Condition[] {
         if (word == '(') {
             traceString += '.0';
         } else if (word == ')') {
+            if (currentCondition) {
+                pumpCondition();
+            }
             const traces = traceString.split('.');
             traces.pop();
             traceString = traces.join('.');
@@ -168,7 +171,7 @@ export function parseCondition(line: string): Condition[] {
             if (!operatorKeywords.includes(word) && !logicalOperatorKeywords.includes(word)) {
                 throw new Error(JSON.stringify({
                     msg: `SyntaxError: Unexpected identifier "${word}"`,
-                    lineNo: undefined,
+                    lineNo: undefined
                 }));
             }
             currentOperator = word;
@@ -178,7 +181,7 @@ export function parseCondition(line: string): Condition[] {
             if (reserverdWords.includes(word)) {
                 throw new Error(JSON.stringify({
                     msg: `SyntaxError: "${word}" is a reserved word`,
-                    lineNo: undefined,
+                    lineNo: undefined
                 }));
             }
             currentCondition.key = word;
@@ -187,10 +190,6 @@ export function parseCondition(line: string): Condition[] {
             currentCondition = new Condition('none', word, '', '', []);
             currentKey = word;
         }
-    }
-
-    if (currentCondition) {
-        pumpCondition();
     }
 
     currentCondition = undefined;
@@ -207,9 +206,9 @@ export function parseOrderBy(orderByWords: string[]): [string, 'asc' | 'desc'][]
     for (const word of orderByArray) {
         const words = word.split(' ');
         if (words.length == 1) {
-            orderBy.push([words[0], 'asc',]);
+            orderBy.push([words[0], 'asc']);
         } else {
-            orderBy.push([words[0], words[1] as 'asc' | 'desc',]);
+            orderBy.push([words[0], words[1] as 'asc' | 'desc']);
         }
     }
     return orderBy;
@@ -295,7 +294,7 @@ export default function parse(line: string, lineNo: number) {
                     if (currentModel.firstOrLast == 'last') {
                         throw new Error(JSON.stringify({
                             msg: 'SyntaxError: "first" and "last" cannot be used together',
-                            lineNo: undefined,
+                            lineNo: undefined
                         }));
                     }
                     currentModel.firstOrLast = 'first';
@@ -303,7 +302,7 @@ export default function parse(line: string, lineNo: number) {
                     if (currentModel.firstOrLast == 'first') {
                         throw new Error(JSON.stringify({
                             msg: 'SyntaxError: "first" and "last" cannot be used together',
-                            lineNo: undefined,
+                            lineNo: undefined
                         }));
                     }
                     currentModel.firstOrLast = 'last';
@@ -311,7 +310,7 @@ export default function parse(line: string, lineNo: number) {
                 if (currentUsedKeywords.includes(currentKeyword)) {
                     throw new Error(JSON.stringify({
                         msg: `SyntaxError: Duplicate identitfier "${currentKeyword}"`,
-                        lineNo: undefined,
+                        lineNo: undefined
                     }));
                 }
                 currentUsedKeywords.push(currentKeyword);
@@ -359,7 +358,7 @@ export default function parse(line: string, lineNo: number) {
         if (!currentModel.modelName) {
             throw new Error(JSON.stringify({
                 msg: 'SyntaxError: load statement must have "from" keyword',
-                lineNo: lastLoadLineNumber,
+                lineNo: lastLoadLineNumber
             }));
         }
         models.push(currentModel);
