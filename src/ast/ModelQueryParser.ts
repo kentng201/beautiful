@@ -10,7 +10,7 @@ export function hasModelKeyword(line: string): boolean {
 }
 
 export const operatorKeywords = ['more than', 'less than', 'equal', 'not equal', 'full equal', 'not full equal', 'more than or equal', 'less than or equal',];
-export const logicalOperatorKeywords = ['>=', '<=', '>', '<', '===', '!==', '!=', '=',];
+export const logicalOperatorKeywords = ['>=', '<=', '>', '<', '===', '!==', '!=', '=', 'like', 'between',];
 
 export class Condition {
     join: 'and' | 'or' | 'none' | 'childrens';
@@ -104,7 +104,7 @@ export function parseCondition(line: string): Condition[] {
         if (words[i].includes('(') || words[i].includes(')')) {
             const tempWords = breakParenthesis(words[i]);
             newWords = newWords.concat(tempWords);
-        } else {
+        } else if (words[i] != 'where') {
             newWords.push(words[i]);
         }
     }
@@ -118,6 +118,8 @@ export function parseCondition(line: string): Condition[] {
             traceString = traces.join('.');
         } else if (word == 'and' || word == 'or') {
             currentCondition = new Condition(word, '', '', '', []);
+            currentKey = undefined;
+            currentOperator = undefined;
         } else if (currentCondition && currentOperator && currentKey) {
             if (word == 'and' && currentOperator == 'and') {
                 throw new Error(JSON.stringify({
@@ -158,6 +160,7 @@ export function parseCondition(line: string): Condition[] {
             currentKey = undefined;
             currentOperator = undefined;
         } else if (currentCondition && currentKey) {
+            console.log('currentKey: ', currentKey);
             if (!operatorKeywords.includes(word) && !logicalOperatorKeywords.includes(word)) {
                 throw new Error(JSON.stringify({
                     msg: `SyntaxError: Unexpected identifier "${word}"`,
@@ -167,29 +170,28 @@ export function parseCondition(line: string): Condition[] {
             currentOperator = word;
             currentCondition.operator = word;
         } else if (currentCondition) {
-            const wordIsString = word.match(/(\w+)\.\.\.(.*?)\.\.\./);
-            if (wordIsString) {
-                currentCondition.key = wordIsString[1];
-                currentCondition.operator = '=';
-                currentCondition.value = wordIsString[2];
-                if (!traceString.includes('.')) {
-                    conditions.push(currentCondition);
-                } else {
-                    const traces = traceString.split('.');
-                    const currentTrace = traces[0];
-                    let currentConditionTrace = conditions[parseInt(currentTrace)];
-                    for (let i = 1; i < traces.length - 1; i++) {
-                        currentConditionTrace = currentConditionTrace.children[currentConditionTrace.children.length - 1];
-                    }
-                    currentConditionTrace.children.push(currentCondition);
-                }
-                currentKey = undefined;
-                currentOperator = undefined;
-                continue;
-            } else {
-                currentCondition.key = word;
-                currentKey = word;
-            }
+            // const wordIsString = word.match(/(\w+)\.\.\.(.*?)\.\.\./);
+            // if (wordIsString) {
+            //     currentCondition.key = wordIsString[1];
+            //     currentCondition.operator = '=';
+            //     currentCondition.value = wordIsString[2];
+            //     if (!traceString.includes('.')) {
+            //         conditions.push(currentCondition);
+            //     } else {
+            //         const traces = traceString.split('.');
+            //         const currentTrace = traces[0];
+            //         let currentConditionTrace = conditions[parseInt(currentTrace)];
+            //         for (let i = 1; i < traces.length - 1; i++) {
+            //             currentConditionTrace = currentConditionTrace.children[currentConditionTrace.children.length - 1];
+            //         }
+            //         currentConditionTrace.children.push(currentCondition);
+            //     }
+            //     currentKey = undefined;
+            //     currentOperator = undefined;
+            //     continue;
+            // }
+            currentCondition.key = word;
+            currentKey = word;
         } else {
             currentCondition = new Condition('none', word, '', '', []);
             currentKey = word;
@@ -325,12 +327,6 @@ export default function parse(line: string, lineNo: number) {
                 if (currentKeyword == 'load') {
                     currentModel.variableName = word;
                 } else if (currentKeyword == 'from') {
-                    if (currentModel.modelName) {
-                        throw new Error(JSON.stringify({
-                            msg: 'SyntaxError: Duplicate declaration of "from"',
-                            lineNo: undefined,
-                        }));
-                    }
                     currentModel.modelName = word;
                 } else if (currentKeyword == 'select') {
                     selectWords.push(word);
@@ -348,7 +344,6 @@ export default function parse(line: string, lineNo: number) {
                     }
                 } else if (currentKeyword == 'where') {
                     conditionWords.push(word);
-                } else {
                 }
             }
         }

@@ -1,7 +1,8 @@
 load user 
     from User 
-    order by username 
-    where username like ...%test%... and (age more than 18 and age less than 30 or (age equal 14) and age equal 20 ) 
+    order by username asc
+    where username like ...%test%... 
+    and (age more than 18 and age less than 30 or (age equal 14) and hei equal 20) 
 
 
 load schedule 
