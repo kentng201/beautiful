@@ -8,7 +8,6 @@ const filePath: string = process.argv[2];
 fs.readFile(filePath, 'utf8', (err, data) => {
     const lines = data.split('\n');
 
-
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
         try {
