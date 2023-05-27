@@ -1,24 +1,20 @@
 import { parseCondition } from "../ModelQueryParser";
-import { StatementObject, whereRegex } from "../StatementParser";
+import { StatementObject } from "../StatementParser";
 
 export function verifyIfStatement(line: string) {
-    if (line.startsWith('if')) {
+    if (line.startsWith('if') && line.match(/\b(if)\b/g)?.length == 1) {
     } else if (line.includes(' if')) {
         throw new Error(JSON.stringify({
-            message: '"if" should be at the beginning of the line',
+            msg: 'SyntaxError: "if" should be at the beginning of the line',
             lineNo: undefined,
         }))
     }
 }
 
 export function extractIfStatementToObject(line: string) {
-    if (line.startsWith('if')) {
-        const expressionWithConditions = line.replace('if', ''); 
+    if (line.startsWith('if ')) {
+        const expressionWithConditions = line.replace('if ', ''); 
         const conditions = parseCondition(expressionWithConditions);
         return new StatementObject('if', '', conditions);
     }
-    throw new Error(JSON.stringify({
-        message: '"if" should be at the beginning of the line',
-        lineNo: undefined,
-    }));
 }
