@@ -14,5 +14,5 @@ every user in users where user.name not full equal 'John'
         display key
         display user[key]
 
-while num1 less than 10
+while num1 less than 10 and test more than 10
     num1 plus 10
