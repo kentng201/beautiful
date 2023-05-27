@@ -1,20 +1,21 @@
-import { Condition, parseCondition } from "./ModelQueryParser";
-import { extractElseStatementToObject, verifyElseStatement } from "./statements/else";
-import { extractEveryStatementToObject, verifyEveryStatement } from "./statements/every";
-import { extractForStatementToObject, verifyForStatement } from "./statements/for";
-import { extractIfStatementToObject, verifyIfStatement } from "./statements/if";
-import { extractWhileStatementToObject, verifyWhileStatement } from "./statements/while";
+import { Condition } from './ModelQueryParser';
+import { extractElseStatementToObject, verifyElseStatement } from './statements/else';
+import { extractEveryStatementToObject, verifyEveryStatement } from './statements/every';
+import { extractForStatementToObject, verifyForStatement } from './statements/for';
+import { extractIfStatementToObject, verifyIfStatement } from './statements/if';
+import { extractWhileStatementToObject, verifyWhileStatement } from './statements/while';
 
-export let statementKeywords = ['if', 'else', 'for', 'every', 'switch', 'while', 'loop']
+export const statementKeywords = ['if', 'else', 'for', 'every', 'switch', 'while', 'loop',];
 export type StatementKeyword = typeof statementKeywords[number];
 
-export let loopControlKeywords = ['break', 'continue', 'return'];
+export const loopControlKeywords = ['break', 'continue', 'return',];
+export const expressionKeywords = ['where', 'select', 'from', 'order by', 'group by', 'having', 'limit', 'offset', 'distinct', 'as', 'in', 'not in', 'exists', 'not exists', 'between', 'like', 'is', 'is not', 'null', 'not null', 'union', 'union all', 'intersect', 'except', 'case', 'when', 'then', 'else', 'end', 'cast', 'as', 'coalesce', 'nullif', 'in', 'not in', 'exists', 'not exists', 'between', 'like', 'is', 'is not', 'null', 'not null', 'union', 'union all', 'intersect', 'except', 'case', 'when', 'then', 'else', 'end', 'cast', 'as', 'coalesce', 'nullif',];
 
-export let logicaKeywords = ['and', 'or'];
-export let operatorKeywords = ['==', '===', '>', '>=', '<', '<=', 'more than', 'less than', 'equal', 'full equal', 'between', 'like', 'is']
+export const logicaKeywords = ['and', 'or',];
+export const operatorKeywords = ['==', '===', '>', '>=', '<', '<=', 'more than', 'less than', 'equal', 'full equal', 'between', 'like', 'is',];
 
-export let whereRegex = /where\s*\((.*)\)/;
-export let expressionRegex = /(.*)\s*(==|===|>|>=|<|<=|more than|less than|equal|full equal|between|like|is)\s*(.*)/;
+export const whereRegex = /where\s*\((.*)\)/;
+export const expressionRegex = /(.*)\s*(==|===|>|>=|<|<=|more than|less than|equal|full equal|between|like|is)\s*(.*)/;
 
 export class StatementObject {
     keyword: StatementKeyword;
@@ -34,6 +35,9 @@ export function verifyStatementSyntax(line: string) {
     if (line.includes('every ')) {
         verifyEveryStatement(line); return;
     }
+    if (line.includes('while ')) {
+        verifyWhileStatement(line); return;
+    }
     if (line.includes('for ')) {
         verifyForStatement(line); return;
     }
@@ -46,9 +50,6 @@ export function verifyStatementSyntax(line: string) {
     if (line.includes('switch ')) {
         // verifySwitchStatement(line); return;
     }
-    if (line.includes('while ')) {
-        verifyWhileStatement(line); return;
-    }
     if (line.includes('loop ')) {
         // verifyLoopStatement(line); return;
     }
@@ -57,6 +58,9 @@ export function verifyStatementSyntax(line: string) {
 export function convertStatementToObject(line: string): StatementObject | undefined {
     if (line.includes('every ')) {
         return extractEveryStatementToObject(line);
+    }
+    if (line.includes('while ')) {
+        return extractWhileStatementToObject(line);
     }
     if (line.includes('else')) {
         return extractElseStatementToObject(line);
@@ -73,9 +77,6 @@ export function convertStatementToObject(line: string): StatementObject | undefi
     if (line.includes('switch ')) {
         // return extractSwitchStatementToObject(line);
     }
-    if (line.includes('while ')) {
-        return extractWhileStatementToObject(line);
-    }
     if (line.includes('loop ')) {
         // return extractLoopStatementToObject(line);
     }
@@ -84,9 +85,9 @@ export function convertStatementToObject(line: string): StatementObject | undefi
 }
 
 export let currentLineNo: number | undefined;
-export let currentKeywordStackLineNo: number[] = [];
+export const currentKeywordStackLineNo: number[] = [];
 export let currentStatementObject: StatementObject | undefined;
-export let statements: StatementObject[] = [];
+export const statements: StatementObject[] = [];
 export function getStatements() {
     return statements;
 }

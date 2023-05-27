@@ -1,3 +1,5 @@
+import { expressionKeywords, logicaKeywords, loopControlKeywords, statementKeywords } from './StatementParser';
+
 export function hasModelKeyword(line: string): boolean {
     return (
         line.match(/\b(select|load|save|find|order|by|from|where|between|like|first|last|limit|offset|and|or)\b/) != null
@@ -121,28 +123,6 @@ export function parseCondition(line: string): Condition[] {
             currentKey = undefined;
             currentOperator = undefined;
         } else if (currentCondition && currentOperator && currentKey) {
-            if (word == 'and' && currentOperator == 'and') {
-                throw new Error(JSON.stringify({
-                    msg: 'SyntaxError: Duplicate identitfier "and"',
-                    lineNo: undefined,
-                }));
-            } else if (word == 'or' && currentOperator == 'or') {
-                throw new Error(JSON.stringify({
-                    msg: 'SyntaxError: Duplicate identitfier "or"',
-                    lineNo: undefined,
-                }));
-            } else if (word == 'and' && currentOperator == 'or') {
-                throw new Error(JSON.stringify({
-                    msg: 'SyntaxError: "and" and "or" cannot be used together',
-                    lineNo: undefined,
-                }));
-            } else if (word == 'or' && currentOperator == 'and') {
-                throw new Error(JSON.stringify({
-                    msg: 'SyntaxError: "and" and "or" cannot be used together',
-                    lineNo: undefined,
-                }));
-            }
-
             currentCondition.value = word;
 
             if (!traceString.includes('.')) {
@@ -160,7 +140,6 @@ export function parseCondition(line: string): Condition[] {
             currentKey = undefined;
             currentOperator = undefined;
         } else if (currentCondition && currentKey) {
-            console.log('currentKey: ', currentKey);
             if (!operatorKeywords.includes(word) && !logicalOperatorKeywords.includes(word)) {
                 throw new Error(JSON.stringify({
                     msg: `SyntaxError: Unexpected identifier "${word}"`,
@@ -170,26 +149,18 @@ export function parseCondition(line: string): Condition[] {
             currentOperator = word;
             currentCondition.operator = word;
         } else if (currentCondition) {
-            // const wordIsString = word.match(/(\w+)\.\.\.(.*?)\.\.\./);
-            // if (wordIsString) {
-            //     currentCondition.key = wordIsString[1];
-            //     currentCondition.operator = '=';
-            //     currentCondition.value = wordIsString[2];
-            //     if (!traceString.includes('.')) {
-            //         conditions.push(currentCondition);
-            //     } else {
-            //         const traces = traceString.split('.');
-            //         const currentTrace = traces[0];
-            //         let currentConditionTrace = conditions[parseInt(currentTrace)];
-            //         for (let i = 1; i < traces.length - 1; i++) {
-            //             currentConditionTrace = currentConditionTrace.children[currentConditionTrace.children.length - 1];
-            //         }
-            //         currentConditionTrace.children.push(currentCondition);
-            //     }
-            //     currentKey = undefined;
-            //     currentOperator = undefined;
-            //     continue;
-            // }
+            const reserverdWords = statementKeywords
+                .concat(modelKeywords)
+                .concat(loopControlKeywords)
+                .concat(expressionKeywords)
+                .concat(logicaKeywords)
+                .concat(operatorKeywords);
+            if (reserverdWords.includes(word)) {
+                throw new Error(JSON.stringify({
+                    msg: `SyntaxError: "${word}" is a reserved word`,
+                    lineNo: undefined,
+                }));
+            }
             currentCondition.key = word;
             currentKey = word;
         } else {
