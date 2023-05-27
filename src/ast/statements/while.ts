@@ -5,13 +5,13 @@ export function verifyWhileStatement(line: string) {
     if (!line.startsWith('while')) {
         throw new Error(JSON.stringify({
             msg: 'SyntaxError: "while" should be at the beginning of the line',
-            lineNo: undefined,
+            lineNo: undefined
         }));
     }
     if (line.match(/\b(while)\b/g)?.length != 1) {
         throw new Error(JSON.stringify({
             msg: 'SyntaxError: Duplicate identifier "while"',
-            lineNo: undefined,
+            lineNo: undefined
         }));
     }
 }

@@ -4,12 +4,13 @@ export const logicalOperatorKeywords = ['>=', '<=', '>', '<', '===', '!==', '!='
 export const arithemticOperatorKeywords = ['add', 'minus', 'multiply', 'divide', 'mod', 'power'];
 export const logicalArtihmeticOperatorKeywords = ['+', '-', '*', '/', '%', '**', '++', '--'];
 
-export const assignKeywords = ['assign', 'via'];
+export const assignKeywords = ['via'];
 
-export const statementKeywords = ['if', 'else', 'for', 'every', 'switch', 'while', 'loop'];
+export const statementKeywords = ['if', 'else', 'for', 'every', 'switch', 'while', 'loop', 'assign', 'func'];
 export type StatementKeyword = typeof statementKeywords[number];
 
 export const statementControlKeywords = ['in', 'as'];
+export const httpKeywords = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD', 'TRACE', 'CONNECT'];
 
 export const loopControlKeywords = ['break', 'continue', 'return'];
 
@@ -25,6 +26,7 @@ export type ModelKeyword = typeof modelKeywords[number];
 export const reserverdWords = ([] as string[]).concat(
     statementKeywords,
     statementControlKeywords,
+    httpKeywords,
     modelKeywords,
     assignKeywords,
     loopControlKeywords,

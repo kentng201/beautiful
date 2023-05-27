@@ -1,5 +1,6 @@
 import { Condition } from './ModelQueryParser';
 import { StatementKeyword, statementKeywords } from './reserved';
+import { extractAssignStatementToObject, verifyAssignStatement } from './statements/assign';
 import { extractElseStatementToObject, verifyElseStatement } from './statements/else';
 import { extractEveryStatementToObject, verifyEveryStatement } from './statements/every';
 import { extractForStatementToObject, verifyForStatement } from './statements/for';
@@ -7,14 +8,15 @@ import { extractIfStatementToObject, verifyIfStatement } from './statements/if';
 import { extractLoopStatementToObject, verifyLoopStatement } from './statements/loop';
 import { extractWhileStatementToObject, verifyWhileStatement } from './statements/while';
 
-export class StatementObject {
+export class StatementObject<T = any> {
+    name: string = 'statement';
     keyword: StatementKeyword;
-    expression: string;
+    expression: T;
     condition: Condition[] = [];
-    body: (string | StatementObject)[] = [];
-    parent?: StatementObject;
+    body: (string | StatementObject<T>)[] = [];
+    parent?: StatementObject<T>;
 
-    constructor(keyword: StatementKeyword, expression: string, condition: Condition[] = [], body: (string | StatementObject)[] = []) {
+    constructor(keyword: StatementKeyword, expression: T, condition: Condition[] = [], body: (string | StatementObject<T>)[] = []) {
         this.keyword = keyword;
         this.expression = expression;
         this.condition = condition;
@@ -48,6 +50,9 @@ export function verifyStatementSyntax(line: string) {
     if (line.includes('if ')) {
         verifyIfStatement(line); return;
     }
+    if (line.includes('assign')) {
+        verifyAssignStatement(line); return;
+    }
 }
 
 export function convertStatementToObject(line: string): StatementObject | undefined {
@@ -77,6 +82,9 @@ export function convertStatementToObject(line: string): StatementObject | undefi
     }
     if (line.includes('if ')) {
         return extractIfStatementToObject(line);
+    }
+    if (line.includes('assign')) {
+        return extractAssignStatementToObject(line);
     }
     return undefined;
 }
