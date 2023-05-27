@@ -23,9 +23,7 @@ async function asking(question: string): Promise<string> {
     4. Compile source to exportable component
 Your choice is: `);
 
-    if ([1, 2, 3, 4,].includes(Number(command))) {
-        console.log('hi');
-    } else {
+    if (![1, 2, 3, 4,].includes(Number(command))) {
         console.log(chalk.red('Invalid command, dismiss.'));
     }
 
