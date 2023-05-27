@@ -17,6 +17,8 @@ fs.readFile(filePath, 'utf8', (err, data) => {
         try {
             parse(line, i + 1);
         } catch (error: any) {
+            console.log('error: ', error);
+
             const errorObject = JSON.parse(error.message);
             console.log(chalk.red(errorObject.msg));
             console.log(chalk.red(`    at (${filePath}:${errorObject.lineNo || i + 1})`));

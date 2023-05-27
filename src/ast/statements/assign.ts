@@ -1,4 +1,7 @@
 import { StatementObject } from '../StatementParser';
+import { verifyFilterSyntax } from './assignment/filter';
+import { verifyMapSyntax } from './assignment/map';
+import { verifyPickSyntax } from './assignment/pick';
 
 export function verifyAssignStatement(line: string) {
     if (!line.startsWith('assign')) {
@@ -33,7 +36,6 @@ class AssignMethodObject {
 }
 
 class AssignObject {
-    name = 'assign';
     variableName: string;
     statement?: AssignMethodObject;
 
@@ -43,20 +45,49 @@ class AssignObject {
     }
 }
 
+export function verifyAssignSyntax(method: string, body: string) {
+    if (method == 'map') {
+        verifyMapSyntax(body);
+    } else if (method == 'filter') {
+        verifyFilterSyntax(body);
+    } else if (method == 'reduce') {
+        // verifyReduceSyntax(body);
+    } else if (method == 'sort') {
+        // verifySortSyntax(body);
+    } else if (method == 'pick') {
+        verifyPickSyntax(body);
+    } else if (method == 'GET') {
+        // verifyGetSyntax(body);
+    } else if (method == 'POST') {
+        // verifyPostSyntax(body);
+    } else if (method == 'PUT') {
+        // verifyPutSyntax(body);
+    } else if (method == 'DELETE') {
+        // verifyDeleteSyntax(body);
+    } else if (method == 'new') {
+        // verifyNewSyntax(body);
+    }
+}
+
+
+
 export function extractAssignStatementToMethod(line: string) {
-    const [method, ...rest] = line.split(' ');
+    let object, body = '';
+    let [method] = line.split(' ');
+    const rest = line.split(' ').slice(1);
     if (method == 'map' || method == 'filter' || method == 'reduce' || method == 'sort' || method == 'pick') {
-        const object = new AssignMethodObject(method, rest.join(' '));
-        return object;
+        body = rest.join(' ');
     }
     if (method == 'GET' || method == 'POST' || method == 'PUT' || method == 'DELETE') {
-        const object = new AssignMethodObject(method, rest.join(' '));
-        return object;
+        body = rest.join(' ');
     }
     if (method == 'new' || rest[0] == 'new') {
-        const object = new AssignMethodObject('new', line.split('new')[1].trim());
-        return object;
+        method = 'new';
+        body = line.split('new')[1].trim();
     }
+    object = new AssignMethodObject(method, body);
+    verifyAssignSyntax(method, body);
+    if (object) return object;
 
     line = line.replace(/\b(or)\b/g, '||');
     line = line.replace(/\b(and)\b/g, '&&');
@@ -83,7 +114,7 @@ export function extractAssignStatementToMethod(line: string) {
         type = 'variable';
     }
 
-    const object = new AssignMethodObject(type, line);
+    object = new AssignMethodObject(type, line);
     return object;
 }
 
