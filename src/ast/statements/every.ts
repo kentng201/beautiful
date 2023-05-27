@@ -49,7 +49,7 @@ export function extractEveryStatementToObject(line: string) {
     if (line.length > 0) {
         line = line.replace('where', '').trim();
         const conditions = parseCondition(line);
-        return new StatementObject('loop', expression, conditions);
+        return new StatementObject('every', expression, conditions);
     }
     return new StatementObject('every', expression);
 }
