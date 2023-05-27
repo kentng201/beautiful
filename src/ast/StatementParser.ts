@@ -92,8 +92,6 @@ function isStatementKeyword(line: string) {
     return statementKeywords.includes(line.trim().split(' ')[0]);
 }
 
-let decreaseSpacing = false;
-
 export default function parse(line: string, lineNo: number) {
     currentLineNo = lineNo;
     if (line.trim().length === 0) {
@@ -104,11 +102,9 @@ export default function parse(line: string, lineNo: number) {
         if (isStatementKeyword(line)) {
             verifyStatementSyntax(line.trim());
             parentStatementObject = currentStatementObject;
-            console.log('parentStatementObject: ', parentStatementObject);
             const result = convertStatementToObject(line.trim());
             if (result) {
                 const leadingSpaces = line.indexOf(line.trim());
-                console.log('leadingSpaces: ', leadingSpaces);
                 if (spacingStack[spacingStack.length - 1] < leadingSpaces) {
                     spacingStack.push(line.indexOf(line.trim()));
                 }
@@ -126,11 +122,12 @@ export default function parse(line: string, lineNo: number) {
                 spacingStack.push(line.indexOf(line.trim()));
             }
             for (let i = 0; i < spacingStack.length; i++) {
-                if (spacingStack[spacingStack.length - 2] > leadingSpaces) {
-                    spacingStack.pop();
-                    parentStatementObject = parentStatementObject?.parent;
-                    currentStatementObject = parentStatementObject;
-                    decreaseSpacing = true;
+                if (spacingStack[spacingStack.length - 1] > leadingSpaces) {
+                    if (currentStatementObject && currentStatementObject.parent) {
+                        spacingStack.pop();
+                        currentStatementObject = currentStatementObject?.parent;
+                        parentStatementObject = currentStatementObject?.parent;
+                    }
                 } else {
                     break;
                 }
