@@ -1,0 +1,14 @@
+assign basicInt via 2
+assign allUsers via 100 new User
+
+assign noNameUsers via filter allUsers as user where user.username equal ...no name...
+assign sortedUsers via sort allUsers by username asc
+assign testUser via pick allUsers where id equal 1
+assign nameOnly via map allUsers as user return new string array user.username user.password
+
+
+assign newUsers via 2 new User array
+assign newUsers via 2 new string array '' ''
+assign newUsers via 2 new User collection
+
+assign apiResult via GET 'https://api.github.com/users/defunkt'
