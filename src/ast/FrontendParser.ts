@@ -87,7 +87,7 @@ export default function parse(line: string) {
             mainObject = newObject;
         }
         currentAstObject = newObject;
-    // is end of tag
+        // is end of tag
     } else if (line.endsWith('.') && !line.endsWith('...')) {
         console.log('no', 2);
         if (currentAstObject && currentAstObject !== mainObject) {
@@ -100,7 +100,7 @@ export default function parse(line: string) {
         } else {
             console.log('ignoring line:', line);
         }
-    // is start of a class/function/keyword
+        // is start of a class/function/keyword
     } else if (line.endsWith("{")) {
         console.log('no', 3);
         const isFunction = line.match(/(\([a-zA-Z0-9_, ]*\) (=>*) {)/) !== null;
@@ -134,7 +134,7 @@ export default function parse(line: string) {
                 functionObject = undefined;
             }
         }
-    // is end of a class/function/keyword
+        // is end of a class/function/keyword
     } else if (line.endsWith("}")) {
         console.log('no', 4);
         if (keywordStack.length > 0) {
@@ -142,7 +142,7 @@ export default function parse(line: string) {
                 functionObject.body.push(line);
             }
             keywordStack.pop();
-        } 
+        }
         else if (currentAstObject) {
             console.log('no', 5);
             if (functionObject) {
@@ -166,7 +166,7 @@ export default function parse(line: string) {
                 currentAstObject.attributes[key] = ['function', newFunctionObject];
             }
         }
-    // is function body
+        // is function body
     } else if (
         line.startsWith('const') || line.startsWith('let') ||
         line.includes('(') && line.includes(')') ||
@@ -194,7 +194,7 @@ export default function parse(line: string) {
     } else if (line.includes('..')) {
         console.log('no', 9);
         const [key, value] = line.trimStart().trimEnd().split('..');
-        
+
         if (currentAstObject) {
             let type: AttributeType;
             try {

@@ -2,7 +2,7 @@ import { Condition, parseCondition } from "./ModelQueryParser";
 import { extractElseStatementToObject, verifyElseStatement } from "./statements/else";
 import { extractIfStatementToObject, verifyIfStatement } from "./statements/if";
 
-export let statementKeywords = ['if', 'else', 'when', 'for', 'every', 'switch', 'while', 'case', 'loop']
+export let statementKeywords = ['if', 'else', 'for', 'every', 'switch', 'while', 'case', 'loop']
 export type StatementKeyword = typeof statementKeywords[number];
 
 export let loopControlKeywords = ['break', 'continue', 'return'];
@@ -32,8 +32,6 @@ export function verifyStatementSyntax(line: string) {
         verifyElseStatement(line);
     } else if (line.includes('if ')) {
         verifyIfStatement(line);
-    } else if (line.includes('when ')) {
-        // verifyWhenStatement(line);
     } else if (line.includes('for ')) {
         // verifyForStatement(line);
     } else if (line.includes('every ')) {
@@ -58,8 +56,6 @@ export function convertStatementToObject(line: string): StatementObject | undefi
     }
     if (line.includes('else')) {
         return extractElseStatementToObject(line);
-    } else if (line.includes('when ')) {
-        // return extractWhenStatementToObject(line);
     } else if (line.includes('for ')) {
         // return extractForStatementToObject(line);
     } else if (line.includes('every ')) {

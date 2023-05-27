@@ -6,7 +6,7 @@ export function hasModelKeyword(line: string): boolean {
         ||
         line.match(/\b(join|left|right|inner)\b/) != null
     )
-    && !line.startsWith('.');
+        && !line.startsWith('.');
 }
 
 // example: load users select username from User where username...ho... and (id..3 or id>3) or username...kentng201... left join a order by username;
@@ -157,7 +157,7 @@ export function parseCondition(line: string): Condition[] {
             currentKey = undefined;
             currentOperator = undefined;
         } else if (currentCondition && currentKey) {
-            
+
             currentOperator = word;
             currentCondition.operator = word;
         } else if (currentCondition) {
@@ -268,7 +268,7 @@ export default function parse(line: string, lineNo: number) {
         line = line.replace('full equal', '===');
         line = line.replace('not equal', '!=');
         line = line.replace('equal', '=');
-        
+
         let words = line.split(' ');
         let newWords: any[] = [];
         for (let i = 0; i < words.length; i++) {

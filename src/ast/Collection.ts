@@ -71,7 +71,7 @@ export default class Collection<Model> {
         return newCollection;
     }
 
-    sort(key, order: 'asc'|'desc') {
+    sort(key, order: 'asc' | 'desc') {
         this.models.sort((a, b) => {
             if (a[key] > b[key]) {
                 return order == 'asc' ? 1 : -1;

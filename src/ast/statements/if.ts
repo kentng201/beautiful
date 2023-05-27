@@ -12,9 +12,7 @@ export function verifyIfStatement(line: string) {
 }
 
 export function extractIfStatementToObject(line: string) {
-    if (line.startsWith('if ')) {
-        const expressionWithConditions = line.replace('if ', ''); 
-        const conditions = parseCondition(expressionWithConditions);
-        return new StatementObject('if', '', conditions);
-    }
+    const expressionWithConditions = line.replace('if ', ''); 
+    const conditions = parseCondition(expressionWithConditions);
+    return new StatementObject('if', '', conditions);
 }
