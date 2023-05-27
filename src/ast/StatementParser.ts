@@ -4,16 +4,25 @@ import { extractAssignStatementToObject, verifyAssignStatement } from './stateme
 import { extractElseStatementToObject, verifyElseStatement } from './statements/else';
 import { extractEveryStatementToObject, verifyEveryStatement } from './statements/every';
 import { extractForStatementToObject, verifyForStatement } from './statements/for';
-import { extractFuncStatementToObject, verifyFuncStatement } from './statements/func';
+import { extractArgumentsStringToObject, extractFuncStatementToObject, isArgument, verifyFuncStatement } from './statements/func';
 import { extractIfStatementToObject, verifyIfStatement } from './statements/if';
 import { extractLoopStatementToObject, verifyLoopStatement } from './statements/loop';
 import { extractWhileStatementToObject, verifyWhileStatement } from './statements/while';
 
+
+export class ArgumentObject {
+    name: string;
+    type?: string;
+    constructor(name: string, type?: string) {
+        this.name = name;
+        this.type = type;
+    }
+}
 export class StatementObject<T = any> {
     name: string = 'statement';
     keyword: StatementKeyword;
     expression: T;
-    arguments?: string;
+    arguments?: ArgumentObject[];
     condition: Condition[] = [];
     body: (string | StatementObject<T>)[] = [];
     parent?: StatementObject<T>;
@@ -114,6 +123,8 @@ function isStatementKeyword(line: string) {
     return statementKeywords.includes(line.trim().split(' ')[0]);
 }
 
+export let lastFunctionObject: StatementObject | undefined;
+
 export default function parse(line: string, lineNo: number) {
     currentLineNo = lineNo;
     if (line.trim().length === 0) {
@@ -122,6 +133,7 @@ export default function parse(line: string, lineNo: number) {
         return;
     } else if (line.startsWith(' ') && line.trim().length > 0 && keywordLineNoStack.length > 0) {
         if (isStatementKeyword(line)) {
+            lastFunctionObject = undefined;
             verifyStatementSyntax(line.trim());
             parentStatementObject = currentStatementObject;
             const result = convertStatementToObject(line.trim());
@@ -137,6 +149,13 @@ export default function parse(line: string, lineNo: number) {
                 }
             } else {
                 parentStatementObject = undefined;
+            }
+        } else if (lastFunctionObject && isArgument(line)) {
+            const args = extractArgumentsStringToObject(line);
+            if (lastFunctionObject.arguments) {
+                for (const arg of args) {
+                    lastFunctionObject.arguments.push(arg);
+                }
             }
         } else {
             const leadingSpaces = line.indexOf(line.trim());
@@ -161,6 +180,9 @@ export default function parse(line: string, lineNo: number) {
         const result = convertStatementToObject(line.trim());
         if (result) {
             currentStatementObject = result;
+            if (result.keyword === 'func') {
+                lastFunctionObject = result;
+            }
             keywordLineNoStack.push(lineNo);
             if (spacingStack.length == 0) {
                 spacingStack.push(line.indexOf(line.trim()));
