@@ -6,7 +6,7 @@ export const logicalArtihmeticOperatorKeywords = ['+', '-', '*', '/', '%', '**',
 
 export const assignKeywords = ['via'];
 
-export const statementKeywords = ['if', 'else', 'for', 'every', 'switch', 'while', 'loop', 'assign', 'func'];
+export const statementKeywords = ['if', 'else', 'for', 'every', 'switch', 'while', 'loop', 'set', 'func'];
 export type StatementKeyword = typeof statementKeywords[number];
 
 export const statementControlKeywords = ['in', 'as'];

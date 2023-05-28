@@ -349,7 +349,7 @@ export default function parse(line: string, lineNo: number) {
                 } else if (currentKeyword == 'find') {
                     currentModel.offset = 0;
                     currentModel.limit = 1;
-                    currentModel.conditions.push(new Condition('none', '_id', '=', word, []));
+                    currentModel.conditions.push(new Condition('none', 'id', '=', word, []));
                 } else if (currentKeyword == 'limit') {
                     currentModel.limit = parseInt(word);
                 } else if (currentKeyword == 'offset') {

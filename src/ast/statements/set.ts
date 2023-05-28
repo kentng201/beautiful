@@ -5,29 +5,29 @@ import { verifyMapSyntax } from './assignment/map';
 import { verifyNewSyntax } from './assignment/new';
 import { verifyPickSyntax } from './assignment/pick';
 
-export function verifyAssignStatement(line: string) {
-    if (!line.startsWith('assign')) {
+export function verifySetStatement(line: string) {
+    if (!line.startsWith('set')) {
         throw new Error(JSON.stringify({
-            msg: 'SyntaxError: "assign" should be at the beginning of the line',
+            msg: 'SyntaxError: "set" should be at the beginning of the line',
             lineNo: undefined
         }));
     }
-    if (line.match(/\b(assign)\b/g)?.length != 1) {
+    if (line.match(/\b(set)\b/g)?.length != 1) {
         throw new Error(JSON.stringify({
-            msg: 'SyntaxError: Duplicate identifier "assign"',
+            msg: 'SyntaxError: Duplicate identifier "set"',
             lineNo: undefined
         }));
     }
     const words = line.split(' ');
-    if (words.length >= 3 && words[2] != 'via') {
+    if (words.length >= 3 && words[2] != 'to') {
         throw new Error(JSON.stringify({
-            msg: 'SyntaxError: Missing identifier "via"',
+            msg: 'SyntaxError: Missing identifier "to"',
             lineNo: undefined
         }));
     }
 }
 
-class AssignMethodObject {
+export class SetMethodObject {
     method: string;
     body: string;
 
@@ -37,17 +37,17 @@ class AssignMethodObject {
     }
 }
 
-class AssignObject {
+export class SetObject {
     variableName: string;
-    statement?: AssignMethodObject;
+    statement?: SetMethodObject;
 
-    constructor(variableName: string, statement?: AssignMethodObject) {
+    constructor(variableName: string, statement?: SetMethodObject) {
         this.variableName = variableName;
         this.statement = statement;
     }
 }
 
-export function verifyAssignSyntax(method: string, body: string) {
+export function verifySetSyntax(method: string, body: string) {
     if (method == 'map') {
         verifyMapSyntax(body);
     } else if (method == 'filter') {
@@ -65,9 +65,7 @@ export function verifyAssignSyntax(method: string, body: string) {
     }
 }
 
-
-
-export function extractAssignStatementToMethod(line: string) {
+function extractSetStatementToMethod(line: string) {
     let object, body = '';
     let [method] = line.split(' ');
     const rest = line.split(' ').slice(1);
@@ -81,8 +79,8 @@ export function extractAssignStatementToMethod(line: string) {
         method = 'new';
         body = line.split('new')[1].trim();
     }
-    object = new AssignMethodObject(method, body);
-    verifyAssignSyntax(method, body);
+    object = new SetMethodObject(method, body);
+    verifySetSyntax(method, body);
     if (object && body) return object;
 
     line = line.replace(/\b(or)\b/g, '||');
@@ -110,14 +108,14 @@ export function extractAssignStatementToMethod(line: string) {
         type = 'variable';
     }
 
-    object = new AssignMethodObject(type, line);
+    object = new SetMethodObject(type, line);
     return object;
 }
 
-export function extractAssignStatementToObject(line: string) {
+export function extractSetStatementToObject(line: string) {
     const words = line.split(' ');
-    const expression = line.replace(`assign ${words[1]} via`, '').trim();
-    const assignMethod = extractAssignStatementToMethod(expression);
-    const assign = new AssignObject(words[1], assignMethod);
-    return new StatementObject<AssignObject>('assign', assign);
+    const expression = line.replace(`set ${words[1]} to`, '').trim();
+    const setMethod = extractSetStatementToMethod(expression);
+    const set = new SetObject(words[1], setMethod);
+    return new StatementObject<SetObject>('set', set);
 }

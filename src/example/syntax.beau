@@ -1,10 +1,11 @@
 load users
-    select username
+    select username password
     from User
     where username equal ...ho..........
-    and (id equal 3 or id less than 3 or id equal ...test...)
-    or username equal ...kentng201...
-    left join a
+    and (id equal 3 
+    or id less than 3 
+    or id equal ...test...
+    or username equal ...kentng201...)
     order by username
 
 load user from User find 1
@@ -42,6 +43,10 @@ set newUsers to 2 new User collection ., this add 2 new users into an collection
 
 if newUsers is 2 User array
     console.log ...2 User...
+    if newUsers is a collection
+        console.log ...2 User collection...
+    else if newUsers is an array
+        console.log ...2 User array...
 
 set intArray to int array 1 2 ., this add 2 new int into an array, which is [1, 2]
 set dbUsers to User collection newUsers

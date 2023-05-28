@@ -1,12 +1,12 @@
-import parseQuery, { Condition, LoadModelQueryObject, getCurrentModel, getModels, isModalQueryKeyword, isWhereStatement, parseCondition } from './ModelQueryParser';
+import parseQuery, { Condition, LoadModelQueryObject, getCurrentModel, isModalQueryKeyword, isWhereStatement, parseCondition } from './ModelQueryParser';
 import { StatementKeyword, statementKeywords } from './reserved';
-import { extractAssignStatementToObject, verifyAssignStatement } from './statements/assign';
 import { extractElseStatementToObject, verifyElseStatement } from './statements/else';
 import { extractEveryStatementToObject, verifyEveryStatement } from './statements/every';
 import { extractForStatementToObject, verifyForStatement } from './statements/for';
 import { extractArgumentsStringToObject, extractFuncStatementToObject, isArgument, verifyFuncStatement } from './statements/func';
 import { extractIfStatementToObject, verifyIfStatement } from './statements/if';
 import { extractLoopStatementToObject, verifyLoopStatement } from './statements/loop';
+import { extractSetStatementToObject, verifySetStatement } from './statements/set';
 import { extractWhileStatementToObject, verifyWhileStatement } from './statements/while';
 
 
@@ -23,14 +23,14 @@ export class StatementObject<T = any> {
     keyword: StatementKeyword;
     expression: T;
     arguments?: ArgumentObject[];
-    condition: Condition[] = [];
+    conditions: Condition[] = [];
     body: (string | StatementObject<T>)[] = [];
     parent?: StatementObject<T>;
 
-    constructor(keyword: StatementKeyword, expression: T, condition: Condition[] = [], body: (string | StatementObject<T>)[] = []) {
+    constructor(keyword: StatementKeyword, expression: T, conditions: Condition[] = [], body: (string | StatementObject<T>)[] = []) {
         this.keyword = keyword;
         this.expression = expression;
-        this.condition = condition;
+        this.conditions = conditions;
         this.body = body;
     }
     removeParentReference() {
@@ -40,8 +40,8 @@ export class StatementObject<T = any> {
 }
 
 export function verifyStatementSyntax(line: string) {
-    if (line.includes('assign')) {
-        verifyAssignStatement(line); return;
+    if (line.includes('set')) {
+        verifySetStatement(line); return;
     }
     if (line.includes('func')) {
         verifyFuncStatement(line); return;
@@ -77,8 +77,8 @@ export function convertStatementToObject(line: string): StatementObject | undefi
         line = lineWithComments[0];
     }
 
-    if (line.includes('assign')) {
-        return extractAssignStatementToObject(line);
+    if (line.includes('set')) {
+        return extractSetStatementToObject(line);
     }
     if (line.includes('func')) {
         return extractFuncStatementToObject(line);
@@ -144,7 +144,7 @@ export default function parse(line: string, lineNo: number) {
         const conditions = parseCondition(line, false);
         if (currentStatementObject) {
             for (const condition of conditions) {
-                currentStatementObject.condition.push(condition);
+                currentStatementObject.conditions.push(condition);
             }
         }
         return;
