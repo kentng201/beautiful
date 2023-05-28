@@ -10,7 +10,7 @@ if (command === 'validate') {
     parse();
 } else if (command === 'convert') {
     // convert();
-} else if (command === 'run') {
+} else if (command === 'build') {
     (async () => {
         await validate();
         await parse();

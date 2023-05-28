@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "biu": "ts-node src/commands/biu.ts",
-    "validate": "ts-node -r tsconfig-paths/register src/scripts/validate.ts"
+    "biu": "ts-node -r tsconfig-paths/register src/commands/biu.ts",
+    "run": "ts-node -r tsconfig-paths/register src/commands/feature.ts"
   },
   "keywords": [],
   "author": "",
