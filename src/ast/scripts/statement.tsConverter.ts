@@ -93,7 +93,7 @@ function convertStatementBodyToString(body: (StatementObject | LoadModelQueryObj
 }
 
 
-function convertObjectsToTs(array: (StatementObject<any> | LoadModelQueryObject)[]): string {
+function convertObjectsToTs<T>(array: (StatementObject<T> | LoadModelQueryObject)[]): string {
     let output = '';
     const collection = Collection.toString();
     output += collection;
@@ -103,7 +103,7 @@ function convertObjectsToTs(array: (StatementObject<any> | LoadModelQueryObject)
 
 
     if (array.length > 0) {
-        array.forEach((element: any) => {
+        array.forEach((element: StatementObject | LoadModelQueryObject) => {
             if (element.name === 'statement') {
                 const statement = element as StatementObject;
                 if (statement.keyword !== 'set') {
@@ -178,7 +178,7 @@ function convertObjectsToTs(array: (StatementObject<any> | LoadModelQueryObject)
     return output;
 }
 
-new Promise(async (resolve) => {
+new Promise(async () => {
     const src = await execute();
     let dest = convertObjectsToTs(src);
     const stringMatched = dest.match(/\.\.\.(.*)\.\.\./g) || [];
