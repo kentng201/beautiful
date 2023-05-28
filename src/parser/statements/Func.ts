@@ -1,10 +1,14 @@
 import Statement from './Statement';
 
-export type Argument = {
+export class Argument {
     type?: 'string' | 'number' | 'boolean' | 'int' | 'decimal' | 'func';
     dataType?: 'array' | 'collection';
     argumentName: string;
-};
+
+    constructor(...anything: any[]) {
+        this.argumentName = anything[0];
+    }
+}
 
 export default class Func {
     name = 'func';

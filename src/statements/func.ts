@@ -1,5 +1,6 @@
-import { ArgumentObject, StatementObject } from '../ast/StatementParser';
+import Statement from 'src/parser/statements/Statement';
 import { reserverdWords } from '../keywords';
+import { Argument } from 'src/parser/statements/Func';
 
 export function verifyFuncStatement(line: string, lineNo: number) {
     if (!line.startsWith('func')) {
@@ -34,14 +35,14 @@ export function isArgument(line: string) {
 }
 
 export function extractArgumentsStringToObject(line: string) {
-    const result: ArgumentObject[] = [];
+    const result: Argument[] = [];
     const words = line.trim().split(' ');
     for (let i = 0; i < words.length; i++) {
         if (words[i] === 'is') {
-            result.push(new ArgumentObject(words[i - 1], words[i + 1]));
+            result.push(new Argument(words[i - 1], words[i + 1]));
         }
         if (words[i] !== 'is' && words[i + 1] !== 'is' && words[i + 1] !== undefined) {
-            result.push(new ArgumentObject(words[i]));
+            result.push(new Argument(words[i]));
         }
     }
     return result;
@@ -49,10 +50,10 @@ export function extractArgumentsStringToObject(line: string) {
 
 export function extractFuncStatementToObject(line: string) {
     const functionName = line.split(' ')[1];
-    const statement = new StatementObject('func', functionName);
+    const statement = new Statement('func', functionName);
     if (line.split(' ').length > 2) {
         const argumentsString = line.split(' ').slice(2).join(' ');
-        statement.arguments = extractArgumentsStringToObject(argumentsString);
+        // statement.arguments = extractArgumentsStringToObject(argumentsString);
     }
     return statement;
 }

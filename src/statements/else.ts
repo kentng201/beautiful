@@ -1,5 +1,3 @@
-import { parseCondition } from '../ast/ModelQueryParser';
-import { StatementObject } from '../ast/StatementParser';
 
 export function verifyElseStatement(line: string, lineNo: number) {
     if (!line.startsWith('else')) {
@@ -37,10 +35,10 @@ export function verifyElseStatement(line: string, lineNo: number) {
 
 export function extractElseStatementToObject(line: string) {
     if (line == 'else') {
-        return new StatementObject('else', '');
+        // return new StatementObject('else', '');
     } else if (line.includes('else if ')) {
         const expressionWithConditions = line.replace('else if ', '');
-        const conditions = parseCondition(expressionWithConditions);
-        return new StatementObject('else if', '', conditions);
+        // const conditions = parseCondition(expressionWithConditions);
+        // return new StatementObject('else if', '', conditions);
     }
 }

@@ -1,5 +1,4 @@
-import { parseCondition } from '../ast/ModelQueryParser';
-import { StatementObject } from '../ast/StatementParser';
+import Statement from 'src/parser/statements/Statement';
 import { reserverdWords } from '../keywords';
 
 export function verifyLoopStatement(line: string, lineNo: number) {
@@ -51,8 +50,8 @@ export function extractLoopStatementToObject(line: string) {
     line = line.replace(`loop ${expression}`, '').trim();
     if (line.length > 0) {
         line = line.replace('where', '').trim();
-        const conditions = parseCondition(line);
-        return new StatementObject('loop', expression, conditions);
+        // const conditions = parseCondition(line);
+        return new Statement('loop', expression);
     }
-    return new StatementObject('loop', expression);
+    return new Statement('loop', expression);
 }

@@ -171,3 +171,11 @@ export function isTagBody(line: string) {
         line.match(/\.\./g)
     );
 }
+
+export function isNumeric(value: string) {
+    return /^-?\d*\.?\d+$/.test(value);
+}
+
+export function isString(value: string) {
+    return /^".*"$/.test(value) || /^'.*'$/.test(value) || /^\.\.\..*\.\.\.$/.test(value);
+}

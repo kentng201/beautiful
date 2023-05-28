@@ -1,5 +1,3 @@
-import { parseCondition } from '../ast/ModelQueryParser';
-import { StatementObject } from '../ast/StatementParser';
 
 export function verifyWhileStatement(line: string, lineNo: number) {
     if (!line.startsWith('while')) {
@@ -18,6 +16,6 @@ export function verifyWhileStatement(line: string, lineNo: number) {
 
 export function extractWhileStatementToObject(line: string) {
     const expressionWithConditions = line.replace('while ', '');
-    const conditions = parseCondition(expressionWithConditions);
-    return new StatementObject('while', '', conditions);
+    // const conditions = parseCondition(expressionWithConditions);
+    // return new StatementObject('while', '', conditions);
 }

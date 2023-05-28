@@ -1,10 +1,10 @@
 import { isMainLeadingKeyword } from 'src/syntax/matcher';
-import { StatementObject } from '../ast/StatementParser';
 import { verifyFilterSyntax } from './assignment/filter';
 import { verifyHttpSyntax } from './assignment/http';
 import { verifyMapSyntax } from './assignment/map';
 import { verifyNewSyntax } from './assignment/new';
 import { verifyPickSyntax } from './assignment/pick';
+import Statement from 'src/parser/statements/Statement';
 
 export function verifySetStatement(line: string, lineNo: number, nextLine?: string) {
     if (!line.startsWith('set')) {
@@ -137,5 +137,5 @@ export function extractSetStatementToObject(line: string) {
     const expression = line.replace(`set ${words[1]} to`, '').trim();
     const setMethod = extractSetStatementToMethod(expression);
     const set = new SetObject(words[1], setMethod);
-    return new StatementObject<SetObject>('set', set);
+    return new Statement<SetObject>('set', set);
 }

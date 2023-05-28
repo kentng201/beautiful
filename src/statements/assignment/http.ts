@@ -1,4 +1,4 @@
-import { isString } from 'src/ast/ModelQueryParser';
+import { isString } from 'src/syntax/matcher';
 
 export function verifyHttpSyntax(line: string) {
     const words = line.split(' ');

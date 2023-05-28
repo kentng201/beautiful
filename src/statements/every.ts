@@ -1,5 +1,3 @@
-import { parseCondition } from '../ast/ModelQueryParser';
-import { StatementObject } from '../ast/StatementParser';
 import { reserverdWords } from '../keywords';
 
 export function verifyEveryStatement(line: string, lineNo: number) {
@@ -48,8 +46,8 @@ export function extractEveryStatementToObject(line: string) {
     line = line.replace(`every ${expression}`, '');
     if (line.length > 0) {
         line = line.replace('where', '').trim();
-        const conditions = parseCondition(line);
-        return new StatementObject('every', expression, conditions);
+        // const conditions = parseCondition(line);
+        // return new StatementObject('every', expression, conditions);
     }
-    return new StatementObject('every', expression);
+    // return new StatementObject('every', expression);
 }

@@ -1,5 +1,4 @@
-import { parseCondition } from '../ast/ModelQueryParser';
-import { StatementObject } from '../ast/StatementParser';
+import Statement from 'src/parser/statements/Statement';
 
 export function verifyIfStatement(line: string, lineNo: number) {
     if (!line.startsWith('if')) {
@@ -24,6 +23,6 @@ export function verifyIfStatement(line: string, lineNo: number) {
 
 export function extractIfStatementToObject(line: string) {
     const expressionWithConditions = line.replace('if ', '');
-    const conditions = parseCondition(expressionWithConditions);
-    return new StatementObject('if', '', conditions);
+    // const conditions = parseCondition(expressionWithConditions);
+    // return new Statement('if', '', conditions);
 }

@@ -1,4 +1,3 @@
-import { parseCondition } from 'src/ast/ModelQueryParser';
 import { reserverdWords } from 'src/keywords';
 
 export function verifyPickSyntax(line: string) {
@@ -29,5 +28,5 @@ export function verifyPickSyntax(line: string) {
     }
 
     const condition = line.split('where ')[1];
-    parseCondition(condition);
+    // parseCondition(condition);
 }
