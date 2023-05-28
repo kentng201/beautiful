@@ -1,5 +1,5 @@
 import { verifySetStatement } from 'src/ast/statements/set';
-import { isCommentKeyword, isControlExpression, isMainLeadingKeyword, isSubKeyword, isWhereExpression } from './matcher';
+import { isCommentKeyword, isEndTagKeyword, isMainLeadingKeyword, isStartTagKeyword, isSubKeyword, isTagBody, isWhereExpression } from './matcher';
 import { verifyFuncStatement } from 'src/ast/statements/func';
 import { verifyElseStatement } from 'src/ast/statements/else';
 import { verifyIfStatement } from 'src/ast/statements/if';
@@ -10,6 +10,8 @@ import { verifyToStatement } from 'src/ast/statements/to';
 import { verifyAsStatement } from 'src/ast/statements/as';
 import { verifyInStatement } from 'src/ast/statements/in';
 import { isAssignmentExpression } from './matcher';
+import { verifyLoadStatement } from 'src/ast/statements/load';
+import { verifyTagBodySyntax, verifyTagSyntax } from 'src/ast/statements/tag';
 
 export default function validate(lines: string[]) {
     let currentMainKeyword = '';
@@ -27,7 +29,7 @@ export default function validate(lines: string[]) {
         console.log('leadingSpaces: ', leadingSpaces);
         if (isMainLeadingKeyword(line)) {
             if (line.startsWith('set')) {
-                verifySetStatement(line, lineNo);
+                verifySetStatement(line, lineNo, lines[i + 1]);
             } else if (line.startsWith('func')) {
                 verifyFuncStatement(line, lineNo);
             } else if (line.startsWith('else')) {
@@ -50,11 +52,19 @@ export default function validate(lines: string[]) {
                 verifyAsStatement(line, lineNo, currentMainKeyword, currentMainLineNo);
             } else if (line.startsWith('in')) {
                 verifyInStatement(line, lineNo, currentMainKeyword, currentMainLineNo);
+            } else {
+                verifyLoadStatement(line, lineNo, currentMainKeyword, currentMainLineNo);
             }
         } else if (isWhereExpression(line)) {
             console.log('where expression');
         } else if (isAssignmentExpression(line)) {
             console.log('assignment expression');
+        } else if (isTagBody(line)) {
+            console.log('is tag body');
+            verifyTagBodySyntax(line, lineNo);
+        } else if (isStartTagKeyword(line) || isEndTagKeyword(line)) {
+            console.log('is tag');
+            verifyTagSyntax(line, lineNo);
         } else if (isCommentKeyword(line)) {
             console.log('comments');
         } else if (line === '') {

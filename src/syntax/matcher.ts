@@ -86,7 +86,7 @@ export function isAssignmentExpression(line: string) {
         || line.match(/\b(having)\b/g)
         || line.match(/\b(between)\b/g)
         || line.match(/\b(page)\b/g)
-        || line.match(/\b(of)\b/g)
+        || line.match(/\b(per)\b/g)
         || line.match(/\b(first one)\b/g)
         || line.match(/\b(last one)\b/g)
     );
@@ -152,5 +152,23 @@ export function isSubKeyword(line: string) {
         || line.match(/\b(between)\b/g)
         || line.match(/\b(page)\b/g)
 
+    );
+}
+
+export function isStartTagKeyword(line: string) {
+    return !!(
+        line.startsWith('.')
+    );
+}
+
+export function isEndTagKeyword(line: string) {
+    return !!(
+        line.endsWith('.')
+    );
+}
+
+export function isTagBody(line: string) {
+    return !!(
+        line.match(/\.\./g)
     );
 }

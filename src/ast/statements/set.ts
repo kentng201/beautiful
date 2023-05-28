@@ -1,3 +1,4 @@
+import { isMainLeadingKeyword } from 'src/syntax/matcher';
 import { StatementObject } from '../StatementParser';
 import { verifyFilterSyntax } from './assignment/filter';
 import { verifyHttpSyntax } from './assignment/http';
@@ -5,7 +6,7 @@ import { verifyMapSyntax } from './assignment/map';
 import { verifyNewSyntax } from './assignment/new';
 import { verifyPickSyntax } from './assignment/pick';
 
-export function verifySetStatement(line: string, lineNo: number) {
+export function verifySetStatement(line: string, lineNo: number, nextLine?: string) {
     if (!line.startsWith('set')) {
         throw new Error(JSON.stringify({
             msg: 'SyntaxError: "set" should be at the beginning of the line',
@@ -19,9 +20,28 @@ export function verifySetStatement(line: string, lineNo: number) {
         }));
     }
     const words = line.split(' ');
-    if (words.length >= 3 && words[2] != 'to' && words[2] != 'from') {
+    const setKeywords = [
+        'to', 'map', 'filter', 'reduce', 'sort', 'pick',
+        'from', 'where', 'left join', 'right join', 'order by', 'find', 'page', 'per'
+    ];
+    const MISSING_KEYWORD = 'SyntaxError: "set" statement should have at least one keyword of the line:'
+        + '\n"to", "from"';
+
+    if (words.length == 2 && !nextLine) {
         throw new Error(JSON.stringify({
-            msg: 'SyntaxError: Missing identifier "to"/"from"',
+            msg: MISSING_KEYWORD,
+            lineNo: lineNo
+        }));
+    }
+    if (words.length == 2 && nextLine && isMainLeadingKeyword(nextLine)) {
+        throw new Error(JSON.stringify({
+            msg: MISSING_KEYWORD,
+            lineNo: lineNo
+        }));
+    }
+    if (words.length >= 3 && !setKeywords.includes(words[2]) && !setKeywords.includes(words[2] + ' ' + words[3])) {
+        throw new Error(JSON.stringify({
+            msg: MISSING_KEYWORD,
             lineNo: lineNo
         }));
     }
