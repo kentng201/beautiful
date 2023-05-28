@@ -23,7 +23,8 @@ hi.
 every user in users where (user.age equal 20)
     console.log user.name
     set i to i + 1
-    set user from User 
-    select username 
-    where id == 1
+    loop 100 times as i
+        set user from User 
+        select username 
+        where id == 1
 
