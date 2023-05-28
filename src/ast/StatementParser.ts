@@ -158,21 +158,30 @@ export default function parse(line: string, lineNo: number) {
             if (result) {
                 const leadingSpaces = line.indexOf(line.trim());
                 if (spacingStack[spacingStack.length - 1] < leadingSpaces) {
-                    spacingStack.push(line.indexOf(line.trim()));
-                    if (currentStatementObject?.body[currentStatementObject?.body.length - 1] instanceof StatementObject) {
-                        currentStatementObject = currentStatementObject?.body[currentStatementObject?.body.length - 1] as StatementObject;
-                        parentStatementObject = currentStatementObject?.parent;
+                    if (currentStatementObject && currentStatementObject.parent) {
+                        spacingStack.push(line.indexOf(line.trim()));
+                        if (currentStatementObject?.body[currentStatementObject?.body.length - 1] instanceof StatementObject) {
+                            currentStatementObject = currentStatementObject?.body[currentStatementObject?.body.length - 1] as StatementObject;
+                            parentStatementObject = currentStatementObject?.parent;
+                        }
                     }
                 } else if (spacingStack[spacingStack.length - 1] > leadingSpaces) {
-                    spacingStack.pop();
                     if (currentStatementObject && currentStatementObject.parent) {
+                        spacingStack.pop();
                         currentStatementObject = currentStatementObject?.parent;
                         parentStatementObject = currentStatementObject?.parent;
                     }
                 }
-                currentStatementObject = result;
-                currentStatementObject.parent = parentStatementObject;
+                if (!parentStatementObject) {
+                    parentStatementObject = statements[statements.length - 1] as StatementObject;
+                    while (parentStatementObject.body && parentStatementObject.body.length != 0) {
+                        parentStatementObject = parentStatementObject.body[parentStatementObject.body.length - 1] as StatementObject;
+                    }
+                    parentStatementObject = parentStatementObject.parent;
+                }
                 if (parentStatementObject) {
+                    currentStatementObject = result;
+                    currentStatementObject.parent = parentStatementObject;
                     parentStatementObject.body.push(result);
                 }
             } else {
@@ -191,7 +200,7 @@ export default function parse(line: string, lineNo: number) {
                 if (spacingStack[spacingStack.length - 1] == leadingSpaces) {
                     break;
                 }
-                if (spacingStack[spacingStack.length - 1] <= leadingSpaces) {
+                if (spacingStack[spacingStack.length - 1] < leadingSpaces) {
                     if (currentStatementObject && currentStatementObject.parent) {
                         spacingStack.push(line.indexOf(line.trim()));
                         if (currentStatementObject?.body[currentStatementObject?.body.length - 1] instanceof StatementObject) {
@@ -200,8 +209,8 @@ export default function parse(line: string, lineNo: number) {
                         }
                     }
                 } else if (spacingStack[spacingStack.length - 1] > leadingSpaces) {
-                    spacingStack.pop();
                     if (currentStatementObject && currentStatementObject.parent) {
+                        spacingStack.pop();
                         currentStatementObject = currentStatementObject?.parent;
                         parentStatementObject = currentStatementObject?.parent;
                     }
