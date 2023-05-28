@@ -1,12 +1,17 @@
-if newUsers is 2 User array
+if newUsers ~= 2 User array
     console.log ...2 User...
-    if newUsers is a collection
+    if newUsers ~= collection 
         console.log ...2 User collection...
-        if hi == 3
+        if hi == 3 
             console.log 'hi'
-    else if newUsers is an array
+    else if newUsers ~= 2 int 
         console.log ...2 User array...
         for each user in newUsers
             console.log ...user...
-    every user in newUsers
-        console.log ...user...
+    set var to 1
+    if user == 'hi'
+        set var to 1
+        every user in newUsers
+            console.log ...user...
+            set var to 1
+        set var to 10
