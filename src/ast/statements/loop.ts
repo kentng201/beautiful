@@ -1,6 +1,6 @@
 import { parseCondition } from '../ModelQueryParser';
 import { StatementObject } from '../StatementParser';
-import { reserverdWords } from '../reserved';
+import { reserverdWords } from '../../keywords';
 
 export function verifyLoopStatement(line: string) {
     if (!line.startsWith('loop')) {

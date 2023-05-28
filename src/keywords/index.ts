@@ -4,9 +4,9 @@ export const logicalOperatorKeywords = ['>=', '<=', '>', '<', '===', '!==', '!='
 export const arithemticOperatorKeywords = ['add', 'minus', 'multiply', 'divide', 'mod', 'power'];
 export const logicalArtihmeticOperatorKeywords = ['+', '-', '*', '/', '%', '**', '++', '--'];
 
-export const assignKeywords = ['via'];
+export const assignKeywords = ['to'];
 
-export const statementKeywords = ['if', 'else', 'for', 'every', 'switch', 'while', 'loop', 'set', 'func'];
+export const statementKeywords = ['if', 'else', 'every', 'switch', 'while', 'loop', 'set', 'func'];
 export type StatementKeyword = typeof statementKeywords[number];
 
 export const statementControlKeywords = ['in', 'as'];
@@ -14,7 +14,8 @@ export const httpKeywords = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS',
 
 export const loopControlKeywords = ['break', 'continue', 'return'];
 
-export const logicaKeywords = ['and', 'or'];
+export const logicalKeywords = ['and', 'or'];
+export const logicalLogicalKeywords = ['&&', '||'];
 
 export const whereRegex = /where\s*\((.*)\)/;
 export const expressionRegex = /(.*)\s*(==|===|>|>=|<|<=|more than|less than|equal|full equal|between|like|is)\s*(.*)/;
@@ -30,6 +31,6 @@ export const reserverdWords = ([] as string[]).concat(
     modelKeywords,
     assignKeywords,
     loopControlKeywords,
-    logicaKeywords,
+    logicalKeywords,
     operatorKeywords
 );

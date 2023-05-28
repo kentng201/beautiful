@@ -1,5 +1,5 @@
 import { isNumeric } from 'src/ast/ModelQueryParser';
-import { reserverdWords } from 'src/ast/reserved';
+import { reserverdWords } from 'src/keywords';
 
 export function verifyNewSyntax(line: string) {
     const words = line.split(' ');

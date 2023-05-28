@@ -9,7 +9,7 @@ import { convertAlikeStringToTsString } from '../statements/operation/alike';
 
 const filePath: string = process.argv[2];
 const filename = filePath.split('/').pop();
-const outputFilePath = 'dist/' + filename?.replace('.beau', '.ts');
+const outputFilePath = 'dist/' + filename?.replace('.beau', '.js');
 if (!fs.existsSync('dist')) {
     fs.mkdirSync('dist');
 }
@@ -34,7 +34,14 @@ function convertStatementBodyToString(body: (StatementObject | LoadModelQueryObj
                     if (i === 0) {
                         condtionString += condition.key + ' ' + condition.operator + ' ' + condition.value.trim();
                     } else {
-                        condtionString += condition.join + ' ' + condition.key + ' ' + condition.operator + ' ' + condition.value.trim();
+                        const joiner = condition.join;
+                        let joinerString = '';
+                        if (joiner === 'and') {
+                            joinerString = ' && ';
+                        } else if (joiner === 'or') {
+                            joinerString = ' || ';
+                        }
+                        condtionString += joinerString + condition.key + ' ' + condition.operator + ' ' + condition.value.trim();
                     }
                 }
                 if (isAlikeSyntax(condtionString)) {
@@ -95,17 +102,19 @@ function convertStatementBodyToString(body: (StatementObject | LoadModelQueryObj
 
 function convertObjectsToTs<T>(array: (StatementObject<T> | LoadModelQueryObject)[]): string {
     let output = '';
-    const collection = Collection.toString();
-    output += collection;
-    output += '\n';
-    output += '\n';
-    output += '\n';
-
+    // const collection = Collection.toString();
+    // output += collection;
+    // output += '\n';
+    // output += '\n';
+    // output += '\n';
 
     if (array.length > 0) {
         array.forEach((element: StatementObject | LoadModelQueryObject) => {
             if (element.name === 'statement') {
                 const statement = element as StatementObject;
+                if (output.length !== 0 && statement.keyword !== 'set') {
+                    output += '\n';
+                }
                 if (statement.keyword !== 'set') {
                     output += statement.keyword + ' (';
                 }
@@ -126,7 +135,14 @@ function convertObjectsToTs<T>(array: (StatementObject<T> | LoadModelQueryObject
                         if (i === 0) {
                             condtionString += condition.key + ' ' + condition.operator + ' ' + condition.value.trim();
                         } else {
-                            condtionString += condition.join + ' ' + condition.key + ' ' + condition.operator + ' ' + condition.value.trim();
+                            const joiner = condition.join;
+                            let joinerString = '';
+                            if (joiner === 'and') {
+                                joinerString = ' && ';
+                            } else if (joiner === 'or') {
+                                joinerString = ' || ';
+                            }
+                            condtionString += joinerString + condition.key + ' ' + condition.operator + ' ' + condition.value.trim();
                         }
                     }
                     if (isAlikeSyntax(condtionString)) {

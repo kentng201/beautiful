@@ -1,4 +1,4 @@
-import { ModelKeyword, arithemticOperatorKeywords, logicalArtihmeticOperatorKeywords, logicalOperatorKeywords, modelKeywords, operatorKeywords, reserverdWords, statementKeywords } from './reserved';
+import { ModelKeyword, arithemticOperatorKeywords, logicalArtihmeticOperatorKeywords, logicalOperatorKeywords, modelKeywords, operatorKeywords, reserverdWords, statementKeywords } from '../keywords';
 
 export function isModalQueryKeyword(line: string): boolean {
     return (

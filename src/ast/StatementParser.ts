@@ -1,8 +1,7 @@
 import parseQuery, { Condition, LoadModelQueryObject, getCurrentModel, isModalQueryKeyword, isWhereStatement, parseCondition } from './ModelQueryParser';
-import { StatementKeyword, statementKeywords } from './reserved';
+import { StatementKeyword, statementKeywords } from '../keywords';
 import { extractElseStatementToObject, verifyElseStatement } from './statements/else';
 import { extractEveryStatementToObject, verifyEveryStatement } from './statements/every';
-import { extractForStatementToObject, verifyForStatement } from './statements/for';
 import { extractArgumentsStringToObject, extractFuncStatementToObject, isArgument, verifyFuncStatement } from './statements/func';
 import { extractIfStatementToObject, verifyIfStatement } from './statements/if';
 import { extractLoopStatementToObject, verifyLoopStatement } from './statements/loop';
@@ -52,9 +51,6 @@ export function verifyStatementSyntax(line: string) {
     if (line.includes('while ')) {
         verifyWhileStatement(line); return;
     }
-    if (line.includes('for ')) {
-        verifyForStatement(line); return;
-    }
     if (line.includes('switch ')) {
         // verifySwitchStatement(line); return;
     }
@@ -88,9 +84,6 @@ export function convertStatementToObject(line: string): StatementObject | undefi
     }
     if (line.includes('while ')) {
         return extractWhileStatementToObject(line);
-    }
-    if (line.includes('for ')) {
-        return extractForStatementToObject(line);
     }
     if (line.includes('switch ')) {
         // return extractSwitchStatementToObject(line);
