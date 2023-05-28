@@ -245,7 +245,6 @@ export default function parse(line: string, lineNo: number) {
             }
             if (currentStatementObject?.body) {
                 if (line.trim().startsWith('load')) {
-                    console.log('line: ', line);
                     lastKeyword = 'load';
                     parseQuery(line.trim(), lineNo);
                     const model = getCurrentModel();
