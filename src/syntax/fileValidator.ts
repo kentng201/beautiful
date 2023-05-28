@@ -16,7 +16,9 @@ import { verifyBodyStatement } from 'src/ast/statements/body';
 
 export default function validate(lines: string[]) {
     let currentMainKeyword = '';
+    let currentMainLine = '';
     let currentMainLineNo = 0;
+    let currentMainIndentation = 0;
 
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
@@ -40,7 +42,9 @@ export default function validate(lines: string[]) {
                 verifyEveryStatement(line, lineNo);
             }
             currentMainKeyword = line.split(' ')[0];
+            currentMainLine = line;
             currentMainLineNo = lineNo;
+            currentMainIndentation = leadingSpaces;
         } else if (isSubKeyword(line)) {
             if (line.startsWith('to')) {
                 verifyToStatement(line, lineNo, currentMainKeyword, currentMainLineNo);
@@ -64,7 +68,9 @@ export default function validate(lines: string[]) {
         } else if (isCommentKeyword(line) || line === '') {
             // comments or empty line
         } else {
-            verifyBodyStatement(line, lineNo, leadingSpaces, currentMainKeyword);
+            verifyBodyStatement(line, lineNo, leadingSpaces, {
+                currentMainKeyword, currentMainLineNo, currentMainIndentation, currentMainLine
+            });
         }
     }
 }

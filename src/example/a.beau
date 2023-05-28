@@ -4,7 +4,10 @@ set total to age + weight
 
 ., set test to new decimal array 1 2
 
-if 2 or 3
+while total less than 100
+    if 2 or 3
+        if 3 or 4
+            true
     true
 
 if total less than or equal 100 and total not full equal 200
