@@ -1,5 +1,5 @@
 set newUsers to 2
-if newUsers ~= 2 User array
+if newUsers ~= 2 User
     console.log ...2 User...
     if newUsers ~= collection 
         console.log ...2 User collection...

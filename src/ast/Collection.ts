@@ -23,7 +23,7 @@ export default class Collection<Model> {
         return this.models;
     }
 
-    where(field, operator, value) {
+    where(field: keyof Model, operator: string, value: any) {
         const newCollection = new Collection<Model>([]);
         for (const model of this.models) {
             if (operator == '=') {
@@ -51,11 +51,11 @@ export default class Collection<Model> {
                     newCollection.models.push(model);
                 }
             } else if (operator == 'like') {
-                if (model[field].match(value)) {
+                if ((model[field] as string).match(value)) {
                     newCollection.models.push(model);
                 }
             } else if (operator == 'not like') {
-                if (!model[field].match(value)) {
+                if (!(model[field] as string).match(value)) {
                     newCollection.models.push(model);
                 }
             } else if (operator == 'in') {
@@ -71,7 +71,7 @@ export default class Collection<Model> {
         return newCollection;
     }
 
-    sort(key, order: 'asc' | 'desc') {
+    sort(key: keyof Model, order: 'asc' | 'desc') {
         this.models.sort((a, b) => {
             if (a[key] > b[key]) {
                 return order == 'asc' ? 1 : -1;

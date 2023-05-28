@@ -83,7 +83,7 @@ new Promise(async (resolve) => {
                         const expression = statement.expression as SetObject;
                         output += ' ' + expression.variableName + ' to ' + expression.statement?.body;
                     }
-                    if (statement.expression && statement.conditions && !['func', 'else'].includes(statement.keyword)) {
+                    if (statement.expression && statement.conditions && !['func', 'else', 'set'].includes(statement.keyword)) {
                         output += ' where';
                     }
                     if (statement.conditions) {

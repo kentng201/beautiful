@@ -1,5 +1,6 @@
 import fs from 'fs';
 import execute from './statement.parser';
+import Collection from '../Collection';
 import { StatementObject } from '../StatementParser';
 import { LoadModelQueryObject } from '../ModelQueryParser';
 import { SetObject } from '../statements/set';
@@ -13,7 +14,6 @@ if (!fs.existsSync('dist')) {
 
 function convertStatementBodyToString(body: (StatementObject | LoadModelQueryObject | string)[], layer: number = 1) {
     const layerSpace = '\n' + '    '.repeat(layer);
-    // const parentLayerSpace = '\n' + '    '.repeat(layer-1);
     let result = '';
     body.forEach((element) => {
         if (typeof element === 'string') {
@@ -88,6 +88,13 @@ function convertStatementBodyToString(body: (StatementObject | LoadModelQueryObj
 
 function convertObjectsToTs(array: (StatementObject<any> | LoadModelQueryObject)[]): string {
     let output = '';
+    const collection = Collection.toString();
+    output += collection;
+    output += '\n';
+    output += '\n';
+    output += '\n';
+
+
     if (array.length > 0) {
         array.forEach((element: any) => {
             if (element.name === 'statement') {
