@@ -14,6 +14,7 @@ import { verifyLoadStatement } from 'src/statements/load';
 import { verifyTagBodySyntax, verifyTagSyntax } from 'src/statements/tag';
 import { verifyBodyStatement } from 'src/statements/body';
 import { IndentInfo, validateIndentSpacing } from 'src/statements/indent';
+import { verifyWhileStatement } from 'src/statements/while';
 
 export default function validate(lines: string[]) {
     let indentStack: IndentInfo[] = [];
@@ -38,6 +39,8 @@ export default function validate(lines: string[]) {
                 verifyElseStatement(line, lineNo);
             } else if (line.startsWith('if')) {
                 verifyIfStatement(line, lineNo);
+            } else if (line.startsWith('while')) {
+                verifyWhileStatement(line, lineNo);
             } else if (line.startsWith('loop')) {
                 verifyLoopStatement(line, lineNo);
             } else if (line.startsWith('every')) {

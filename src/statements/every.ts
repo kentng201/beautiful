@@ -1,4 +1,5 @@
 import { reserverdWords } from '../keywords';
+import { verifyComparisonStatement } from './comparison';
 
 export function verifyEveryStatement(line: string, lineNo: number) {
     if (!line.startsWith('every')) {
@@ -38,6 +39,7 @@ export function verifyEveryStatement(line: string, lineNo: number) {
             lineNo: lineNo
         }));
     }
+    verifyComparisonStatement(line, lineNo, 'every', lineNo);
 }
 
 export function extractEveryStatementToObject(line: string) {

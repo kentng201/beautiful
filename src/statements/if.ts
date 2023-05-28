@@ -1,4 +1,5 @@
 import Statement from 'src/parser/statements/Statement';
+import { verifyComparisonStatement } from './comparison';
 
 export function verifyIfStatement(line: string, lineNo: number) {
     if (!line.startsWith('if')) {
@@ -19,6 +20,7 @@ export function verifyIfStatement(line: string, lineNo: number) {
             lineNo: lineNo
         }));
     }
+    verifyComparisonStatement(line, lineNo, 'if', lineNo);
 }
 
 export function extractIfStatementToObject(line: string) {

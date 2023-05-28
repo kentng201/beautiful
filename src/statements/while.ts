@@ -1,3 +1,4 @@
+import { verifyComparisonStatement } from './comparison';
 
 export function verifyWhileStatement(line: string, lineNo: number) {
     if (!line.startsWith('while')) {
@@ -12,6 +13,13 @@ export function verifyWhileStatement(line: string, lineNo: number) {
             lineNo: lineNo
         }));
     }
+    if (line.match(/\b(where)\b/g)?.length != null) {
+        throw new Error(JSON.stringify({
+            msg: 'SyntaxError: "where" keyword is not assignable to keyword "' + 'while' + '"',
+            lineNo: lineNo
+        }));
+    }
+    verifyComparisonStatement(line, lineNo, 'while', lineNo);
 }
 
 export function extractWhileStatementToObject(line: string) {

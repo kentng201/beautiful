@@ -1,5 +1,6 @@
 import Statement from 'src/parser/statements/Statement';
 import { reserverdWords } from '../keywords';
+import { verifyComparisonStatement } from './comparison';
 
 export function verifyLoopStatement(line: string, lineNo: number) {
     if (!line.startsWith('loop')) {
@@ -39,6 +40,7 @@ export function verifyLoopStatement(line: string, lineNo: number) {
             lineNo: lineNo
         }));
     }
+    verifyComparisonStatement(line, lineNo, 'loop', lineNo);
 }
 
 export function extractLoopStatementToObject(line: string) {
