@@ -13,14 +13,7 @@ import { isAssignmentExpression } from './matcher';
 import { verifyLoadStatement } from 'src/ast/statements/load';
 import { verifyTagBodySyntax, verifyTagSyntax } from 'src/ast/statements/tag';
 import { verifyBodyStatement } from 'src/ast/statements/body';
-
-export type IndentInfo = {
-    keyword: string;
-    line: string;
-    lineNo: number;
-    indent: number;
-};
-
+import { IndentInfo, validateIndentSpacing } from 'src/ast/statements/indent';
 
 export default function validate(lines: string[]) {
     let indentStack: IndentInfo[] = [];
@@ -95,34 +88,7 @@ export default function validate(lines: string[]) {
             // comments or empty line
         }
         if (!isMainLeadingKeyword(line) && leadingSpaces > 0) {
-            const lastInfo = indentStack[indentStack.length - 1];
-            if (lastInfo && lastInfo.indent < leadingSpaces && lastInfo.keyword === '') {
-                throw new Error(JSON.stringify({
-                    msg: 'SyntaxError: "' + line + '" statement should be indented properly',
-                    lineNo: lineNo
-                }));
-            } else {
-                let notMatchIndention = true;
-                for (let i = indentStack.length - 1; i >= 0; i--) {
-                    const indentInfo = indentStack[i];
-                    if (i == indentStack.length - 1 && leadingSpaces > indentInfo.indent && indentInfo.keyword !== '') {
-                        notMatchIndention = false;
-                        break;
-                    } else if (i != indentStack.length - 1 && indentInfo.indent !== leadingSpaces) {
-                        notMatchIndention = true;
-                    } else if (indentInfo.indent === leadingSpaces) {
-                        notMatchIndention = false;
-                        break;
-                    }
-                    notMatchIndention = true;
-                }
-                if (notMatchIndention && leadingSpaces > 0) {
-                    throw new Error(JSON.stringify({
-                        msg: 'SyntaxError: "' + line + '" statement should be indented properly',
-                        lineNo: lineNo
-                    }));
-                }
-            }
+            validateIndentSpacing(indentStack, leadingSpaces, line, lineNo);
             indentStack.push({
                 keyword: '',
                 line: line,
