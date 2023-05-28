@@ -21,7 +21,7 @@ export function validateIndentSpacing(indentStack: IndentInfo[], leadingSpaces: 
     }
     if (notMatchIndention && leadingSpaces > 0) {
         throw new Error(JSON.stringify({
-            msg: 'SyntaxError: "' + line + '" statement should be indented properly',
+            msg: 'SyntaxError: "' + line + '" statement should be indent properly',
             lineNo: lineNo
         }));
     }
