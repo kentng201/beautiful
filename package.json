@@ -6,14 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "biu": "ts-node src/commands/biu.ts",
-    "parse": "ts-node -r tsconfig-paths/register src/ast/scripts/index.parser.ts",
-    "parse:frontend": "ts-node -r tsconfig-paths/register src/ast/scripts/frontend.parser.ts",
-    "parse:query":  "ts-node -r tsconfig-paths/register src/ast/scripts/model-query.parser.ts",
-    "parse:statement": "ts-node -r tsconfig-paths/register src/ast/scripts/statement.parser.ts",
-    "revert:statement": "ts-node -r tsconfig-paths/register src/ast/scripts/statement.reverter.ts",
-    "convert:statement": "ts-node -r tsconfig-paths/register src/ast/scripts/statement.tsConverter.ts",
-
-    "validate-file": "ts-node -r tsconfig-paths/register src/ast/scripts/validate-file.ts"
+    "validate": "ts-node -r tsconfig-paths/register src/scripts/validate.ts"
   },
   "keywords": [],
   "author": "",
