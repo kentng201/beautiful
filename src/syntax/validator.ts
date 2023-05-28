@@ -12,7 +12,6 @@ import { verifyInStatement } from 'src/statements/in';
 import { isAssignmentExpression } from './matcher';
 import { verifyLoadStatement } from 'src/statements/load';
 import { verifyTagBodySyntax, verifyTagSyntax } from 'src/statements/tag';
-import { verifyBodyStatement } from 'src/statements/body';
 import { IndentInfo, verifyIndentSpacing } from 'src/statements/indent';
 import { verifyWhileStatement } from 'src/statements/while';
 
@@ -32,6 +31,7 @@ export default function validate(lines: string[]) {
         const hasLeadingSpace = line.match(/^\s+/) as RegExpMatchArray;
         const leadingSpaces = hasLeadingSpace ? hasLeadingSpace[0].length : 0;
         line = line.trim();
+        verifyIndentSpacing(indentStack, leadingSpaces, line, lineNo);
         if (isMainLeadingKeyword(line)) {
             if (line.startsWith('func')) {
                 verifyFuncStatement(line, lineNo);
@@ -91,7 +91,6 @@ export default function validate(lines: string[]) {
             // comments or empty line
         }
         if (!isMainLeadingKeyword(line) && leadingSpaces > 0) {
-            verifyIndentSpacing(indentStack, leadingSpaces, line, lineNo);
             indentStack.push({
                 keyword: '',
                 line: line,
@@ -99,6 +98,5 @@ export default function validate(lines: string[]) {
                 indent: leadingSpaces
             });
         }
-        verifyBodyStatement(line, lineNo, leadingSpaces, indentStack);
     }
 }
