@@ -40,28 +40,25 @@ export class StatementObject<T = any> {
 
 export function verifyStatementSyntax(line: string) {
     if (line.includes('set')) {
-        verifySetStatement(line); return;
+        verifySetStatement(line, 0); return;
     }
     if (line.includes('func')) {
-        verifyFuncStatement(line); return;
+        verifyFuncStatement(line, 0); return;
     }
     if (line.includes('every ')) {
-        verifyEveryStatement(line); return;
+        verifyEveryStatement(line, 0); return;
     }
     if (line.includes('while ')) {
-        verifyWhileStatement(line); return;
-    }
-    if (line.includes('switch ')) {
-        // verifySwitchStatement(line); return;
+        verifyWhileStatement(line, 0); return;
     }
     if (line.includes('loop ')) {
-        verifyLoopStatement(line); return;
+        verifyLoopStatement(line, 0); return;
     }
     if (line.includes('else')) {
-        verifyElseStatement(line); return;
+        verifyElseStatement(line, 0); return;
     }
     if (line.includes('if ')) {
-        verifyIfStatement(line); return;
+        verifyIfStatement(line, 0); return;
     }
 }
 
@@ -84,9 +81,6 @@ export function convertStatementToObject(line: string): StatementObject | undefi
     }
     if (line.includes('while ')) {
         return extractWhileStatementToObject(line);
-    }
-    if (line.includes('switch ')) {
-        // return extractSwitchStatementToObject(line);
     }
     if (line.includes('loop ')) {
         return extractLoopStatementToObject(line);

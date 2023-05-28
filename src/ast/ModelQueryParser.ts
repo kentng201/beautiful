@@ -1,4 +1,4 @@
-import { ModelKeyword, arithemticOperatorKeywords, logicalArtihmeticOperatorKeywords, logicalOperatorKeywords, modelKeywords, operatorKeywords, reserverdWords, statementKeywords } from '../keywords';
+import { ModelKeyword, arithemticOperatorKeywords, assignKeywords, logicalArtihmeticOperatorKeywords, logicalOperatorKeywords, operatorKeywords, reserverdWords, statementKeywords } from '../keywords';
 
 export function isModalQueryKeyword(line: string): boolean {
     return (
@@ -305,7 +305,7 @@ export default function parse(line: string, lineNo: number) {
         }
 
         for (const word of newWords) {
-            if (modelKeywords.includes(word.toLowerCase())) {
+            if (assignKeywords.includes(word.toLowerCase())) {
                 currentKeyword = word.trim().toLowerCase() as ModelKeyword;
                 if (currentKeyword == 'order') {
                     currentBy = 'order';

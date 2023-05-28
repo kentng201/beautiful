@@ -105,7 +105,7 @@ export default function parse(line: string) {
         console.log('no', 3);
         const isFunction = line.match(/(\([a-zA-Z0-9_, ]*\) (=>*) {)/) !== null;
         const isClass = line.match(/(class [a-zA-Z0-9_]* {)/) !== null;
-        const isKeyword = line.match(/(if|else|for|while|switch|case)/) !== null;
+        const isKeyword = line.match(/(if|else|for|while|case)/) !== null;
         const [key, value] = line.trimStart().trimEnd().split('..').map(x => x.trim());
         if (isKeyword) {
             keywordStack.push(line);

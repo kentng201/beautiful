@@ -4,12 +4,18 @@ set total to age + weight
 
 ., set test to new decimal array 1 2
 
+if 2 or 3
+    true
 
 if total less than or equal 100 and total not full equal 200
     console.log total
     console.log 100
     set hi to 200
-
-if total is int
+else if total is int
     console.log total
+
+func parseInt
+    num is number
+    return num
+    
 

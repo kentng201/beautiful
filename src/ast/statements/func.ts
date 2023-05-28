@@ -1,24 +1,24 @@
 import { ArgumentObject, StatementObject } from '../StatementParser';
 import { reserverdWords } from '../../keywords';
 
-export function verifyFuncStatement(line: string) {
+export function verifyFuncStatement(line: string, lineNo: number) {
     if (!line.startsWith('func')) {
         throw new Error(JSON.stringify({
             msg: 'SyntaxError: "func" should be at the beginning of the line',
-            lineNo: undefined
+            lineNo: lineNo
         }));
     }
     if (line.match(/\b(func)\b/g)?.length != 1) {
         throw new Error(JSON.stringify({
             msg: 'SyntaxError: Duplicate identifier "func"',
-            lineNo: undefined
+            lineNo: lineNo
         }));
     }
     const words = line.split(' ');
     if (words.length >= 2 && reserverdWords.includes(words[1])) {
         throw new Error(JSON.stringify({
             msg: `SyntaxError: "${words[1]}" is a reserved keyword`,
-            lineNo: undefined
+            lineNo: lineNo
         }));
     }
 }

@@ -36,8 +36,8 @@ export function isWhereExpression(line: string) {
         line.match(/\b(or)\b/g)
         || line.match(/\b(and)\b/g)
 
-        || line.match(/\b(&&)\b/g)
-        || line.match(/\b(||)\b/g)
+        || line.match(/&&/g)
+        || line.match(/\|\|/g)
 
         || line.match(/\b(\()\b/g)
         || line.match(/\b(\))\b/g)
@@ -111,5 +111,48 @@ export function isHttpExpression(line: string) {
         || line.match(/\b(HEAD)\b/g)
         || line.match(/\b(TRACE)\b/g)
         || line.match(/\b(CONNECT)\b/g)
+    );
+}
+
+
+export function isMainLeadingKeyword(line: string) {
+    return !!(
+        line.match(/^(if)\b/g)
+        || line.match(/^(else)\b/g)
+        || line.match(/^(else if)\b/g)
+        || line.match(/^(while)\b/g)
+        || line.match(/^(every)\b/g)
+        || line.match(/^(loop)\b/g)
+        || line.match(/^(func)\b/g)
+        || line.match(/^(set)\b/g)
+    );
+}
+
+export function isCommentKeyword(line: string) {
+    return !!(
+        line.match(/\b(\.,)\b/g)
+    );
+}
+
+export function isSubKeyword(line: string) {
+    return !!(
+        line.match(/\b(as)\b/g)
+        || line.match(/\b(in)\b/g)
+        || line.match(/\b(times)\b/g)
+        || line.match(/\b(to)\b/g)
+        || line.match(/\b(select)\b/g)
+        || line.match(/\b(from)\b/g)
+        || line.match(/\b(where)\b/g)
+        || line.match(/\b(left join)\b/g)
+        || line.match(/\b(right join)\b/g)
+        || line.match(/\b(inner join)\b/g)
+        || line.match(/\b(outer join)\b/g)
+        || line.match(/\b(join)\b/g)
+        || line.match(/\b(order by)\b/g)
+        || line.match(/\b(group by)\b/g)
+        || line.match(/\b(having)\b/g)
+        || line.match(/\b(between)\b/g)
+        || line.match(/\b(page)\b/g)
+
     );
 }

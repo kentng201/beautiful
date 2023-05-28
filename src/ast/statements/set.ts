@@ -5,24 +5,24 @@ import { verifyMapSyntax } from './assignment/map';
 import { verifyNewSyntax } from './assignment/new';
 import { verifyPickSyntax } from './assignment/pick';
 
-export function verifySetStatement(line: string) {
+export function verifySetStatement(line: string, lineNo: number) {
     if (!line.startsWith('set')) {
         throw new Error(JSON.stringify({
             msg: 'SyntaxError: "set" should be at the beginning of the line',
-            lineNo: undefined
+            lineNo: lineNo
         }));
     }
     if (line.match(/\b(set)\b/g)?.length != 1) {
         throw new Error(JSON.stringify({
             msg: 'SyntaxError: Duplicate identifier "set"',
-            lineNo: undefined
+            lineNo: lineNo
         }));
     }
     const words = line.split(' ');
     if (words.length >= 3 && words[2] != 'to') {
         throw new Error(JSON.stringify({
             msg: 'SyntaxError: Missing identifier "to"',
-            lineNo: undefined
+            lineNo: lineNo
         }));
     }
 }

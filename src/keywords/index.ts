@@ -6,7 +6,7 @@ export const logicalArtihmeticOperatorKeywords = ['+', '-', '*', '/', '%', '**',
 
 export const assignKeywords = ['func', 'set', 'select', 'as', 'find', 'from', 'where', 'left join', 'right join', 'inner join', 'outer join', 'join', 'order by', 'group by', 'having', 'between', 'page', 'of', 'first one', 'last one'];
 
-export const statementKeywords = ['if', 'else', 'every', 'switch', 'while', 'loop'];
+export const statementKeywords = ['if', 'else', 'every', 'while', 'loop'];
 export type StatementKeyword = typeof statementKeywords[number];
 
 export const statementControlKeywords = ['in', 'as'];
@@ -20,15 +20,12 @@ export const logicalLogicalKeywords = ['&&', '||'];
 export const whereRegex = /where\s*\((.*)\)/;
 export const expressionRegex = /(.*)\s*(==|===|>|>=|<|<=|more than|less than|equal|full equal|between|like|is)\s*(.*)/;
 
-
-export const modelKeywords = [];
-export type ModelKeyword = typeof modelKeywords[number];
+export type ModelKeyword = typeof assignKeywords[number];
 
 export const reserverdWords = ([] as string[]).concat(
     statementKeywords,
     statementControlKeywords,
     httpKeywords,
-    modelKeywords,
     assignKeywords,
     loopControlKeywords,
     logicalKeywords,
