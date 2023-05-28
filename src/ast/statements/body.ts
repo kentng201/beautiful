@@ -11,15 +11,14 @@ export function verifyBodyStatement(line: string, lineNo: number, leadingSpaces:
             lineNo: lineNo
         }));
     }
-    let notMatchIndention = false;
-    console.log('-------------------');
-    console.log('line: ', line);
-    console.log('indentStack: ', indentStack);
-    for (let i = indentStack.length - 1; i > 0; i--) {
+    let notMatchIndention = true;
+    for (let i = indentStack.length - 1; i >= 0; i--) {
         const indentInfo = indentStack[i];
-        if (i == indentStack.length - 1 && leadingSpaces > indentInfo.indent) {
+        if (i == indentStack.length - 1 && leadingSpaces > indentInfo.indent && indentInfo.keyword !== '') {
             notMatchIndention = false;
             break;
+        } else if (i != indentStack.length - 1 && indentInfo.indent !== leadingSpaces) {
+            notMatchIndention = true;
         } else if (indentInfo.indent === leadingSpaces) {
             notMatchIndention = false;
             break;
@@ -32,5 +31,4 @@ export function verifyBodyStatement(line: string, lineNo: number, leadingSpaces:
             lineNo: lineNo
         }));
     }
-
 }
