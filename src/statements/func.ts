@@ -1,5 +1,5 @@
-import { ArgumentObject, StatementObject } from '../StatementParser';
-import { reserverdWords } from '../../keywords';
+import { ArgumentObject, StatementObject } from '../ast/StatementParser';
+import { reserverdWords } from '../keywords';
 
 export function verifyFuncStatement(line: string, lineNo: number) {
     if (!line.startsWith('func')) {

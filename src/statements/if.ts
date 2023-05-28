@@ -1,5 +1,5 @@
-import { parseCondition } from '../ModelQueryParser';
-import { StatementObject } from '../StatementParser';
+import { parseCondition } from '../ast/ModelQueryParser';
+import { StatementObject } from '../ast/StatementParser';
 
 export function verifyIfStatement(line: string, lineNo: number) {
     if (!line.startsWith('if')) {

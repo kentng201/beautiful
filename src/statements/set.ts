@@ -1,5 +1,5 @@
 import { isMainLeadingKeyword } from 'src/syntax/matcher';
-import { StatementObject } from '../StatementParser';
+import { StatementObject } from '../ast/StatementParser';
 import { verifyFilterSyntax } from './assignment/filter';
 import { verifyHttpSyntax } from './assignment/http';
 import { verifyMapSyntax } from './assignment/map';

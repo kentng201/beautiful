@@ -1,19 +1,19 @@
-import { verifySetStatement } from 'src/ast/statements/set';
+import { verifySetStatement } from 'src/statements/set';
 import { isCommentKeyword, isEndTagKeyword, isMainLeadingKeyword, isStartTagKeyword, isSubKeyword, isTagBody, isWhereExpression } from './matcher';
-import { verifyFuncStatement } from 'src/ast/statements/func';
-import { verifyElseStatement } from 'src/ast/statements/else';
-import { verifyIfStatement } from 'src/ast/statements/if';
-import { verifyLoopStatement } from 'src/ast/statements/loop';
-import { verifyEveryStatement } from 'src/ast/statements/every';
-import { verifyWhereStatement } from 'src/ast/statements/where';
-import { verifyToStatement } from 'src/ast/statements/to';
-import { verifyAsStatement } from 'src/ast/statements/as';
-import { verifyInStatement } from 'src/ast/statements/in';
+import { verifyFuncStatement } from 'src/statements/func';
+import { verifyElseStatement } from 'src/statements/else';
+import { verifyIfStatement } from 'src/statements/if';
+import { verifyLoopStatement } from 'src/statements/loop';
+import { verifyEveryStatement } from 'src/statements/every';
+import { verifyWhereStatement } from 'src/statements/where';
+import { verifyToStatement } from 'src/statements/to';
+import { verifyAsStatement } from 'src/statements/as';
+import { verifyInStatement } from 'src/statements/in';
 import { isAssignmentExpression } from './matcher';
-import { verifyLoadStatement } from 'src/ast/statements/load';
-import { verifyTagBodySyntax, verifyTagSyntax } from 'src/ast/statements/tag';
-import { verifyBodyStatement } from 'src/ast/statements/body';
-import { IndentInfo, validateIndentSpacing } from 'src/ast/statements/indent';
+import { verifyLoadStatement } from 'src/statements/load';
+import { verifyTagBodySyntax, verifyTagSyntax } from 'src/statements/tag';
+import { verifyBodyStatement } from 'src/statements/body';
+import { IndentInfo, validateIndentSpacing } from 'src/statements/indent';
 
 export default function validate(lines: string[]) {
     let indentStack: IndentInfo[] = [];
