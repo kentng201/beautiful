@@ -12,6 +12,7 @@ import { verifyInStatement } from 'src/ast/statements/in';
 import { isAssignmentExpression } from './matcher';
 import { verifyLoadStatement } from 'src/ast/statements/load';
 import { verifyTagBodySyntax, verifyTagSyntax } from 'src/ast/statements/tag';
+import { verifyBodyStatement } from 'src/ast/statements/body';
 
 export default function validate(lines: string[]) {
     let currentMainKeyword = '';
@@ -24,9 +25,6 @@ export default function validate(lines: string[]) {
         const hasLeadingSpace = line.match(/^\s+/) as RegExpMatchArray;
         const leadingSpaces = hasLeadingSpace ? hasLeadingSpace[0].length : 0;
         line = line.trim();
-        console.log('---------');
-        console.log('line: ', line);
-        console.log('leadingSpaces: ', leadingSpaces);
         if (isMainLeadingKeyword(line)) {
             if (line.startsWith('set')) {
                 verifySetStatement(line, lineNo, lines[i + 1]);
@@ -56,21 +54,17 @@ export default function validate(lines: string[]) {
                 verifyLoadStatement(line, lineNo, currentMainKeyword, currentMainLineNo);
             }
         } else if (isWhereExpression(line)) {
-            console.log('where expression');
+            verifyWhereStatement(line, lineNo, currentMainKeyword, currentMainLineNo);
         } else if (isAssignmentExpression(line)) {
-            console.log('assignment expression');
+            verifyLoadStatement(line, lineNo, currentMainKeyword, currentMainLineNo);
         } else if (isTagBody(line)) {
-            console.log('is tag body');
             verifyTagBodySyntax(line, lineNo);
         } else if (isStartTagKeyword(line) || isEndTagKeyword(line)) {
-            console.log('is tag');
             verifyTagSyntax(line, lineNo);
-        } else if (isCommentKeyword(line)) {
-            console.log('comments');
-        } else if (line === '') {
-            console.log('empty line');
+        } else if (isCommentKeyword(line) || line === '') {
+            // comments or empty line
         } else {
-            console.log('is body');
+            verifyBodyStatement(line, lineNo, leadingSpaces, currentMainKeyword);
         }
     }
 }
