@@ -4,10 +4,12 @@ import Collection from '../Collection';
 import { StatementObject } from '../StatementParser';
 import { LoadModelQueryObject } from '../ModelQueryParser';
 import { SetObject } from '../statements/set';
+import { isAlikeSyntax } from '../statements/operation/alike';
+import { convertAlikeStringToTsString } from '../statements/operation/alike';
 
 const filePath: string = process.argv[2];
 const filename = filePath.split('/').pop();
-const outputFilePath = 'dist/' + filename?.replace('.beau', '.txt');
+const outputFilePath = 'dist/' + filename?.replace('.beau', '.ts');
 if (!fs.existsSync('dist')) {
     fs.mkdirSync('dist');
 }
@@ -25,15 +27,20 @@ function convertStatementBodyToString(body: (StatementObject | LoadModelQueryObj
                 result += statement.keyword + ' (';
             }
             if (statement.conditions) {
+                let condtionString = '';
                 const conditions = statement.conditions;
                 for (let i = 0; i < conditions.length; i++) {
                     const condition = conditions[i];
                     if (i === 0) {
-                        result += condition.key + ' ' + condition.operator + ' ' + condition.value.trim();
+                        condtionString += condition.key + ' ' + condition.operator + ' ' + condition.value.trim();
                     } else {
-                        result += condition.join + ' ' + condition.key + ' ' + condition.operator + ' ' + condition.value.trim();
+                        condtionString += condition.join + ' ' + condition.key + ' ' + condition.operator + ' ' + condition.value.trim();
                     }
                 }
+                if (isAlikeSyntax(condtionString)) {
+                    condtionString = convertAlikeStringToTsString(condtionString);
+                }
+                result += condtionString;
             }
             if (typeof statement.expression === 'string') {
                 result += statement.expression.trim();
@@ -112,15 +119,20 @@ function convertObjectsToTs(array: (StatementObject<any> | LoadModelQueryObject)
                     output += ' where';
                 }
                 if (statement.conditions) {
+                    let condtionString = '';
                     const conditions = statement.conditions;
                     for (let i = 0; i < conditions.length; i++) {
                         const condition = conditions[i];
                         if (i === 0) {
-                            output += condition.key + ' ' + condition.operator + ' ' + condition.value.trim();
+                            condtionString += condition.key + ' ' + condition.operator + ' ' + condition.value.trim();
                         } else {
-                            output += condition.join + ' ' + condition.key + ' ' + condition.operator + ' ' + condition.value.trim();
+                            condtionString += condition.join + ' ' + condition.key + ' ' + condition.operator + ' ' + condition.value.trim();
                         }
                     }
+                    if (isAlikeSyntax(condtionString)) {
+                        condtionString = convertAlikeStringToTsString(condtionString);
+                    }
+                    output += condtionString;
                 }
                 if (statement.keyword !== 'set') {
                     output += ') {';
