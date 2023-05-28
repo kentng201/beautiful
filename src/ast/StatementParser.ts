@@ -159,6 +159,16 @@ export default function parse(line: string, lineNo: number) {
                 const leadingSpaces = line.indexOf(line.trim());
                 if (spacingStack[spacingStack.length - 1] < leadingSpaces) {
                     spacingStack.push(line.indexOf(line.trim()));
+                    if (currentStatementObject?.body[currentStatementObject?.body.length - 1] instanceof StatementObject) {
+                        currentStatementObject = currentStatementObject?.body[currentStatementObject?.body.length - 1] as StatementObject;
+                        parentStatementObject = currentStatementObject?.parent;
+                    }
+                } else if (spacingStack[spacingStack.length - 1] > leadingSpaces) {
+                    spacingStack.pop();
+                    if (currentStatementObject && currentStatementObject.parent) {
+                        currentStatementObject = currentStatementObject?.parent;
+                        parentStatementObject = currentStatementObject?.parent;
+                    }
                 }
                 currentStatementObject = result;
                 currentStatementObject.parent = parentStatementObject;
@@ -177,18 +187,24 @@ export default function parse(line: string, lineNo: number) {
             }
         } else {
             const leadingSpaces = line.indexOf(line.trim());
-            if (spacingStack[spacingStack.length - 1] < leadingSpaces) {
-                spacingStack.push(line.indexOf(line.trim()));
-            }
             for (let i = 0; i < spacingStack.length; i++) {
-                if (spacingStack[spacingStack.length - 1] > leadingSpaces) {
+                if (spacingStack[spacingStack.length - 1] == leadingSpaces) {
+                    break;
+                }
+                if (spacingStack[spacingStack.length - 1] <= leadingSpaces) {
                     if (currentStatementObject && currentStatementObject.parent) {
-                        spacingStack.pop();
+                        spacingStack.push(line.indexOf(line.trim()));
+                        if (currentStatementObject?.body[currentStatementObject?.body.length - 1] instanceof StatementObject) {
+                            currentStatementObject = currentStatementObject?.body[currentStatementObject?.body.length - 1] as StatementObject;
+                            parentStatementObject = currentStatementObject?.parent;
+                        }
+                    }
+                } else if (spacingStack[spacingStack.length - 1] > leadingSpaces) {
+                    spacingStack.pop();
+                    if (currentStatementObject && currentStatementObject.parent) {
                         currentStatementObject = currentStatementObject?.parent;
                         parentStatementObject = currentStatementObject?.parent;
                     }
-                } else {
-                    break;
                 }
             }
             currentStatementObject?.body.push(line.trim());
