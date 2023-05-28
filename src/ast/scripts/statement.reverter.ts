@@ -1,4 +1,4 @@
-import fs, { stat } from 'fs';
+import fs from 'fs';
 import './statement.parser';
 import { StatementObject } from '../StatementParser';
 import { SetObject } from '../statements/set';
@@ -39,15 +39,13 @@ function convertStatementBodyToString(body: (StatementObject | string)[], layer:
                 const body = convertStatementBodyToString(statement.body, layer + 1);
                 result += body;
             }
-            console.log('layer: ', layer, body);
-
             result += '\n';
         }
     });
     return result;
 }
 
-fs.readFile(inputJson, 'utf8', (err, data) => {
+fs.readFile(inputJson, 'utf8', async (err, data) => {
     const array = JSON.parse(data);
     if (array.length > 0) {
         array.forEach((element: any) => {
