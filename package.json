@@ -11,7 +11,9 @@
     "parse:query":  "ts-node -r tsconfig-paths/register src/ast/scripts/model-query.parser.ts",
     "parse:statement": "ts-node -r tsconfig-paths/register src/ast/scripts/statement.parser.ts",
     "revert:statement": "ts-node -r tsconfig-paths/register src/ast/scripts/statement.reverter.ts",
-    "convert:statement": "ts-node -r tsconfig-paths/register src/ast/scripts/statement.tsConverter.ts"
+    "convert:statement": "ts-node -r tsconfig-paths/register src/ast/scripts/statement.tsConverter.ts",
+
+    "validate-file": "ts-node -r tsconfig-paths/register src/ast/scripts/validate-file.ts"
   },
   "keywords": [],
   "author": "",

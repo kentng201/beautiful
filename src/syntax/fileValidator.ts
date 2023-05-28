@@ -14,11 +14,22 @@ import { verifyLoadStatement } from 'src/ast/statements/load';
 import { verifyTagBodySyntax, verifyTagSyntax } from 'src/ast/statements/tag';
 import { verifyBodyStatement } from 'src/ast/statements/body';
 
+export type IndentInfo = {
+    keyword: string;
+    line: string;
+    lineNo: number;
+    indent: number;
+};
+
+
 export default function validate(lines: string[]) {
-    let currentMainKeyword = '';
-    let currentMainLine = '';
-    let currentMainLineNo = 0;
-    let currentMainIndentation = 0;
+    let indentStack: IndentInfo[] = [];
+    let currentKeyword: IndentInfo = {
+        keyword: '',
+        line: '',
+        lineNo: 0,
+        indent: 0
+    };
 
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
@@ -28,9 +39,7 @@ export default function validate(lines: string[]) {
         const leadingSpaces = hasLeadingSpace ? hasLeadingSpace[0].length : 0;
         line = line.trim();
         if (isMainLeadingKeyword(line)) {
-            if (line.startsWith('set')) {
-                verifySetStatement(line, lineNo, lines[i + 1]);
-            } else if (line.startsWith('func')) {
+            if (line.startsWith('func')) {
                 verifyFuncStatement(line, lineNo);
             } else if (line.startsWith('else')) {
                 verifyElseStatement(line, lineNo);
@@ -41,36 +50,65 @@ export default function validate(lines: string[]) {
             } else if (line.startsWith('every')) {
                 verifyEveryStatement(line, lineNo);
             }
-            currentMainKeyword = line.split(' ')[0];
-            currentMainLine = line;
-            currentMainLineNo = lineNo;
-            currentMainIndentation = leadingSpaces;
+            const keyword = line.split(' ')[0];
+            currentKeyword = {
+                keyword: keyword,
+                line: line,
+                lineNo: lineNo,
+                indent: leadingSpaces
+            };
+            if (leadingSpaces === 0) {
+                indentStack = [];
+            }
+            const lastKeyword = indentStack.length > 0 ? indentStack[indentStack.length - 1] : undefined;
+            if (lastKeyword && lastKeyword.indent < leadingSpaces) {
+                indentStack.push(currentKeyword);
+            } else if (lastKeyword && lastKeyword.indent === leadingSpaces) {
+                indentStack.pop();
+                indentStack.push(currentKeyword);
+            } else if (!lastKeyword) {
+                indentStack.push(currentKeyword);
+            }
+        } else if (line.startsWith('set')) {
+            verifySetStatement(line, lineNo, lines[i + 1]);
         } else if (isSubKeyword(line)) {
             if (line.startsWith('to')) {
-                verifyToStatement(line, lineNo, currentMainKeyword, currentMainLineNo);
+                verifyToStatement(line, lineNo, currentKeyword.keyword, currentKeyword.lineNo);
             } else if (line.startsWith('where')) {
-                verifyWhereStatement(line, lineNo, currentMainKeyword, currentMainLineNo);
+                verifyWhereStatement(line, lineNo, currentKeyword.keyword, currentKeyword.lineNo);
             } else if (line.startsWith('as')) {
-                verifyAsStatement(line, lineNo, currentMainKeyword, currentMainLineNo);
+                verifyAsStatement(line, lineNo, currentKeyword.keyword, currentKeyword.lineNo);
             } else if (line.startsWith('in')) {
-                verifyInStatement(line, lineNo, currentMainKeyword, currentMainLineNo);
+                verifyInStatement(line, lineNo, currentKeyword.keyword, currentKeyword.lineNo);
             } else {
-                verifyLoadStatement(line, lineNo, currentMainKeyword, currentMainLineNo);
+                verifyLoadStatement(line, lineNo, currentKeyword.keyword, currentKeyword.lineNo);
             }
         } else if (isWhereExpression(line)) {
-            verifyWhereStatement(line, lineNo, currentMainKeyword, currentMainLineNo);
+            verifyWhereStatement(line, lineNo, currentKeyword.keyword, currentKeyword.lineNo);
         } else if (isAssignmentExpression(line)) {
-            verifyLoadStatement(line, lineNo, currentMainKeyword, currentMainLineNo);
+            verifyLoadStatement(line, lineNo, currentKeyword.keyword, currentKeyword.lineNo);
         } else if (isTagBody(line)) {
             verifyTagBodySyntax(line, lineNo);
         } else if (isStartTagKeyword(line) || isEndTagKeyword(line)) {
             verifyTagSyntax(line, lineNo);
         } else if (isCommentKeyword(line) || line === '') {
             // comments or empty line
-        } else {
-            verifyBodyStatement(line, lineNo, leadingSpaces, {
-                currentMainKeyword, currentMainLineNo, currentMainIndentation, currentMainLine
+        }
+        if (!isMainLeadingKeyword(line) && leadingSpaces > 0) {
+            const lastInfo = indentStack[indentStack.length - 1];
+            if (lastInfo && lastInfo.indent < leadingSpaces && lastInfo.keyword === '') {
+                throw new Error(JSON.stringify({
+                    msg: 'SyntaxError: "' + line + '" statement should be indented properly',
+                    lineNo: lineNo
+                }));
+            }
+            indentStack.push({
+                keyword: '',
+                line: line,
+                lineNo: lineNo,
+                indent: leadingSpaces
             });
         }
+        verifyBodyStatement(line, lineNo, leadingSpaces, indentStack);
     }
 }

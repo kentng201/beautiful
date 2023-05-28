@@ -1,30 +1,36 @@
-type CurrentMain = {
-    currentMainKeyword: string;
-    currentMainLine: string;
-    currentMainLineNo: number;
-    currentMainIndentation: number;
-};
+import { IndentInfo } from 'src/syntax/fileValidator';
+import { isCommentKeyword } from 'src/syntax/matcher';
 
-export function verifyBodyStatement(line: string, lineNo: number, leadingSpaces: number, main?: CurrentMain) {
-    if (!main?.currentMainKeyword && leadingSpaces > 0) {
+export function verifyBodyStatement(line: string, lineNo: number, leadingSpaces: number, indentStack: IndentInfo[]) {
+    if (isCommentKeyword(line) || line === '') {
+        return true;
+    }
+    if (leadingSpaces > 0 && indentStack.length == 0) {
         throw new Error(JSON.stringify({
             msg: 'SyntaxError: "' + line + '" statement should not open without a main statement',
             lineNo: lineNo
         }));
     }
-    console.log('main: ', main);
+    let notMatchIndention = false;
+    console.log('-------------------');
     console.log('line: ', line);
-    console.log('leadingSpaces: ', leadingSpaces);
-    if (main?.currentMainIndentation !== undefined && leadingSpaces == 0) {
+    console.log('indentStack: ', indentStack);
+    for (let i = indentStack.length - 1; i > 0; i--) {
+        const indentInfo = indentStack[i];
+        if (i == indentStack.length - 1 && leadingSpaces > indentInfo.indent) {
+            notMatchIndention = false;
+            break;
+        } else if (indentInfo.indent === leadingSpaces) {
+            notMatchIndention = false;
+            break;
+        }
+        notMatchIndention = true;
+    }
+    if (notMatchIndention && leadingSpaces > 0) {
         throw new Error(JSON.stringify({
-            msg: 'SyntaxError: "' + line + '" statement should be indented more than the main statement',
+            msg: 'SyntaxError: "' + line + '" statement should be indented properly',
             lineNo: lineNo
         }));
     }
-    if (main?.currentMainIndentation !== undefined && leadingSpaces <= main.currentMainIndentation) {
-        throw new Error(JSON.stringify({
-            msg: 'SyntaxError: "Statement should be indented more than statement "' + main.currentMainLine + '"',
-            lineNo: lineNo
-        }));
-    }
+
 }

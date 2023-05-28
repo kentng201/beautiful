@@ -1,7 +1,6 @@
 set age to 20
 set weight to undefined
 set total to age + weight
-
 ., set test to new decimal array 1 2
 
 while total less than 100
@@ -11,9 +10,9 @@ while total less than 100
     true
 
 if total less than or equal 100 and total not full equal 200
+    set hi to 200
     console.log total
     console.log 100
-    set hi to 200
 else if total is int
     console.log total
 

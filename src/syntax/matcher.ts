@@ -122,7 +122,6 @@ export function isMainLeadingKeyword(line: string) {
         || line.match(/^(every)\b/g)
         || line.match(/^(loop)\b/g)
         || line.match(/^(func)\b/g)
-        || line.match(/^(set)\b/g)
     );
 }
 
