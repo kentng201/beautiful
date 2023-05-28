@@ -1,3 +1,4 @@
+import Comment from './Comment';
 import ModelQuery from './ModelQuery';
 
 export type SetStatementType = 'native' | 'variable' | 'object' | 'http' | 'new' | 'filter' | 'sort' | 'pick' | 'map';
@@ -7,6 +8,7 @@ export class SetStatement {
     type: SetStatementType;
     statement: string;
     method?: string;
+    comment?: Comment;
 
     constructor(type: SetStatementType, statement: string, method?: string) {
         this.type = type;

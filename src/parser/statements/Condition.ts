@@ -1,3 +1,5 @@
+import Comment from './Comment';
+
 export const operators = ['==', '===', '>', '>=', '<', '<=', 'between', 'like', '~='];
 export type Operator = typeof operators[number];
 
@@ -10,5 +12,6 @@ export default class Condition {
         value: string;
     };
     children: Condition[] = [];
+    comment?: Comment;
     parent: Condition | undefined;
 }

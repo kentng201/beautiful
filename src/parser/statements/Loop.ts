@@ -1,3 +1,4 @@
+import Comment from './Comment';
 import Condition from './Condition';
 import Statement from './Statement';
 
@@ -7,6 +8,7 @@ export default class Loop {
     asName?: string;
     conditions: Condition[] = [];
     body: Statement[] = [];
+    comment?: Comment;
 
     constructor(variableName: string, asName?: string, conditions: Condition[] = [], body: Statement[] = []) {
         this.variableName = variableName;

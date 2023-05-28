@@ -1,3 +1,4 @@
+import Comment from './Comment';
 import Condition from './Condition';
 
 export default class Join {
@@ -5,6 +6,7 @@ export default class Join {
     type: 'left' | 'right' | 'inner' | 'outer';
     modelName: string;
     conditions: Condition[];
+    comment?: Comment;
 
     constructor(type: 'left' | 'right' | 'inner', modelName: string, conditions: Condition[]) {
         this.type = type;

@@ -1,3 +1,4 @@
+import Comment from './Comment';
 import Condition from './Condition';
 import Join from './Join';
 
@@ -14,6 +15,7 @@ export default class ModelQuery {
     select?: string[];
     sort?: Sort[];
     join?: Join[];
+    comment?: Comment;
 
     constructor(variableName: string, from: string) {
         this.variableName = variableName;
