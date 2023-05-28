@@ -1,5 +1,7 @@
+import { verifyComparisonStatement } from './comparison';
+
 export function verifyWhereStatement(line: string, lineNo: number, currentMainKeyword: string, currentMainLineNo: number) {
-    if (!['loop', 'every'].includes(currentMainKeyword)) {
+    if (!['loop', 'every', 'set'].includes(currentMainKeyword)) {
         throw new Error(JSON.stringify({
             msg: 'SyntaxError: "where" keyword is not assignable to keyword "' + currentMainKeyword + '"',
             lineNo: lineNo
@@ -17,5 +19,8 @@ export function verifyWhereStatement(line: string, lineNo: number, currentMainKe
             msg: 'SyntaxError: "where" should be at the beginning of the line',
             lineNo: lineNo
         }));
+    }
+    if (words.length >= 2) {
+        verifyComparisonStatement(words.slice(1).join(' '), lineNo, 'where', currentMainLineNo);
     }
 }

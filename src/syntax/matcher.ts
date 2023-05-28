@@ -71,9 +71,7 @@ export function isControlKeywordExpression(line: string) {
 
 export function isAssignmentExpression(line: string) {
     return !!(
-        line.match(/\b(func)\b/g)
-        || line.match(/\b(set)\b/g)
-        || line.match(/\b(select)\b/g)
+        line.match(/\b(select)\b/g)
         || line.match(/\b(as)\b/g)
         || line.match(/\b(find)\b/g)
         || line.match(/\b(from)\b/g)

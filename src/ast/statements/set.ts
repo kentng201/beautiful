@@ -19,9 +19,9 @@ export function verifySetStatement(line: string, lineNo: number) {
         }));
     }
     const words = line.split(' ');
-    if (words.length >= 3 && words[2] != 'to') {
+    if (words.length >= 3 && words[2] != 'to' && words[2] != 'from') {
         throw new Error(JSON.stringify({
-            msg: 'SyntaxError: Missing identifier "to"',
+            msg: 'SyntaxError: Missing identifier "to"/"from"',
             lineNo: lineNo
         }));
     }

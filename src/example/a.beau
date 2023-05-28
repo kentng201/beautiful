@@ -14,8 +14,11 @@ if total less than or equal 100 and total not full equal 200
 else if total is int
     console.log total
 
-func parseInt
-    num is number
-    return num
-    
+every user in usrs 
+where (user.age equal 20)
+    console.log i
+    set i to i + 1
+    set user from User 
+    select username 
+    where id == 1
 
