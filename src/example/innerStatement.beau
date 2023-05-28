@@ -1,6 +1,6 @@
-load user from User where id == 1
 if newUsers ~= 2 User array
     console.log ...2 User...
+    load user from User where id == 1
     if newUsers ~= collection 
         console.log ...2 User collection...
         if hi == 3 
