@@ -2,7 +2,7 @@ import fs from 'fs';
 import chalk from 'chalk';
 import validate from 'src/syntax/validator';
 
-const filePath: string = process.argv[2];
+const filePath: string = process.argv[3];
 
 export default async function execute() {
     return new Promise<void>((resolve) => {
@@ -26,5 +26,3 @@ export default async function execute() {
         resolve();
     });
 }
-
-execute();
