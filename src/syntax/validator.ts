@@ -13,7 +13,7 @@ import { isAssignmentExpression } from './matcher';
 import { verifyLoadStatement } from 'src/statements/load';
 import { verifyTagBodySyntax, verifyTagSyntax } from 'src/statements/tag';
 import { verifyBodyStatement } from 'src/statements/body';
-import { IndentInfo, validateIndentSpacing } from 'src/statements/indent';
+import { IndentInfo, verifyIndentSpacing } from 'src/statements/indent';
 import { verifyWhileStatement } from 'src/statements/while';
 
 export default function validate(lines: string[]) {
@@ -91,7 +91,7 @@ export default function validate(lines: string[]) {
             // comments or empty line
         }
         if (!isMainLeadingKeyword(line) && leadingSpaces > 0) {
-            validateIndentSpacing(indentStack, leadingSpaces, line, lineNo);
+            verifyIndentSpacing(indentStack, leadingSpaces, line, lineNo);
             indentStack.push({
                 keyword: '',
                 line: line,

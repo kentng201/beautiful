@@ -4,7 +4,7 @@ export type IndentInfo = {
     lineNo: number;
     indent: number;
 };
-export function validateIndentSpacing(indentStack: IndentInfo[], leadingSpaces: number, line: string, lineNo: number) {
+export function verifyIndentSpacing(indentStack: IndentInfo[], leadingSpaces: number, line: string, lineNo: number) {
     let notMatchIndention = true;
     for (let i = indentStack.length - 1; i >= 0; i--) {
         const indentInfo = indentStack[i];
