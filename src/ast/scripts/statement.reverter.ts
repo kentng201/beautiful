@@ -8,13 +8,13 @@ const filePath: string = process.argv[2];
 const inputJson = 'src/output/statement.test.json';
 let output = '';
 
-function convertStatementBodyToString(body: (StatementObject | string)[], layer: number = 1) {
+function convertStatementBodyToString(body: (StatementObject | LoadModelQueryObject | string)[], layer: number = 1) {
     const layerSpace = '\n' + '    '.repeat(layer);
     let result = '';
     body.forEach((element) => {
         if (typeof element === 'string') {
             result += layerSpace + element;
-        } else {
+        } else if (element.name === 'statement') {
             const statement = element as StatementObject;
             result += layerSpace + statement.keyword;
             if (statement.conditions) {
@@ -38,6 +38,31 @@ function convertStatementBodyToString(body: (StatementObject | string)[], layer:
             if (statement.body) {
                 const body = convertStatementBodyToString(statement.body, layer + 1);
                 result += body;
+            }
+        } else if (element.name === 'query') {
+            const query = element as LoadModelQueryObject;
+            result += layerSpace + 'load ' + query.variableName
+                + layerSpace + '    ' + 'from ' + query.modelName;
+            if (query.fields.length > 0) {
+                result += layerSpace + '\n' + 'select ' + query.fields.join(' ');
+            }
+            if (query.conditions.length > 0) {
+                const conditions = query.conditions;
+                result += layerSpace + '    ' + 'where';
+                for (let i = 0; i < conditions.length; i++) {
+                    const condition = conditions[i];
+                    if (i === 0) {
+                        result += ' ' + condition.key + ' ' + condition.operator + ' ' + condition.value;
+                    } else {
+                        result += '\n' + layerSpace + condition.join + ' ' + condition.key + ' ' + condition.operator + ' ' + condition.value;
+                    }
+                }
+            }
+            if (query.firstOrLast) {
+                result += layerSpace + '\n' + '    ' + query.firstOrLast;
+            }
+            if (query.orderBy.length > 0) {
+                result += layerSpace + '\n' + '    ' + 'order by ' + query.orderBy.map((order) => `${order[0]} ${order[1]}`).join(' ');
             }
         }
     });

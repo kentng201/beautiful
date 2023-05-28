@@ -24,7 +24,7 @@ export class StatementObject<T = any> {
     expression: T;
     arguments?: ArgumentObject[];
     conditions: Condition[] = [];
-    body?: (string | StatementObject<T>)[] = [];
+    body?: (string | StatementObject<T> | LoadModelQueryObject)[] = [];
     parent?: StatementObject<T>;
 
     constructor(keyword: StatementKeyword, expression: T, conditions: Condition[] = [], body: (string | StatementObject<T>)[] = []) {
@@ -135,7 +135,7 @@ export default function parse(line: string, lineNo: number) {
         return;
     } else if (line.startsWith('.,')) {
         return;
-    } else if (isWhereStatement(line) && lastKeyword != 'load') {
+    } else if (isWhereStatement(line) && !isModalQueryKeyword(line) && lastKeyword != 'load') {
         if (line.match(/\b(where)\b/)) {
             line = line.split('where')[1];
         } else {
@@ -237,25 +237,37 @@ export default function parse(line: string, lineNo: number) {
                     const lastChild = currentStatementObject.body[currentStatementObject.body.length - 1];
                     if (lastChild instanceof StatementObject && lastChild.keyword != 'set') {
                         currentStatementObject = currentStatementObject.body[currentStatementObject.body.length - 1] as StatementObject;
+                        parentStatementObject = currentStatementObject?.parent;
                     } else {
                         break;
                     }
                 }
             }
             if (currentStatementObject?.body) {
-                currentStatementObject?.body.push(line.trim());
+                if (line.trim().startsWith('load')) {
+                    console.log('line: ', line);
+                    lastKeyword = 'load';
+                    parseQuery(line.trim(), lineNo);
+                    const model = getCurrentModel();
+                    if (model) {
+                        currentStatementObject?.body.push(model);
+                    }
+
+                } else {
+                    currentStatementObject?.body.push(line.trim());
+                }
             }
         }
     } else if ((lastKeyword == 'load' && getCurrentModel() && !statementKeywords.includes(line.trim().split(' ')[0])) || isModalQueryKeyword(line.trim())) {
         if (line.trim().startsWith('load')) {
             lastKeyword = 'load';
-            parseQuery(line, lineNo);
+            parseQuery(line.trim(), lineNo);
             const model = getCurrentModel();
             if (model) {
                 statements.push(model);
             }
         } else if (lastKeyword == 'load') {
-            parseQuery(line.trimStart(), lineNo);
+            parseQuery(line.trim().trimStart(), lineNo);
         }
     } else if (isStatementKeyword(line)) {
         verifyStatementSyntax(line.trim());
