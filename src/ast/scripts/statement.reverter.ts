@@ -39,7 +39,6 @@ function convertStatementBodyToString(body: (StatementObject | string)[], layer:
                 const body = convertStatementBodyToString(statement.body, layer + 1);
                 result += body;
             }
-            result += '\n';
         }
     });
     return result;
@@ -53,7 +52,7 @@ fs.readFile(inputJson, 'utf8', async (err, data) => {
                 const statement = element as StatementObject;
                 output += statement.keyword;
                 if (typeof statement.expression === 'string') {
-                    output += ' ' + statement.expression;
+                    output += statement.expression;
                 } else {
                     const expression = statement.expression as SetObject;
                     output += ' ' + expression.variableName + ' to ' + expression.statement?.body;
