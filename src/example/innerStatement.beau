@@ -1,3 +1,4 @@
+load user from User where id == 1
 if newUsers ~= 2 User array
     console.log ...2 User...
     if newUsers ~= collection 
@@ -11,7 +12,10 @@ if newUsers ~= 2 User array
     set var to 1
     if user == 'hi'
         set var to 1
+        console.log ...user...
+        hello.world 2
         every user in newUsers
             console.log ...user...
             set var to 1
+            console.log ...user...
         set var to 10

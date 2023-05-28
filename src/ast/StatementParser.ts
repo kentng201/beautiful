@@ -24,7 +24,7 @@ export class StatementObject<T = any> {
     expression: T;
     arguments?: ArgumentObject[];
     conditions: Condition[] = [];
-    body: (string | StatementObject<T>)[] = [];
+    body?: (string | StatementObject<T>)[] = [];
     parent?: StatementObject<T>;
 
     constructor(keyword: StatementKeyword, expression: T, conditions: Condition[] = [], body: (string | StatementObject<T>)[] = []) {
@@ -35,7 +35,7 @@ export class StatementObject<T = any> {
     }
     removeParentReference() {
         delete this.parent;
-        this.body.forEach(child => child instanceof StatementObject ? child.removeParentReference() : '');
+        this.body?.forEach(child => child instanceof StatementObject ? child.removeParentReference() : '');
     }
 }
 
@@ -160,7 +160,7 @@ export default function parse(line: string, lineNo: number) {
                 if (spacingStack[spacingStack.length - 1] < leadingSpaces) {
                     if (currentStatementObject && currentStatementObject.parent) {
                         spacingStack.push(line.indexOf(line.trim()));
-                        if (currentStatementObject?.body[currentStatementObject?.body.length - 1] instanceof StatementObject) {
+                        if (currentStatementObject?.body && currentStatementObject?.body[currentStatementObject?.body.length - 1] instanceof StatementObject) {
                             currentStatementObject = currentStatementObject?.body[currentStatementObject?.body.length - 1] as StatementObject;
                             parentStatementObject = currentStatementObject?.parent;
                         }
@@ -174,15 +174,30 @@ export default function parse(line: string, lineNo: number) {
                 }
                 if (!parentStatementObject) {
                     parentStatementObject = statements[statements.length - 1] as StatementObject;
-                    while (parentStatementObject.body && parentStatementObject.body.length != 0) {
-                        parentStatementObject = parentStatementObject.body[parentStatementObject.body.length - 1] as StatementObject;
+                    while (parentStatementObject.body) {
+                        const lastChild = parentStatementObject.body[parentStatementObject.body.length - 1];
+                        if (lastChild instanceof StatementObject && lastChild.keyword != 'set') {
+                            parentStatementObject = parentStatementObject.body[parentStatementObject.body.length - 1] as StatementObject;
+                        } else {
+                            break;
+                        }
                     }
-                    parentStatementObject = parentStatementObject.parent;
                 }
                 if (parentStatementObject) {
+                    // if "set", treat it as normal statement, push out
+                    if (parentStatementObject.keyword === 'set' && parentStatementObject.parent) {
+                        parentStatementObject = parentStatementObject.parent;
+                    }
+
                     currentStatementObject = result;
+                    // if "set", delete the body so it cannot container child
+                    if (currentStatementObject.keyword === 'set') {
+                        delete currentStatementObject.body;
+                    }
                     currentStatementObject.parent = parentStatementObject;
-                    parentStatementObject.body.push(result);
+                    if (parentStatementObject.body) {
+                        parentStatementObject.body.push(result);
+                    }
                 }
             } else {
                 parentStatementObject = undefined;
@@ -201,9 +216,9 @@ export default function parse(line: string, lineNo: number) {
                     break;
                 }
                 if (spacingStack[spacingStack.length - 1] < leadingSpaces) {
-                    if (currentStatementObject && currentStatementObject.parent) {
+                    if (currentStatementObject && currentStatementObject.parent && currentStatementObject.body) {
                         spacingStack.push(line.indexOf(line.trim()));
-                        if (currentStatementObject?.body[currentStatementObject?.body.length - 1] instanceof StatementObject) {
+                        if (currentStatementObject?.body && currentStatementObject?.body[currentStatementObject?.body.length - 1] instanceof StatementObject) {
                             currentStatementObject = currentStatementObject?.body[currentStatementObject?.body.length - 1] as StatementObject;
                             parentStatementObject = currentStatementObject?.parent;
                         }
@@ -216,7 +231,20 @@ export default function parse(line: string, lineNo: number) {
                     }
                 }
             }
-            currentStatementObject?.body.push(line.trim());
+            if (!currentStatementObject?.body) {
+                currentStatementObject = statements[statements.length - 1] as StatementObject;
+                while (currentStatementObject.body) {
+                    const lastChild = currentStatementObject.body[currentStatementObject.body.length - 1];
+                    if (lastChild instanceof StatementObject && lastChild.keyword != 'set') {
+                        currentStatementObject = currentStatementObject.body[currentStatementObject.body.length - 1] as StatementObject;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            if (currentStatementObject?.body) {
+                currentStatementObject?.body.push(line.trim());
+            }
         }
     } else if ((lastKeyword == 'load' && getCurrentModel() && !statementKeywords.includes(line.trim().split(' ')[0])) || isModalQueryKeyword(line.trim())) {
         if (line.trim().startsWith('load')) {

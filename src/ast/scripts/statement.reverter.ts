@@ -33,7 +33,7 @@ function convertStatementBodyToString(body: (StatementObject | string)[], layer:
                 result += ' ' + statement.expression;
             } else {
                 const expression = statement.expression as SetObject;
-                result += ' ' + expression.variableName + ' ' + expression.statement?.body;
+                result += ' ' + expression.variableName + ' to ' + expression.statement?.body;
             }
             if (statement.body) {
                 const body = convertStatementBodyToString(statement.body, layer + 1);
