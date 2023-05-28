@@ -12,13 +12,15 @@ export type StatementKeyword = typeof statementKeywords[number];
 export const statementControlKeywords = ['in', 'as'];
 export const httpKeywords = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD', 'TRACE', 'CONNECT'];
 
-export const loopControlKeywords = ['break', 'continue', 'return'];
+export const loopControlKeywords = ['stop', 'continue', 'return'];
 
 export const logicalKeywords = ['and', 'or'];
 export const logicalLogicalKeywords = ['&&', '||'];
 
 export const whereRegex = /where\s*\((.*)\)/;
 export const expressionRegex = /(.*)\s*(==|===|>|>=|<|<=|more than|less than|equal|full equal|between|like|is)\s*(.*)/;
+
+export const dataTypeKeywords = ['string', 'number', 'boolean', 'object', 'array', 'null', 'undefined', 'decimal', 'int', 'collection'];
 
 export type ModelKeyword = typeof assignKeywords[number];
 

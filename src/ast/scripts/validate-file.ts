@@ -1,6 +1,6 @@
 import fs from 'fs';
 import chalk from 'chalk';
-import validate from 'src/syntax/fileValidator';
+import validate from 'src/syntax/validator';
 
 const filePath: string = process.argv[2];
 

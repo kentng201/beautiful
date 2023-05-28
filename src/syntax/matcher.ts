@@ -63,7 +63,7 @@ export function isControlExpression(line: string) {
 
 export function isControlKeywordExpression(line: string) {
     return !!(
-        line.match(/\b(break)\b/g)
+        line.match(/\b(stop)\b/g)
         || line.match(/\b(continue)\b/g)
         || line.match(/\b(return)\b/g)
     );
