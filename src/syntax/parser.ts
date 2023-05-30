@@ -2,7 +2,7 @@ import Statement from 'src/parser/statements/Statement';
 import fs from 'fs';
 import parseStatement from 'src/parser';
 
-class LineObject {
+export class LineObject {
     lineNo: number;
     line: string;
     comment?: string;
@@ -54,7 +54,7 @@ class LineObject {
     }
 
     toStatement(lastStatement?: Statement): Statement | undefined {
-        const statement = parseStatement(this.line, this.lineNo, lastStatement);
+        const statement = parseStatement(this.line, this.lineNo, this.children, lastStatement);
         return statement;
     }
 }

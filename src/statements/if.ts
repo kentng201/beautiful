@@ -2,6 +2,7 @@ import Statement from 'src/parser/statements/Statement';
 import { verifyComparisonStatement } from './comparison';
 import If from 'src/parser/statements/If';
 import { convertWhereToArrayInArray, parseInnerWhere, turnBracketToParenthesis } from './where';
+import { LineObject } from 'src/syntax/parser';
 
 export function verifyIfStatement(line: string, lineNo: number) {
     if (!line.startsWith('if')) {
@@ -25,7 +26,7 @@ export function verifyIfStatement(line: string, lineNo: number) {
     verifyComparisonStatement(line, lineNo, 'if', lineNo);
 }
 
-export function parseIf(line: string): Statement {
+export function parseIf(line: string, children?: LineObject[]): Statement {
     const comment = line.split(' .,')[1];
     let expression = line.replace('if ', '');
     if (comment) {
@@ -33,6 +34,9 @@ export function parseIf(line: string): Statement {
     }
     const conditionStatements = convertWhereToArrayInArray(turnBracketToParenthesis(expression));
     const conditions = parseInnerWhere(conditionStatements);
-    const statement = new Statement<If>('if', new If(conditions, []));
+    const body = (children || [])
+        .map((child) => child.toStatement())
+        .filter((child) => child) as Statement[];
+    const statement = new Statement<If>('if', new If(conditions, body));
     return statement;
 }
