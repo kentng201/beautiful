@@ -7,4 +7,16 @@ export default class If {
     conditions: Condition[] = [];
     body: Statement[] = [];
     comment?: Comment;
+
+    constructor(conditions?: Condition[], body?: Statement[], comment?: Comment) {
+        if (conditions) {
+            this.conditions = conditions;
+        }
+        if (body) {
+            this.body = body;
+        }
+        if (comment) {
+            this.comment = comment;
+        }
+    }
 }

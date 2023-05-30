@@ -2,16 +2,16 @@ set num1 to 1
 set num2 to 2
 set mummy to '012-345-6789'
 
-load user from User find 1
+set user from User find 1
 
 if num1 equal num2 and (num2 equal 100 or num2 equal 200+300)
     display 1
     call mummy
-else if num1 not equal num2
+else num1 not equal num2
     display 2
 
 set users to 2 new User collection
-every user in users where user.name not full equal 'John'
+every user as User in users where user.name not full equal 'John'
     every key in user
         every char in key
             if char equal 'a'
@@ -24,4 +24,9 @@ while num1 less than 10 and test more than 10
     num1 plus 10
 
 loop 100 times as i where i is an int
+    console.log 'hello world'
+
+set num1 as new int array to 1 2 3 4 5
+set num2 as new collection to 12 290
+loop 100 times as i
     console.log 'hello world'

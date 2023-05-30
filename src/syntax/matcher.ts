@@ -54,7 +54,6 @@ export function isControlExpression(line: string) {
     return !!(
         line.match(/\b(if)\b/g)
         || line.match(/\b(else)\b/g)
-        || line.match(/\b(else if)\b/g)
         || line.match(/\b(while)\b/g)
         || line.match(/\b(every)\b/g)
         || line.match(/\b(loop)\b/g)
@@ -117,7 +116,6 @@ export function isMainLeadingKeyword(line: string) {
     return !!(
         line.match(/^(if)\b/g)
         || line.match(/^(else)\b/g)
-        || line.match(/^(else if)\b/g)
         || line.match(/^(while)\b/g)
         || line.match(/^(every)\b/g)
         || line.match(/^(loop)\b/g)

@@ -19,11 +19,11 @@ if (command === 'validate') {
     })();
 } else {
     console.log(chalk.red('Invalid command' + (command ? ': ' + command : '')));
-    console.log('Usage: beau <command>');
+    console.log('Usage: elegant <command> <file_path>');
     console.log('Available commands:');
-    console.log(chalk.green('    validate') + ' - Validate a .beau file');
-    console.log(chalk.green('    parse') + ' - Parse a .beau file');
-    console.log(chalk.green('    convert') + ' - Convert a .beau file to .js');
-    console.log(chalk.green('    build') + ' - Validate, parse, and convert a .beau file');
+    console.log(chalk.green('    validate') + ' - Validate a .elg file');
+    console.log(chalk.green('    parse') + ' - Parse a .elg file');
+    console.log(chalk.green('    convert') + ' - Convert a .elg file to .js');
+    console.log(chalk.green('    build') + ' - Validate, parse, and convert a .elg file');
     process.exit(1);
 }

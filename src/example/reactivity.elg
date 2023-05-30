@@ -1,0 +1,26 @@
+set arg1 as object to line1..2 line2...test... line3..true
+set arg2 as object to line1..2 line2...test... line3..false
+
+set all to arg1 + arg2
+
+., example for not auto update gst and total
+set subtotal to pure 100
+set gst to subtotal * 7 / 100
+set total to subtotal + gst
+
+
+set subtotal to pure 200
+console.log subtotal ., result: 200
+console.log gst ., result: 7
+console.log total ., result: 207
+
+
+., example auto update gst and total .,
+set subtotal to 100
+set gst to subtotal * 7 / 100
+set total to subtotal + gst
+
+set subtotal to 200
+console.log subtotal ., result: 200
+console.log gst ., result: 14
+console.log total ., result: 214

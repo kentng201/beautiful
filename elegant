@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Text colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+RESET='\033[0m' # Reset text color to default
+
+
+if ! [ -x "$(command -v node)" ]; then
+    echo -e "${RED}Error: Node.js excutable not found. Please install Node.js on your computer.${RESET}" >&2
+    exit 1
+else
+    npx ts-node -r tsconfig-paths/register src/commands/feature.ts $1 $2
+fi

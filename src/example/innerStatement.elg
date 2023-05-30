@@ -5,11 +5,11 @@ if newUsers ~= 2 User
         console.log ...2 User collection...
         if hi more than 3 
             console.log 'hi'
-        else if hi less than or equal 3
+        else hi less than or equal 3
             console.log ...2 User array...
             for each user in newUsers
                 console.log ...user...
-    else if newUsers is User
+    else newUsers is User
         console.log ...2 User...
         set var to 1
     if user == 'hi'

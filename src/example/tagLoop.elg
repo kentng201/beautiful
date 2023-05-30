@@ -1,0 +1,11 @@
+loop 100 times as i
+    .div
+        ...loop: ,,i,,...
+    div.
+
+set users as 10 new User array
+
+every user in users
+    .div
+        ...username: ,,user.name,,...
+    div.

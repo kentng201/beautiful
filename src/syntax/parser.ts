@@ -1,5 +1,6 @@
 import Statement from 'src/parser/statements/Statement';
 import fs from 'fs';
+import parseStatement from 'src/parser';
 
 class LineObject {
     lineNo: number;
@@ -51,6 +52,11 @@ class LineObject {
         }
         return result;
     }
+
+    toStatement(lastStatement?: Statement): Statement | undefined {
+        const statement = parseStatement(this.line, this.lineNo, lastStatement);
+        return statement;
+    }
 }
 
 function convertLinesToObject(lines: string[]): LineObject[] {
@@ -81,7 +87,17 @@ function convertLinesToObject(lines: string[]): LineObject[] {
     return result;
 }
 
-function convertLinesToTree(lines: (string | LineObject)[]): LineObject[] {
+function getSpacingLines(lines: LineObject[]): number[] {
+    const spacingLines: number[] = [];
+    for (const line of lines) {
+        if (line.children && line.checkChildrenHaveSpacing()) {
+            spacingLines.push(line.lineNo);
+        }
+    }
+    return spacingLines;
+}
+
+function convertLinesToTree(lines: (string | LineObject)[], spacingLines: number[] = []): LineObject[] {
     if (typeof lines[0] === 'string') {
         return convertLinesToObject(lines as string[]);
     }
@@ -89,7 +105,7 @@ function convertLinesToTree(lines: (string | LineObject)[]): LineObject[] {
     const newLines: LineObject[] = [];
     for (let line of lines) {
         line = line as LineObject;
-        if (line.children && line.checkChildrenHaveSpacing()) {
+        if (spacingLines.includes(line.lineNo)) {
             line.children = line.convertIndentionToNewChild();
         }
         newLines.push(line);
@@ -98,13 +114,25 @@ function convertLinesToTree(lines: (string | LineObject)[]): LineObject[] {
 }
 
 export default function parse(lines: string[]) {
-    console.time();
-    const statements: Statement[] = [];
-    let arr = convertLinesToTree(lines);
+    console.time('compile time');
+    let arr = convertLinesToObject(lines);
     for (let i = 0; i < 100; i++) {
-        arr = convertLinesToTree(arr);
+        const spacingLines = getSpacingLines(arr);
+        if (spacingLines.length === 0) break;
+        arr = convertLinesToTree(arr, spacingLines);
     }
-    fs.writeFileSync('test.json', JSON.stringify(arr, null, 4));
-    console.timeEnd();
+    fs.writeFileSync('output.test.json', JSON.stringify(arr, null, 4));
+
+    const statements: Statement[] = [];
+    let lastStatement: Statement | undefined;
+    for (const line of arr) {
+        lastStatement = line.toStatement(lastStatement);
+        if (lastStatement) {
+            statements.push(lastStatement);
+        }
+    }
+    fs.writeFileSync('parsed.test.json', JSON.stringify(statements, null, 4));
+
+    console.timeEnd('compile time');
     return statements;
 }

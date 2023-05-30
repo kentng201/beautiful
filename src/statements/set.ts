@@ -5,6 +5,7 @@ import { verifyMapSyntax } from './assignment/map';
 import { verifyNewSyntax } from './assignment/new';
 import { verifyPickSyntax } from './assignment/pick';
 import Statement from 'src/parser/statements/Statement';
+import { reserverdWords } from 'src/keywords';
 
 export function verifySetStatement(line: string, lineNo: number, nextLine?: string) {
     if (!line.startsWith('set')) {
@@ -26,6 +27,13 @@ export function verifySetStatement(line: string, lineNo: number, nextLine?: stri
     ];
     const MISSING_KEYWORD = 'SyntaxError: "set" statement should have at least one keyword of the line:'
         + '\n"to", "from"';
+
+    if (words.length >= 2 && reserverdWords.includes(words[1])) {
+        throw new Error(JSON.stringify({
+            msg: `SyntaxError: "${words[1]}" is a reserved keyword`,
+            lineNo: lineNo
+        }));
+    }
 
     if (words.length == 2 && !nextLine) {
         throw new Error(JSON.stringify({

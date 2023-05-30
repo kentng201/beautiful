@@ -10,7 +10,7 @@ import { verifyToStatement } from 'src/statements/to';
 import { verifyAsStatement } from 'src/statements/as';
 import { verifyInStatement } from 'src/statements/in';
 import { isAssignmentExpression } from './matcher';
-import { verifyLoadStatement } from 'src/statements/load';
+import { verifyQueryStatement } from 'src/statements/query';
 import { verifyTagBodySyntax, verifyTagSyntax } from 'src/statements/tag';
 import { IndentInfo, verifyIndentSpacing } from 'src/statements/indent';
 import { verifyWhileStatement } from 'src/statements/while';
@@ -77,12 +77,12 @@ export default function validate(lines: string[]) {
             } else if (line.startsWith('in')) {
                 verifyInStatement(line, lineNo, currentKeyword.keyword, currentKeyword.lineNo);
             } else {
-                verifyLoadStatement(line, lineNo, currentKeyword.keyword, currentKeyword.lineNo);
+                verifyQueryStatement(line, lineNo, currentKeyword.keyword, currentKeyword.lineNo);
             }
         } else if (isWhereExpression(line)) {
             verifyWhereStatement(line, lineNo, currentKeyword.keyword, currentKeyword.lineNo);
         } else if (isAssignmentExpression(line)) {
-            verifyLoadStatement(line, lineNo, currentKeyword.keyword, currentKeyword.lineNo);
+            verifyQueryStatement(line, lineNo, currentKeyword.keyword, currentKeyword.lineNo);
         } else if (isTagBody(line)) {
             verifyTagBodySyntax(line, lineNo);
         } else if (isStartTagKeyword(line) || isEndTagKeyword(line)) {

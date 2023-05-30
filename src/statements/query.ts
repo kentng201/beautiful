@@ -1,4 +1,4 @@
-export function verifyLoadStatement(line: string, lineNo: number, currentMainKeyword: string, currentMainLineNo: number) {
+export function verifyQueryStatement(line: string, lineNo: number, currentMainKeyword: string, currentMainLineNo: number) {
     if (
         !line.startsWith('select')
         && !line.startsWith('from')

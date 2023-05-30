@@ -1,0 +1,3 @@
+set total to 10
+if total equal 20
+    console.log total

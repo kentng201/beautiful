@@ -6,15 +6,19 @@ set total to age + weight
 while total less than 100
     if 2 or 3
         if 3 or 4
+            set test to 1
+            set test to 100
             true
-    true
+        true
 
 if total less than or equal 100 and total not full equal 200
     set hi to 200
     console.log total
     console.log 100
-else if total is int
+else total is int
     console.log total
+else
+    console.log 100
 
 .hi
 test..2 hello...test ,,age + weight,,... 

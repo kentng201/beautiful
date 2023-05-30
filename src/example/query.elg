@@ -1,11 +1,11 @@
-load user 
+set user 
     from User 
     order by username asc
     where username like ...%test%... 
     and (age more than 18 and age less than 30 or (age equal 14) and hei equal 20) 
 
 
-load schedule 
+set schedule 
     from Schedule
     where time more than or equal ...07:00... 
         and time less than ...09:00...
@@ -13,5 +13,5 @@ load schedule
     offset 2
     last
 
-., add a fake thing to trigger last load query pump
+., add a fake thing to trigger last set query pump
 .div test..2 div.

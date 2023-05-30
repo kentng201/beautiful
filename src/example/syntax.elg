@@ -1,4 +1,4 @@
-load users
+set users
     select username password
     from User
     where username equal ...ho..........
@@ -8,14 +8,14 @@ load users
     or username equal ...kentng201...)
     order by username
 
-load user from User find 1
-load user from User where id equal 1 or id equal 2 last
+set user from User find 1
+set user from User where id equal 1 or id equal 2 last
 
 set user.username to ... hello world ....
 set user.id to 2
 
-load newUser from User find 10
-load newUser2 from User find 11
+set newUser from User find 10
+set newUser2 from User find 11
 set user to newUser.username + newUser2.username 
 ., this one real time when username changed
 
@@ -36,7 +36,7 @@ if testUser equal 10
     soft remind NoInternet with ...internet down lar... equal console.warn ...internet down lar...
     hard remind NotFound with ...Not found, how?... equal console.error ...Not found, how?...
 
-., load allUsers from User ., this will load all users
+., set allUsers from User ., this will set all users
 
 set newUsers to 2 new User array ., this add 2 new users into an array
 set newUsers to 2 new User collection ., this add 2 new users into an collection
@@ -45,7 +45,7 @@ if newUsers is 2 User array
     console.log ...2 User...
     if newUsers is a collection
         console.log ...2 User collection...
-    else if newUsers is an array
+    else newUsers is an array
         console.log ...2 User array...
 
 set intArray to int array 1 2 ., this add 2 new int into an array, which is [1, 2]

@@ -1,4 +1,0 @@
-set arg1 to object line1..2 line2...test... line3..true
-set arg2 to object line1..2 line2...test... line3..false
-
-set all to arg1 + arg2

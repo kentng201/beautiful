@@ -7,4 +7,4 @@ every user in users where user.name not full equal 'John'
         display key
     display user
 
-load user from User where id == 1
+set user from User where id == 1
