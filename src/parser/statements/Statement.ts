@@ -1,6 +1,14 @@
 import { StatementKeyword } from 'src/keywords';
 import { toJsIf } from 'src/statements/if';
 import If from './If';
+import { toJsLoop } from 'src/statements/loop';
+import Loop from './Loop';
+import { toJsWhile } from 'src/statements/while';
+import While from './While';
+import { toJsEvery } from 'src/statements/every';
+import Every from './Every';
+import { toJsElse } from 'src/statements/else';
+import Else from './Else';
 
 export default class Statement<T = {}> {
     keyword: StatementKeyword | 'set' | 'func';
@@ -15,13 +23,13 @@ export default class Statement<T = {}> {
         if (this.keyword == 'if') {
             return toJsIf(this as Statement<If>, level);
         } else if (this.keyword == 'else') {
-            // toJsElse();
+            return toJsElse(this as Statement<Else>, level);
         } else if (this.keyword == 'while') {
-            // return toJsWhile();
+            return toJsWhile(this as Statement<While>, level);
         } else if (this.keyword == 'every') {
-            // return toJsEvery();
+            return toJsEvery(this as Statement<Every>, level);
         } else if (this.keyword == 'loop') {
-            // return toJsLoop();
+            return toJsLoop(this as Statement<Loop>, level);
         } else if (this.keyword == 'set') {
             // return toJsSet();
         } else if (this.keyword == 'func') {

@@ -74,3 +74,23 @@ export function parseLoop(line: string, children?: LineObject[]): Statement {
     const statement = new Statement<Loop>('loop', new Loop(variableName, asName, conditions, body, comment));
     return statement;
 }
+
+export function toJsLoop(statement: Statement<Loop>, level = 0) {
+    const prevLevel = level > 0 ? (level - 1) * 4 : 0;
+    const thisLevel = level * 4;
+    const nextLevel = (level + 1) * 4;
+    let result = ' '.repeat(prevLevel) + 'for (let ';
+    result += statement.expression.asName;
+    result += ' = 0; ';
+    result += statement.expression.asName;
+    result += ' < ';
+    result += statement.expression.variableName;
+    result += '; ';
+    result += statement.expression.asName;
+    result += '++) {';
+    (statement.expression.body || []).forEach((child) => {
+        result += '\n' + ' '.repeat(nextLevel) + child.toJs(level + 1);
+    });
+    result += '\n' + ' '.repeat(thisLevel) + '}';
+    return result;
+}

@@ -7,9 +7,10 @@ if total equal 20 or (total more than 30 and (total less than 40 and (total == 2
     console.log total
     if total == 'hi'
         console.log total
+    else total == 'bye'
+        console.log 'bye'
     else
-        if total == 'hi'
-            console.log 'bye'
+        console.log 'no'
 
 set users to []
 every user in users
@@ -18,3 +19,6 @@ every user in users
 
 loop 100 times as i where i more than 10
     console.log i
+
+while total more than 10
+    console.log total

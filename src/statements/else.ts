@@ -1,7 +1,7 @@
 import Else from 'src/parser/statements/Else';
 import Statement from 'src/parser/statements/Statement';
 import { LineObject } from 'src/syntax/parser';
-import { convertWhereToArrayInArray, parseInnerWhere, turnBracketToParenthesis } from './where';
+import { convertWhereToArrayInArray, parseInnerWhere, toJsWhere, turnBracketToParenthesis } from './where';
 
 export function verifyElseStatement(line: string, lineNo: number) {
     if (!line.startsWith('else')) {
@@ -30,17 +30,16 @@ export function verifyElseStatement(line: string, lineNo: number) {
     }
 }
 
-
-
 export function parseElse(line: string, children?: LineObject[]): Statement {
+    console.log('line: ', line);
     const comment = line.split(' .,')[1];
-    let expression = line.replace('else ', '');
+    let expression = line.replace('else', '').replace(' if', '');
     if (comment) {
         expression = line.replace(' .,' + comment, '');
     }
-    const conditionStatements = convertWhereToArrayInArray(turnBracketToParenthesis(expression));
     let conditions;
-    if (conditionStatements) {
+    if (expression) {
+        const conditionStatements = convertWhereToArrayInArray(turnBracketToParenthesis(expression));
         conditions = parseInnerWhere(conditionStatements);
     }
     const body = (children || [])
@@ -48,4 +47,23 @@ export function parseElse(line: string, children?: LineObject[]): Statement {
         .filter((child) => child) as Statement[];
     const statement = new Statement<Else>('else', new Else(conditions, body));
     return statement;
+}
+
+export function toJsElse(statement: Statement<Else>, level = 0) {
+    const prevLevel = level > 0 ? (level - 1) * 4 : 0;
+    const thisLevel = level * 4;
+    const nextLevel = (level + 1) * 4;
+    let result = ' '.repeat(prevLevel) + 'else ';
+    console.log('statement.expression.conditions: ', statement.expression.conditions);
+    if (statement.expression.conditions) {
+        result += 'if (';
+        result += toJsWhere(statement.expression.conditions);
+        result += ') ';
+    }
+    result += '{';
+    (statement.expression.body || []).forEach((child) => {
+        result += '\n' + ' '.repeat(nextLevel) + child.toJs(level + 1);
+    });
+    result += '\n' + ' '.repeat(thisLevel) + '}';
+    return result;
 }

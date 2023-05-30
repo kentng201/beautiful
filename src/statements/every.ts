@@ -71,3 +71,15 @@ export function parseEvery(line: string, children?: LineObject[]): Statement {
     const statement = new Statement<Every>('every', new Every(variableName, inName, conditions, body));
     return statement;
 }
+
+export function toJsEvery(statement: Statement<Every>, level = 0) {
+    const prevLevel = level > 0 ? (level - 1) * 4 : 0;
+    const thisLevel = level * 4;
+    const nextLevel = (level + 1) * 4;
+    let result = ' '.repeat(prevLevel) + 'for (const ' + statement.expression.variableName + ' of ' + statement.expression.inName + ') {';
+    (statement.expression.body || []).forEach((child) => {
+        result += '\n' + ' '.repeat(nextLevel) + child.toJs(level + 1);
+    });
+    result += '\n' + ' '.repeat(thisLevel) + '}';
+    return result;
+}
