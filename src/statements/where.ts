@@ -71,12 +71,18 @@ export function parseInnerWhere(lines: any[]): Condition[] {
     for (const line of lines) {
         if (typeof line === 'string') {
             const items = parseWhere(line);
-            for (let i = 0; i <= items.length - 1; i++) {
-                if (i != 0 && !items[i].join && items[i].children.length == 0) {
-                    continue;
+            const lastResult = result[result.length - 1];
+            if (!lastResult) {
+                for (let i = 0; i <= items.length - 1; i++) {
+                    result.push(items[i]);
                 }
-                result.push(items[i]);
+            } else {
+                lastResult.children = [];
+                for (let i = 0; i <= items.length - 1; i++) {
+                    lastResult.children.push(items[i]);
+                }
             }
+
         } else if (Array.isArray(line)) {
             const output = parseInnerWhere(line);
             const children: Condition[] = [];
