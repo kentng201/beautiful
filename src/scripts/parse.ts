@@ -1,5 +1,6 @@
 import fs from 'fs';
 import chalk from 'chalk';
+import validate from 'src/syntax/validator';
 import parse from 'src/syntax/parser';
 
 const filePath: string = process.argv[3];
@@ -13,6 +14,16 @@ export default async function execute() {
             }
 
             const lines = data.split('\n');
+            try {
+                validate(lines);
+            } catch (error: any) {
+                const errorObject = JSON.parse(error.message);
+                console.log(chalk.red(errorObject.msg));
+                console.log(chalk.red(`    at (${filePath}:${errorObject.lineNo})`));
+                console.log(chalk.red(`    -> "${lines[errorObject.lineNo ? errorObject.lineNo - 1 : '0'].trim()}"`));
+                process.exit(1);
+            }
+
             try {
                 parse(lines);
             } catch (error: any) {

@@ -31,7 +31,6 @@ export function verifyElseStatement(line: string, lineNo: number) {
 }
 
 export function parseElse(line: string, children?: LineObject[]): Statement {
-    console.log('line: ', line);
     const comment = line.split(' .,')[1];
     let expression = line.replace('else', '').replace(' if', '');
     if (comment) {
@@ -54,7 +53,6 @@ export function toJsElse(statement: Statement<Else>, level = 0) {
     const thisLevel = level * 4;
     const nextLevel = (level + 1) * 4;
     let result = ' '.repeat(prevLevel) + 'else ';
-    console.log('statement.expression.conditions: ', statement.expression.conditions);
     if (statement.expression.conditions) {
         result += 'if (';
         result += toJsWhere(statement.expression.conditions);
