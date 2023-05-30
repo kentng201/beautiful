@@ -22,10 +22,12 @@ export default class Set {
     variableName: string;
     type: 'to' | 'from';
     assign?: SetStatement | ModelQuery;
+    comment?: Comment;
 
-    constructor(variableName: string, type: 'to' | 'from', assign?: SetStatement | ModelQuery) {
+    constructor(variableName: string, type: 'to' | 'from', assign?: SetStatement | ModelQuery, comment?: Comment) {
         this.variableName = variableName;
         this.type = type;
         this.assign = assign;
+        this.comment = comment;
     }
 }

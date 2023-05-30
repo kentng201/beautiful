@@ -6,6 +6,7 @@ import Statement from 'src/parser/statements/Statement';
 import validate from 'src/syntax/validator';
 
 const filePath: string = process.argv[3];
+const fileName = filePath.split('/').pop()?.split('.')[0] || 'index';
 
 export default async function execute() {
     return new Promise<void>((resolve) => {
@@ -38,7 +39,7 @@ export default async function execute() {
             }
 
             try {
-                convert(statements);
+                convert(statements, fileName);
             } catch (error: any) {
                 const errorObject = JSON.parse(error.message);
                 console.log(chalk.red(errorObject.msg));

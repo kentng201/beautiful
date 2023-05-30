@@ -9,6 +9,8 @@ import { toJsEvery } from 'src/statements/every';
 import Every from './Every';
 import { toJsElse } from 'src/statements/else';
 import Else from './Else';
+import { toJsSet } from 'src/statements/set';
+import Set from './Set';
 
 export default class Statement<T = {}> {
     keyword: StatementKeyword | 'set' | 'func';
@@ -31,7 +33,7 @@ export default class Statement<T = {}> {
         } else if (this.keyword == 'loop') {
             return toJsLoop(this as Statement<Loop>, level);
         } else if (this.keyword == 'set') {
-            // return toJsSet();
+            return toJsSet(this as Statement<Set>, level);
         } else if (this.keyword == 'func') {
             // return toJsFunc();
         } else if (this.keyword == 'native') {

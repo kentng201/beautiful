@@ -5,6 +5,7 @@ import { parseEvery } from 'src/statements/every';
 import { parseLoop } from 'src/statements/loop';
 import { parseWhile } from 'src/statements/while';
 import { parseElse } from 'src/statements/else';
+import { parseSet } from 'src/statements/set';
 
 export default function parseStatement(line: string, lineNo: number, children?: LineObject[]): Statement | undefined {
     if (line.startsWith('if')) {
@@ -18,7 +19,7 @@ export default function parseStatement(line: string, lineNo: number, children?: 
     } else if (line.startsWith('loop')) {
         return parseLoop(line, children);
     } else if (line.startsWith('set')) {
-        // return parseSet(line, children);
+        return parseSet(line);
     } else if (line.startsWith('func')) {
         // return parseFunc(line, children);
     }

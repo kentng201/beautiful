@@ -6,6 +6,10 @@ import { verifyNewSyntax } from './assignment/new';
 import { verifyPickSyntax } from './assignment/pick';
 import Statement from 'src/parser/statements/Statement';
 import { reserverdWords } from 'src/keywords';
+import Set from 'src/parser/statements/Set';
+import Comment from 'src/parser/statements/Comment';
+import { LineObject } from 'src/syntax/parser';
+import { SetStatement } from 'src/parser/statements/Set';
 
 export function verifySetStatement(line: string, lineNo: number, nextLine?: string) {
     if (!line.startsWith('set')) {
@@ -146,4 +150,49 @@ export function extractSetStatementToObject(line: string) {
     const setMethod = extractSetStatementToMethod(expression);
     const set = new SetObject(words[1], setMethod);
     return new Statement<SetObject>('set', set);
+}
+
+export function parseSet(line: string): Statement {
+    const commentString = line.split(' .,')[1];
+    let comment;
+    let expression = line.replace('set ', '');
+    if (commentString) {
+        expression = line.replace(' .,' + commentString, '');
+        comment = new Comment(commentString);
+    }
+    const variableName = expression.split(' ')[0];
+    console.log('variableName: ', variableName);
+
+
+    let type: 'to' | 'from' = 'to';
+    let assign;
+    if (expression.includes(' to ')) {
+        type = 'to';
+        expression = expression.replace(`${variableName} to`, '').trim();
+        const obj = extractSetStatementToObject(expression);
+        assign = new SetStatement('native', obj.expression.statement!.body, obj.expression.statement!.method);
+        // assign = 
+    } else if (expression.includes(' from ')) {
+        type = 'from';
+    }
+
+    const statement = new Statement<Set>('set', new Set(variableName, type, assign, comment));
+    return statement;
+}
+
+export function toJsSet(statement: Statement<Set>, level = 0) {
+    const prevLevel = level > 0 ? (level - 1) * 4 : 0;
+    const thisLevel = level * 4;
+    const nextLevel = (level + 1) * 4;
+    let result = ' '.repeat(thisLevel) + 'const ';
+    const set = statement.expression;
+    result += set.variableName + ' = ';
+    if (set.type == 'to') {
+        result += (set.assign as SetStatement).statement;
+    }
+    result += ';';
+    if (statement.expression.comment) {
+        result += '// ' + statement.expression.comment.content + '\n';
+    }
+    return result;
 }
