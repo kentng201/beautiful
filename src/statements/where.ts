@@ -71,12 +71,24 @@ export function parseInnerWhere(lines: any[]): Condition[] {
     for (const line of lines) {
         if (typeof line === 'string') {
             const items = parseWhere(line);
-            for (const item of items) {
-                result.push(item);
+            for (let i = 0; i <= items.length - 1; i++) {
+                console.log('items[i].join: ', items[i].join);
+                if (i != 0 && !items[i].join && items[i].children.length == 0) {
+                    continue;
+                }
+                result.push(items[i]);
             }
         } else if (Array.isArray(line)) {
             const output = parseInnerWhere(line);
-            result[result.length - 1].children = output;
+            const children: Condition[] = [];
+            for (let i = 0; i <= output.length - 1; i++) {
+                const item = output[i];
+                if (i != 0 && !item.join && item.children.length == 0) {
+                    continue;
+                }
+                children.push(item);
+            }
+            result[result.length - 1].children = children;
         }
     }
     return result;
@@ -166,7 +178,6 @@ export function parseWhere(line: string): Condition[] {
             condition = new Condition();
             condition.join = 'or';
         } else if (condition) {
-            console.log('condition: ', condition);
             condition.statement = {
                 key: (expression || [])[0],
                 operator: operator as Operator,

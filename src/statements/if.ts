@@ -32,6 +32,7 @@ export function parseIf(line: string): Statement {
         expression = line.replace(' .,' + comment, '');
     }
     const conditionStatements = convertWhereToArrayInArray(turnBracketToParenthesis(expression));
+    console.log('conditionStatements: ', conditionStatements);
     const conditions = parseInnerWhere(conditionStatements);
     const statement = new Statement<If>('if', new If(conditions, []));
     return statement;
