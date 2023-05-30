@@ -11,7 +11,7 @@ if (command === 'validate') {
     parse();
 } else if (command === 'convert') {
     // convert();
-} else if (command === 'build') {
+} else if (command === 'compile') {
     (async () => {
         await validate();
         await parse();
@@ -24,6 +24,6 @@ if (command === 'validate') {
     console.log(chalk.green('    validate') + ' - Validate a .elg file');
     console.log(chalk.green('    parse') + ' - Parse a .elg file');
     console.log(chalk.green('    convert') + ' - Convert a .elg file to .js');
-    console.log(chalk.green('    build') + ' - Validate, parse, and convert a .elg file');
+    console.log(chalk.green('    compile') + ' - Validate, parse, and convert a .elg file');
     process.exit(1);
 }

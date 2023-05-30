@@ -28,30 +28,34 @@ export function verifyWhereStatement(line: string, lineNo: number, currentMainKe
 
 export function parseWhere(line: string): Condition[] {
     const expression = line.replace('where ', '');
-    let conditionStrings = expression.split(' and ');
-    conditionStrings = conditionStrings.map((condition, index) => {
-        if (index == conditionStrings.length - 1) {
-            return [condition];
-        }
-        return [condition, 'and'];
-    }).flat();
-
-    // split by 'or' keyword
-    conditionStrings = conditionStrings.map((condition) => {
-        const newConditions = condition.split(' or ');
-        const resultConditions: string[][] = [];
-        for (let i = 0; i <= newConditions.length - 1; i++) {
-            if (i == conditionStrings.length - 1) {
-                resultConditions[i] = [newConditions[i]];
-            } else {
-                resultConditions[i] = [newConditions[i], 'or'];
+    let conditionStrings: string[];
+    if (expression.match(/\b(and)\b/g)) {
+        conditionStrings = expression.replace(/\b(and)\b/g, '&&').split('&&');
+    } else {
+        conditionStrings = [expression];
+    }
+    conditionStrings = conditionStrings.map((str, strIndex) => {
+        const newStrings: string[] = [];
+        if (str.match(/\b(or)\b/g)) {
+            const strings = str.replace(/\b(or)\b/g, '||').split('||');
+            for (let i = 0; i <= strings.length - 1; i++) {
+                if (i != 0) {
+                    newStrings.push('||');
+                }
+                newStrings.push(strings[i].trim());
             }
+        } else {
+            newStrings.push(str);
         }
-        return resultConditions.flat();
-    }).flat();
-
+        if (strIndex != 0) {
+            return ['&&'].concat(newStrings);
+        }
+        return newStrings;
+    }).flat(1);
 
     const conditions: Condition[] = [];
+    console.log('conditionStrings: ', conditionStrings);
+    let condition: Condition | undefined = new Condition();
     for (let i = 0; i <= conditionStrings.length - 1; i++) {
         conditionStrings[i] = conditionStrings[i].trim()
             .replace(/\b(and)\b/g, '&&')
@@ -68,7 +72,6 @@ export function parseWhere(line: string): Condition[] {
             .replace(/\b(is an)\b/g, '~=')
             .replace(/\b(is a)\b/g, '~=')
             .replace(/\b(is)\b/g, '~=');
-        const condition = new Condition();
         let expression: string[] | undefined;
         let operator: string | undefined;
         if (conditionStrings[i].includes('===')) {
@@ -98,14 +101,24 @@ export function parseWhere(line: string): Condition[] {
         } else if (conditionStrings[i].includes('~=')) {
             expression = conditionStrings[i].split('~=');
             operator = '~=';
+        } else {
+            expression = [conditionStrings[i]];
         }
-        condition.statement = {
-            key: (expression || [])[0],
-            operator: operator as Operator,
-            value: (expression || [])[1]
-        };
-
-        conditions.push(condition);
+        if ((expression || [])[0] == '&&') {
+            condition = new Condition();
+            condition.join = 'and';
+        } else if ((expression || [])[0] == '||') {
+            condition = new Condition();
+            condition.join = 'or';
+        } else if (condition) {
+            condition.statement = {
+                key: (expression || [])[0],
+                operator: operator as Operator,
+                value: (expression || [])[1]
+            };
+            conditions.push(condition);
+            condition = undefined;
+        }
     }
     return conditions;
 }

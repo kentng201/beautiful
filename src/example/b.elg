@@ -1,3 +1,3 @@
 set total to 10
-if total equal 20
+if total equal 20 or total more than 30 and total less than 40
     console.log total

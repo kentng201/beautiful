@@ -32,7 +32,6 @@ export function parseIf(line: string): Statement {
         expression = line.replace(' .,' + comment, '');
     }
     const conditions = parseWhere(expression);
-    console.log('conditions?: ', conditions);
     const statement = new Statement<If>('if', new If(conditions, []));
     return statement;
 }
