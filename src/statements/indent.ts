@@ -19,9 +19,6 @@ export function verifyIndentSpacing(indentStack: IndentInfo[], leadingSpaces: nu
         }
         notMatchIndention = true;
     }
-    console.log('-----');
-    console.log('line: ', line);
-    console.log('leadingSpaces: ', leadingSpaces);
     if (notMatchIndention && leadingSpaces > 0 && line.trim() !== '') {
         throw new Error(JSON.stringify({
             msg: 'SyntaxError: "' + line + '" statement should be same indentation as previous statement',

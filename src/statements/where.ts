@@ -72,7 +72,6 @@ export function parseInnerWhere(lines: any[]): Condition[] {
         if (typeof line === 'string') {
             const items = parseWhere(line);
             for (let i = 0; i <= items.length - 1; i++) {
-                console.log('items[i].join: ', items[i].join);
                 if (i != 0 && !items[i].join && items[i].children.length == 0) {
                     continue;
                 }
