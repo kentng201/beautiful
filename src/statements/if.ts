@@ -1,7 +1,7 @@
 import Statement from 'src/parser/statements/Statement';
 import { verifyComparisonStatement } from './comparison';
 import If from 'src/parser/statements/If';
-import { convertWhereToArrayInArray, parseInnerWhere, turnBracketToParenthesis } from './where';
+import { convertWhereToArrayInArray, parseInnerWhere, toJsWhere, turnBracketToParenthesis } from './where';
 import { LineObject } from 'src/syntax/parser';
 import Comment from 'src/parser/statements/Comment';
 
@@ -42,4 +42,16 @@ export function parseIf(line: string, children?: LineObject[]): Statement {
         .filter((child) => child) as Statement[];
     const statement = new Statement<If>('if', new If(conditions, body, comment));
     return statement;
+}
+
+export function toJsIf(statement: Statement<If>, level = 0) {
+    let result = ' '.repeat(level * 4) + 'if (';
+    result += toJsWhere(statement.expression.conditions);
+    result += ') {';
+    (statement.expression.body || []).forEach((child) => {
+        result += '\n' + ' '.repeat((level + 1) * 4) + child.toJs(level + 1);
+    });
+    result += '\n' + ' '.repeat(level * 4) + '}';
+    return result;
+
 }

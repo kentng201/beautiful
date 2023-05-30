@@ -188,3 +188,21 @@ export function parseWhere(line: string): Condition[] {
     }
     return conditions;
 }
+
+export function toJsWhere(conditions: Condition[]) {
+    let result = '';
+    conditions.forEach((condition, index) => {
+        if (index > 0) {
+            const join = condition.join == 'and' ? '&&' : '||';
+            result += ' ' + join + ' ';
+        }
+        if (condition.statement && condition.statement.key && condition.statement.operator && condition.statement.value) {
+            result += condition.statement?.key + ' ' + condition.statement?.operator + ' ' + condition.statement?.value;
+        } else if (condition.children) {
+            result += '(';
+            result += toJsWhere(condition.children);
+            result += ')';
+        }
+    });
+    return result;
+}

@@ -121,7 +121,7 @@ export default function parse(lines: string[]) {
         if (spacingLines.length === 0) break;
         arr = convertLinesToTree(arr, spacingLines);
     }
-    fs.writeFileSync('output.test.json', JSON.stringify(arr, null, 4));
+    // fs.writeFileSync('output.test.json', JSON.stringify(arr, null, 4));
 
     const statements: Statement[] = [];
     let lastStatement: Statement | undefined;
@@ -131,7 +131,7 @@ export default function parse(lines: string[]) {
             statements.push(lastStatement);
         }
     }
-    fs.writeFileSync('parsed.test.json', JSON.stringify(statements, null, 4));
+    // fs.writeFileSync('parsed.test.json', JSON.stringify(statements, null, 4));
 
     console.timeEnd('compile time');
     return statements;
