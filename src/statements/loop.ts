@@ -1,6 +1,11 @@
 import Statement from 'src/parser/statements/Statement';
 import { reserverdWords } from '../keywords';
 import { verifyComparisonStatement } from './comparison';
+import { LineObject } from 'src/syntax/parser';
+import Loop from 'src/parser/statements/Loop';
+import Condition from 'src/parser/statements/Condition';
+import { convertWhereToArrayInArray, parseInnerWhere, turnBracketToParenthesis } from './where';
+import Comment from 'src/parser/statements/Comment';
 
 export function verifyLoopStatement(line: string, lineNo: number) {
     if (!line.startsWith('loop')) {
@@ -43,17 +48,29 @@ export function verifyLoopStatement(line: string, lineNo: number) {
     verifyComparisonStatement(line, lineNo, 'loop', lineNo);
 }
 
-export function extractLoopStatementToObject(line: string) {
-    const words = line.split(' ');
-    let expression = `${words[1]} ${words[2]}`;
-    if (words.length >= 5) {
-        expression += ` ${words[3]} ${words[4]}`;
+export function parseLoop(line: string, children?: LineObject[]): Statement {
+    const commentString = line.split(' .,')[1];
+    let comment;
+    let expression = line.replace('if ', '');
+    if (commentString) {
+        expression = line.replace(' .,' + commentString, '');
+        comment = new Comment(commentString);
     }
-    line = line.replace(`loop ${expression}`, '').trim();
-    if (line.length > 0) {
-        line = line.replace('where', '').trim();
-        // const conditions = parseCondition(line);
-        return new Statement('loop', expression);
+    const conditionString = expression.split(' where ')[1];
+    let conditions: Condition[] = [];
+    expression = expression.replace(' where ' + conditionString, '');
+    if (conditionString) {
+        const conditionStatements = convertWhereToArrayInArray(turnBracketToParenthesis(conditionString));
+        conditions = parseInnerWhere(conditionStatements);
     }
-    return new Statement('loop', expression);
+
+    const variableName = expression.split(' as ')[0].replace('loop ', '').replace(' times', '');
+    const asName = expression.split(' as ')[1];
+
+    const body = (children || [])
+        .map((child) => child.toStatement())
+        .filter((child) => child) as Statement[];
+
+    const statement = new Statement<Loop>('loop', new Loop(variableName, asName, conditions, body, comment));
+    return statement;
 }

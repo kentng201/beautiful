@@ -10,10 +10,11 @@ export default class Loop {
     body: Statement[] = [];
     comment?: Comment;
 
-    constructor(variableName: string, asName?: string, conditions: Condition[] = [], body: Statement[] = []) {
+    constructor(variableName: string, asName?: string, conditions: Condition[] = [], body: Statement[] = [], comment?: Comment) {
         this.variableName = variableName;
         this.asName = asName;
         this.conditions = conditions;
         this.body = body;
+        this.comment = comment;
     }
 }

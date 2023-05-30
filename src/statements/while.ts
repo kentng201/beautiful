@@ -1,4 +1,10 @@
+import { LineObject } from 'src/syntax/parser';
 import { verifyComparisonStatement } from './comparison';
+import Statement from 'src/parser/statements/Statement';
+import Condition from 'src/parser/statements/Condition';
+import { convertWhereToArrayInArray, parseInnerWhere, turnBracketToParenthesis } from './where';
+import While from 'src/parser/statements/While';
+import Comment from 'src/parser/statements/Comment';
 
 export function verifyWhileStatement(line: string, lineNo: number) {
     if (!line.startsWith('while')) {
@@ -22,8 +28,20 @@ export function verifyWhileStatement(line: string, lineNo: number) {
     verifyComparisonStatement(line, lineNo, 'while', lineNo);
 }
 
-export function extractWhileStatementToObject(line: string) {
-    const expressionWithConditions = line.replace('while ', '');
-    // const conditions = parseCondition(expressionWithConditions);
-    // return new StatementObject('while', '', conditions);
+export function parseWhile(line: string, children?: LineObject[]): Statement {
+    const commentString = line.split(' .,')[1];
+    let comment;
+    let expression = line.replace('if ', '');
+    if (commentString) {
+        expression = line.replace(' .,' + commentString, '');
+        comment = new Comment(commentString);
+    }
+    const conditionStatements = convertWhereToArrayInArray(turnBracketToParenthesis(expression));
+    const conditions = parseInnerWhere(conditionStatements);
+
+    const body = (children || [])
+        .map((child) => child.toStatement())
+        .filter((child) => child) as Statement[];
+
+    return new Statement<While>('while', new While(conditions, body, comment));
 }

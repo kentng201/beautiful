@@ -53,8 +53,8 @@ export class LineObject {
         return result;
     }
 
-    toStatement(lastStatement?: Statement): Statement | undefined {
-        const statement = parseStatement(this.line, this.lineNo, this.children, lastStatement);
+    toStatement(): Statement | undefined {
+        const statement = parseStatement(this.line, this.lineNo, this.children);
         return statement;
     }
 }
@@ -126,7 +126,7 @@ export default function parse(lines: string[]) {
     const statements: Statement[] = [];
     let lastStatement: Statement | undefined;
     for (const line of arr) {
-        lastStatement = line.toStatement(lastStatement);
+        lastStatement = line.toStatement();
         if (lastStatement) {
             statements.push(lastStatement);
         }

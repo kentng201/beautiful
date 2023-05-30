@@ -7,4 +7,10 @@ export default class While {
     conditions: Condition[] = [];
     body: Statement[] = [];
     comment?: Comment;
+
+    constructor(conditions: Condition[], body: Statement[], comment?: Comment) {
+        this.conditions = conditions;
+        this.body = body;
+        this.comment = comment;
+    }
 }

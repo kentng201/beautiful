@@ -1,3 +1,7 @@
+import Else from 'src/parser/statements/Else';
+import Statement from 'src/parser/statements/Statement';
+import { LineObject } from 'src/syntax/parser';
+import { convertWhereToArrayInArray, parseInnerWhere, turnBracketToParenthesis } from './where';
 
 export function verifyElseStatement(line: string, lineNo: number) {
     if (!line.startsWith('else')) {
@@ -26,8 +30,22 @@ export function verifyElseStatement(line: string, lineNo: number) {
     }
 }
 
-export function extractElseStatementToObject(line: string) {
-    if (line == 'else') {
-        // return new StatementObject('else', '');
+
+
+export function parseElse(line: string, children?: LineObject[]): Statement {
+    const comment = line.split(' .,')[1];
+    let expression = line.replace('else ', '');
+    if (comment) {
+        expression = line.replace(' .,' + comment, '');
     }
+    const conditionStatements = convertWhereToArrayInArray(turnBracketToParenthesis(expression));
+    let conditions;
+    if (conditionStatements) {
+        conditions = parseInnerWhere(conditionStatements);
+    }
+    const body = (children || [])
+        .map((child) => child.toStatement())
+        .filter((child) => child) as Statement[];
+    const statement = new Statement<Else>('else', new Else(conditions, body));
+    return statement;
 }

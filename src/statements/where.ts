@@ -178,9 +178,9 @@ export function parseWhere(line: string): Condition[] {
             condition.join = 'or';
         } else if (condition) {
             condition.statement = {
-                key: (expression || [])[0],
+                key: ((expression || [])[0] || '').trim(),
                 operator: operator as Operator,
-                value: (expression || [])[1]
+                value: ((expression || [])[1] || '').trim()
             };
             conditions.push(condition);
             condition = undefined;
