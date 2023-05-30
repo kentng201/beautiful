@@ -11,6 +11,7 @@ import { toJsElse } from 'src/statements/else';
 import Else from './Else';
 import { toJsSet } from 'src/statements/set';
 import Set from './Set';
+import { toJsNative } from 'src/statements/native';
 
 export default class Statement<T = {}> {
     keyword: StatementKeyword | 'set' | 'func';
@@ -37,8 +38,7 @@ export default class Statement<T = {}> {
         } else if (this.keyword == 'func') {
             // return toJsFunc();
         } else if (this.keyword == 'native') {
-            // return toJsNative();
-            return this.expression;
+            return toJsNative(this as Statement<string>, level);
         }
     }
 }

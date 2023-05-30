@@ -161,8 +161,6 @@ export function parseSet(line: string): Statement {
         comment = new Comment(commentString);
     }
     const variableName = expression.split(' ')[0];
-    console.log('variableName: ', variableName);
-
 
     let type: 'to' | 'from' = 'to';
     let assign;
@@ -171,7 +169,6 @@ export function parseSet(line: string): Statement {
         expression = expression.replace(`${variableName} to`, '').trim();
         const obj = extractSetStatementToObject(expression);
         assign = new SetStatement('native', obj.expression.statement!.body, obj.expression.statement!.method);
-        // assign = 
     } else if (expression.includes(' from ')) {
         type = 'from';
     }

@@ -1,14 +1,15 @@
-set total to 10
+set total to array
 
-if total == 1
+if total more than 10
+    console.log i
     console.log i
 
-if total equal 20 or (total more than 30 and (total less than 40 and (total == 20 or total == 30) or total equal 50)) and total not equal 60
+if total equal 20 or (total > 20) and (total < 30)
     console.log total
     if total == 'hi'
-        console.log total
+        console.log total 'hi' true
     else total == 'bye'
-        console.log 'bye'
+        console.log ...hi...
     else
         console.log 'no'
 
