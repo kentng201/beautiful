@@ -1,5 +1,10 @@
+import Statement from 'src/parser/statements/Statement';
 import { reserverdWords } from '../keywords';
 import { verifyComparisonStatement } from './comparison';
+import { LineObject } from 'src/syntax/parser';
+import Every from 'src/parser/statements/Every';
+import { convertWhereToArrayInArray, parseInnerWhere, turnBracketToParenthesis } from './where';
+import Condition from 'src/parser/statements/Condition';
 
 export function verifyEveryStatement(line: string, lineNo: number) {
     if (!line.startsWith('every')) {
@@ -42,14 +47,27 @@ export function verifyEveryStatement(line: string, lineNo: number) {
     verifyComparisonStatement(line, lineNo, 'every', lineNo);
 }
 
-export function extractEveryStatementToObject(line: string) {
-    const words = line.split(' ');
-    const expression = `${words[1]} in ${words[3]}`;
-    line = line.replace(`every ${expression}`, '');
-    if (line.length > 0) {
-        line = line.replace('where', '').trim();
-        // const conditions = parseCondition(line);
-        // return new StatementObject('every', expression, conditions);
+export function parseEvery(line: string, children?: LineObject[]): Statement {
+    const comment = line.split(' .,')[1];
+    let expression = line.replace('if ', '');
+    if (comment) {
+        expression = line.replace(' .,' + comment, '');
     }
-    // return new StatementObject('every', expression);
+    const conditionString = expression.split(' where ')[1];
+    let conditions: Condition[] = [];
+    expression = expression.replace(' where ' + conditionString, '');
+    if (conditionString) {
+        const conditionStatements = convertWhereToArrayInArray(turnBracketToParenthesis(conditionString));
+        conditions = parseInnerWhere(conditionStatements);
+    }
+
+    const variableName = expression.split(' in ')[0].replace('every ', '');
+    const inName = expression.split(' in ')[1];
+
+    const body = (children || [])
+        .map((child) => child.toStatement())
+        .filter((child) => child) as Statement[];
+
+    const statement = new Statement<Every>('every', new Every(variableName, inName, conditions, body));
+    return statement;
 }

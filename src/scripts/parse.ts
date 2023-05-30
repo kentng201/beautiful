@@ -16,6 +16,7 @@ export default async function execute() {
             try {
                 parse(lines);
             } catch (error: any) {
+                console.log('error: ', error);
                 const errorObject = JSON.parse(error.message);
                 console.log(chalk.red(errorObject.msg));
                 console.log(chalk.red(`    at (${filePath}:${errorObject.lineNo})`));
