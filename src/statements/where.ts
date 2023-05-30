@@ -26,6 +26,62 @@ export function verifyWhereStatement(line: string, lineNo: number, currentMainKe
     }
 }
 
+export function turnBracketToParenthesis(line: string): string[] {
+    if (!line.includes('(') && !line.includes(')')) {
+        return [line];
+    }
+    const newLines: string[] = [];
+    let newLineIndex = 0;
+    let bracketCount = 0;
+    for (let i = 0; i <= line.length - 1; i++) {
+        if (line[i] == '(') {
+            bracketCount++;
+            if (bracketCount == 1) {
+                newLines.push(line.slice(newLineIndex, i).trim());
+                newLineIndex = i + 1;
+            }
+        } else if (line[i] == ')') {
+            bracketCount--;
+            if (bracketCount == 0) {
+                newLines.push(line.slice(newLineIndex, i).trim());
+                newLineIndex = i + 1;
+            }
+        }
+    }
+    if (newLineIndex != line.length) {
+        newLines.push(line.slice(newLineIndex).trim());
+    }
+    return newLines;
+}
+
+export function convertWhereToArrayInArray(lines: string[]): any[] {
+    const newLines: any[] = [];
+    for (let i = 0; i <= lines.length - 1; i++) {
+        if (lines[i].includes('(') || lines[i].includes(')')) {
+            newLines.push(convertWhereToArrayInArray(turnBracketToParenthesis(lines[i])));
+        } else {
+            newLines.push(lines[i]);
+        }
+    }
+    return newLines;
+}
+
+export function parseInnerWhere(lines: any[]): Condition[] {
+    const result: Condition[] = [];
+    for (const line of lines) {
+        if (typeof line === 'string') {
+            const items = parseWhere(line);
+            for (const item of items) {
+                result.push(item);
+            }
+        } else if (Array.isArray(line)) {
+            const output = parseInnerWhere(line);
+            result[result.length - 1].children = output;
+        }
+    }
+    return result;
+}
+
 export function parseWhere(line: string): Condition[] {
     const expression = line.replace('where ', '');
     let conditionStrings: string[];
@@ -54,7 +110,6 @@ export function parseWhere(line: string): Condition[] {
     }).flat(1);
 
     const conditions: Condition[] = [];
-    console.log('conditionStrings: ', conditionStrings);
     let condition: Condition | undefined = new Condition();
     for (let i = 0; i <= conditionStrings.length - 1; i++) {
         conditionStrings[i] = conditionStrings[i].trim()
@@ -111,6 +166,7 @@ export function parseWhere(line: string): Condition[] {
             condition = new Condition();
             condition.join = 'or';
         } else if (condition) {
+            console.log('condition: ', condition);
             condition.statement = {
                 key: (expression || [])[0],
                 operator: operator as Operator,

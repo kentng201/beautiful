@@ -1,7 +1,7 @@
 import Statement from 'src/parser/statements/Statement';
 import { verifyComparisonStatement } from './comparison';
 import If from 'src/parser/statements/If';
-import { parseWhere } from './where';
+import { convertWhereToArrayInArray, parseInnerWhere, turnBracketToParenthesis } from './where';
 
 export function verifyIfStatement(line: string, lineNo: number) {
     if (!line.startsWith('if')) {
@@ -31,7 +31,8 @@ export function parseIf(line: string): Statement {
     if (comment) {
         expression = line.replace(' .,' + comment, '');
     }
-    const conditions = parseWhere(expression);
+    const conditionStatements = convertWhereToArrayInArray(turnBracketToParenthesis(expression));
+    const conditions = parseInnerWhere(conditionStatements);
     const statement = new Statement<If>('if', new If(conditions, []));
     return statement;
 }
