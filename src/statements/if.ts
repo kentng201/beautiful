@@ -45,13 +45,15 @@ export function parseIf(line: string, children?: LineObject[]): Statement {
 }
 
 export function toJsIf(statement: Statement<If>, level = 0) {
-    let result = ' '.repeat(level * 4) + 'if (';
+    const prevLevel = level > 0 ? (level - 1) * 4 : 0;
+    const thisLevel = level * 4;
+    const nextLevel = (level + 1) * 4;
+    let result = ' '.repeat(prevLevel) + 'if (';
     result += toJsWhere(statement.expression.conditions);
     result += ') {';
     (statement.expression.body || []).forEach((child) => {
-        result += '\n' + ' '.repeat((level + 1) * 4) + child.toJs(level + 1);
+        result += '\n' + ' '.repeat(nextLevel) + child.toJs(level + 1);
     });
-    result += '\n' + ' '.repeat(level * 4) + '}';
+    result += '\n' + ' '.repeat(thisLevel) + '}';
     return result;
-
 }

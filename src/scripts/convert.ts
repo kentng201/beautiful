@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import convert from 'src/syntax/converter';
 import parse from 'src/syntax/parser';
 import Statement from 'src/parser/statements/Statement';
+import validate from 'src/syntax/validator';
 
 const filePath: string = process.argv[3];
 
@@ -15,6 +16,16 @@ export default async function execute() {
             }
 
             const lines = data.split('\n');
+            try {
+                validate(lines);
+            } catch (error: any) {
+                const errorObject = JSON.parse(error.message);
+                console.log(chalk.red(errorObject.msg));
+                console.log(chalk.red(`    at (${filePath}:${errorObject.lineNo})`));
+                console.log(chalk.red(`    -> "${lines[errorObject.lineNo ? errorObject.lineNo - 1 : '0'].trim()}"`));
+                process.exit(1);
+            }
+
             let statements: Statement[];
             try {
                 statements = parse(lines);
@@ -26,9 +37,8 @@ export default async function execute() {
                 process.exit(1);
             }
 
-            let jsFile: string;
             try {
-                jsFile = convert(statements);
+                convert(statements);
             } catch (error: any) {
                 const errorObject = JSON.parse(error.message);
                 console.log(chalk.red(errorObject.msg));
@@ -36,7 +46,6 @@ export default async function execute() {
                 console.log(chalk.red(`    -> "${lines[errorObject.lineNo ? errorObject.lineNo - 1 : '0'].trim()}"`));
                 process.exit(1);
             }
-            console.log('jsFile: ', jsFile);
         });
         resolve();
     });

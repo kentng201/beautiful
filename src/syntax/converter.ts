@@ -1,3 +1,4 @@
+import fs from 'fs';
 import Statement from 'src/parser/statements/Statement';
 
 export default function convert(statements: Statement[]) {
@@ -6,5 +7,6 @@ export default function convert(statements: Statement[]) {
         result += '\n';
         result += statement.toJs();
     }
+    fs.writeFileSync('js.txt', result);
     return result;
 }
