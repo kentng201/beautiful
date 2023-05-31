@@ -4,7 +4,7 @@ import { verifyComparisonStatement } from './comparison';
 import { LineObject } from 'src/syntax/parser';
 import Loop from 'src/parser/statements/Loop';
 import Condition from 'src/parser/statements/Condition';
-import { convertWhereToArrayInArray, parseInnerWhere, turnBracketToParenthesis } from './where';
+import { parseWhere, toJsWhere } from './where';
 import Comment from 'src/parser/statements/Comment';
 
 export function verifyLoopStatement(line: string, lineNo: number) {
@@ -60,8 +60,7 @@ export function parseLoop(line: string, children?: LineObject[]): Statement {
     let conditions: Condition[] = [];
     expression = expression.replace(' where ' + conditionString, '');
     if (conditionString) {
-        const conditionStatements = convertWhereToArrayInArray(turnBracketToParenthesis(conditionString));
-        conditions = parseInnerWhere(conditionStatements);
+        conditions = parseWhere(conditionString);
     }
 
     const variableName = expression.split(' as ')[0].replace('loop ', '').replace(' times', '');

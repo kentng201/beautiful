@@ -3,8 +3,8 @@ import { reserverdWords } from '../keywords';
 import { verifyComparisonStatement } from './comparison';
 import { LineObject } from 'src/syntax/parser';
 import Every from 'src/parser/statements/Every';
-import { convertWhereToArrayInArray, parseInnerWhere, turnBracketToParenthesis } from './where';
 import Condition from 'src/parser/statements/Condition';
+import { parseWhere } from './where';
 
 export function verifyEveryStatement(line: string, lineNo: number) {
     if (!line.startsWith('every')) {
@@ -57,8 +57,7 @@ export function parseEvery(line: string, children?: LineObject[]): Statement {
     let conditions: Condition[] = [];
     expression = expression.replace(' where ' + conditionString, '');
     if (conditionString) {
-        const conditionStatements = convertWhereToArrayInArray(turnBracketToParenthesis(conditionString));
-        conditions = parseInnerWhere(conditionStatements);
+        conditions = parseWhere(conditionString);
     }
 
     const variableName = expression.split(' in ')[0].replace('every ', '');

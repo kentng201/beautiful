@@ -1,10 +1,9 @@
 import { LineObject } from 'src/syntax/parser';
 import { verifyComparisonStatement } from './comparison';
 import Statement from 'src/parser/statements/Statement';
-import Condition from 'src/parser/statements/Condition';
-import { convertWhereToArrayInArray, parseInnerWhere, toJsWhere, turnBracketToParenthesis } from './where';
 import While from 'src/parser/statements/While';
 import Comment from 'src/parser/statements/Comment';
+import { parseWhere, toJsWhere } from './where';
 
 export function verifyWhileStatement(line: string, lineNo: number) {
     if (!line.startsWith('while')) {
@@ -36,8 +35,7 @@ export function parseWhile(line: string, children?: LineObject[]): Statement {
         expression = line.replace(' .,' + commentString, '');
         comment = new Comment(commentString);
     }
-    const conditionStatements = convertWhereToArrayInArray(turnBracketToParenthesis(expression));
-    const conditions = parseInnerWhere(conditionStatements);
+    const conditions = parseWhere(expression);
 
     const body = (children || [])
         .map((child) => child.toStatement())

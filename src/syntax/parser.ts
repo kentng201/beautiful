@@ -131,7 +131,7 @@ export default function parse(lines: string[]) {
             statements.push(lastStatement);
         }
     }
-    // fs.writeFileSync('parsed.test.json', JSON.stringify(statements, null, 4));
+    fs.writeFileSync('parsed.test.json', JSON.stringify(statements, null, 4));
 
     console.timeEnd('compile time');
     return statements;

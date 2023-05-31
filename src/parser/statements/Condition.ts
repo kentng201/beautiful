@@ -14,4 +14,12 @@ export default class Condition {
     children: Condition[] = [];
     comment?: Comment;
     parent: Condition | undefined;
+
+    constructor(join?: 'and' | 'or', statement?: { key: string; operator: Operator; value: string; }, children?: Condition[], comment?: Comment, parent?: Condition) {
+        this.join = join;
+        this.statement = statement;
+        this.children = children || [];
+        this.comment = comment;
+        this.parent = parent;
+    }
 }

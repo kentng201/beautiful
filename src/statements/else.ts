@@ -1,7 +1,7 @@
 import Else from 'src/parser/statements/Else';
 import Statement from 'src/parser/statements/Statement';
 import { LineObject } from 'src/syntax/parser';
-import { convertWhereToArrayInArray, parseInnerWhere, toJsWhere, turnBracketToParenthesis } from './where';
+import { parseWhere, toJsWhere } from './where';
 
 export function verifyElseStatement(line: string, lineNo: number) {
     if (!line.startsWith('else')) {
@@ -38,8 +38,7 @@ export function parseElse(line: string, children?: LineObject[]): Statement {
     }
     let conditions;
     if (expression) {
-        const conditionStatements = convertWhereToArrayInArray(turnBracketToParenthesis(expression));
-        conditions = parseInnerWhere(conditionStatements);
+        conditions = parseWhere(expression);
     }
     const body = (children || [])
         .map((child) => child.toStatement())

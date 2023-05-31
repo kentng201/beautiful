@@ -26,81 +26,80 @@ export function verifyWhereStatement(line: string, lineNo: number, currentMainKe
     }
 }
 
-export function turnBracketToParenthesis(line: string): string[] {
-    if (!line.includes('(') && !line.includes(')')) {
-        return [line];
-    }
-    const newLines: string[] = [];
-    let newLineIndex = 0;
-    let bracketCount = 0;
-    for (let i = 0; i <= line.length - 1; i++) {
+
+export function maxBracketCount(line: string): number {
+    let count = 0;
+    let result = 0;
+    for (let i = 0; i < line.length; i++) {
         if (line[i] == '(') {
-            bracketCount++;
-            if (bracketCount == 1) {
-                newLines.push(line.slice(newLineIndex, i).trim());
-                newLineIndex = i + 1;
-            }
+            count++;
         } else if (line[i] == ')') {
-            bracketCount--;
-            if (bracketCount == 0) {
-                newLines.push(line.slice(newLineIndex, i).trim());
-                newLineIndex = i + 1;
-            }
+            count--;
         }
-    }
-    if (newLineIndex != line.length) {
-        newLines.push(line.slice(newLineIndex).trim());
-    }
-    return newLines;
-}
-
-export function convertWhereToArrayInArray(lines: string[]): any[] {
-    const newLines: any[] = [];
-    for (let i = 0; i <= lines.length - 1; i++) {
-        if (lines[i].includes('(') || lines[i].includes(')')) {
-            newLines.push(convertWhereToArrayInArray(turnBracketToParenthesis(lines[i])));
-        } else {
-            newLines.push(lines[i]);
-        }
-    }
-    return newLines;
-}
-
-export function parseInnerWhere(lines: any[]): Condition[] {
-    const result: Condition[] = [];
-    for (const line of lines) {
-        if (typeof line === 'string') {
-            const items = parseWhere(line);
-            const lastResult = result[result.length - 1];
-            if (!lastResult) {
-                for (let i = 0; i <= items.length - 1; i++) {
-                    result.push(items[i]);
-                }
-            } else {
-                lastResult.children = [];
-                for (let i = 0; i <= items.length - 1; i++) {
-                    lastResult.children.push(items[i]);
-                }
-            }
-
-        } else if (Array.isArray(line)) {
-            const output = parseInnerWhere(line);
-            const children: Condition[] = [];
-            for (let i = 0; i <= output.length - 1; i++) {
-                const item = output[i];
-                if (i != 0 && !item.join && item.children.length == 0) {
-                    continue;
-                }
-                children.push(item);
-            }
-            result[result.length - 1].children = children;
+        if (count > result) {
+            result = count;
         }
     }
     return result;
 }
 
-export function parseWhere(line: string): Condition[] {
+export function toRecurrsiveWhere(line: any): any {
+    if (typeof line === 'string') {
+        const isBracketFound = line.includes('(') || line.includes(')');
+        if (!isBracketFound) return [line];
+
+        const newLines = [];
+        let newLineIndex = 0;
+        let bracketCount = 0;
+        for (let i = 0; i < line.length; i++) {
+            if (line[i] == '(') {
+                bracketCount++;
+                if (bracketCount == 1) {
+                    newLines.push(line.slice(newLineIndex, i).trim());
+                    newLineIndex = i + 1;
+                }
+            } else if (line[i] == ')') {
+                bracketCount--;
+                if (bracketCount == 0) {
+                    newLines.push([line.slice(newLineIndex, i).trim()]);
+                    newLineIndex = i + 1;
+                }
+            }
+        }
+        if (newLineIndex != line.length) {
+            newLines.push(line.slice(newLineIndex).trim());
+        }
+        return newLines;
+    } else if (Array.isArray(line)) {
+        return line.map((newLine) => parseWhere(newLine));
+    }
+}
+
+export function recursiveHasBracket(lines: any): boolean {
+    let result = false;
+    for (const line of lines) {
+        if (Array.isArray(line)) {
+            result = recursiveHasBracket(lines);
+        } else {
+            return line.includes('(') || line.includes(')');
+        }
+    }
+    return result;
+}
+
+function convertLineToCondition(line: string | Array<Condition> | Condition): Condition[] {
+    if (Array.isArray(line) && typeof line != 'string') {
+        return line;
+    }
+    if (line instanceof Condition) {
+        return [line];
+    }
     const expression = line.replace('where ', '');
+    if (expression == 'and') {
+        return [new Condition('and')];
+    } else if (expression == 'or') {
+        return [new Condition('or')];
+    }
     let conditionStrings: string[];
     if (expression.match(/\b(and)\b/g)) {
         conditionStrings = expression.replace(/\b(and)\b/g, '&&').split('&&');
@@ -193,6 +192,31 @@ export function parseWhere(line: string): Condition[] {
         }
     }
     return conditions;
+}
+
+
+export function parseWhere(line: string): Condition[] {
+    const count = maxBracketCount(line);
+    const countArray = new Array(count);
+    let strings = toRecurrsiveWhere(line);
+    for (let i = 0; i < countArray.length - 1; i++) {
+        strings = toRecurrsiveWhere(strings);
+    }
+    const conditionStrings = strings;
+
+    let result: Condition[] = [];
+    for (const strOrArray of conditionStrings) {
+        if (typeof strOrArray === 'string') {
+            const stringResult = convertLineToCondition(strOrArray);
+            result = result.concat(...stringResult);
+        } else if (Array.isArray(strOrArray)) {
+            const newCondition = new Condition();
+            newCondition.children = convertLineToCondition(strOrArray);
+            result.push(newCondition);
+        }
+    }
+    console.log('result: ', result);
+    return result;
 }
 
 export function toJsWhere(conditions: Condition[]) {

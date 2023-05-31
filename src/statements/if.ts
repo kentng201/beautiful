@@ -1,7 +1,7 @@
 import Statement from 'src/parser/statements/Statement';
 import { verifyComparisonStatement } from './comparison';
 import If from 'src/parser/statements/If';
-import { convertWhereToArrayInArray, parseInnerWhere, toJsWhere, turnBracketToParenthesis } from './where';
+import { parseWhere, toJsWhere } from './where';
 import { LineObject } from 'src/syntax/parser';
 import Comment from 'src/parser/statements/Comment';
 
@@ -35,8 +35,8 @@ export function parseIf(line: string, children?: LineObject[]): Statement {
         expression = line.replace(' .,' + commentString, '');
         comment = new Comment(commentString);
     }
-    const conditionStatements = convertWhereToArrayInArray(turnBracketToParenthesis(expression));
-    const conditions = parseInnerWhere(conditionStatements);
+    const conditions = parseWhere(expression);
+    console.log('conditions: ', conditions);
     const body = (children || [])
         .map((child) => child.toStatement())
         .filter((child) => child) as Statement[];
