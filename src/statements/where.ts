@@ -194,7 +194,6 @@ function convertLineToCondition(line: string | Array<Condition> | Condition): Co
     return conditions;
 }
 
-
 export function parseWhere(line: string): Condition[] {
     const count = maxBracketCount(line);
     const countArray = new Array(count);
@@ -203,7 +202,9 @@ export function parseWhere(line: string): Condition[] {
         strings = toRecurrsiveWhere(strings);
     }
     const conditionStrings = strings;
+    // this conditionStrings is correct
 
+    // TODO: start not correct, to fix
     let result: Condition[] = [];
     for (const strOrArray of conditionStrings) {
         if (typeof strOrArray === 'string') {
@@ -215,7 +216,7 @@ export function parseWhere(line: string): Condition[] {
             result.push(newCondition);
         }
     }
-    console.log('result: ', result);
+    // TODO: end not correct, to fix
     return result;
 }
 
